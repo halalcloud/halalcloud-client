@@ -32,11 +32,50 @@
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.Default.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.props" />
   <Import Project="..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.props" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <DisableSpecificWarnings>4127;</DisableSpecificWarnings>
+      <GuardEHContMetadata>false</GuardEHContMetadata>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\public_user_file.grpc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\public_user_file.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\public_user_offline.grpc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\public_user_offline.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\pub_common.grpc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\pub_common.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\rpc_transport.grpc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\rpc_transport.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\slice_svc.grpc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\slice_svc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\user_svc.grpc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\user_svc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\webrtc_manager.grpc.pb.cc" />
+    <ClCompile Include="..\HalalCloud.Protocol\Generated\webrtc_manager.pb.cc" />
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="HalalCloud.Client.Playground.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\public_user_file.grpc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\public_user_file.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\public_user_offline.grpc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\public_user_offline.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\pub_common.grpc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\pub_common.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\rpc_transport.grpc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\rpc_transport.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\slice_svc.grpc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\slice_svc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\user_svc.grpc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\user_svc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\webrtc_manager.grpc.pb.h" />
+    <ClInclude Include="..\HalalCloud.Protocol\Generated\webrtc_manager.pb.h" />
   </ItemGroup>
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.targets" />
   <Import Project="..\..\vcpkg\scripts\buildsystems\msbuild\vcpkg.targets" />
