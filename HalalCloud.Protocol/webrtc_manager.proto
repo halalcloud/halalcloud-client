@@ -1,0 +1,67 @@
+syntax = "proto3";
+package v6.services.p2p;
+option go_package = "github.com/city404/v6-public-rpc-proto/go/v6/wrtc";
+
+service WebRTCManageService {
+    rpc StartDownload (StartDownloadRequest) returns (StartDownloadResponse) {}
+    rpc StopDownload (StopDownloadRequest) returns (StopDownloadResponse) {}
+    rpc Disconnect (DisconnectRequest) returns (DisconnectResponse) {}
+    rpc SendPeerIceCandidate (SendPeerIceCandidateRequest) returns (SendPeerIceCandidateResponse) {}
+    rpc Receive (ReceiveRequest) returns (stream ReceiveResponse) {}
+}
+
+message StartDownloadRequest {
+    string client_identity = 1;
+    string content_identity = 2;
+    int64 peer_limit = 3;
+}
+
+message RtcPeerInfo {
+    string client_identity = 1;
+    string content_identity = 2;
+    string sdp = 3;
+}
+
+message StartDownloadResponse {
+    string content_identity = 1;
+    repeated RtcPeerInfo peers = 2;
+    repeated RtcPeerInfo backend_peers = 3;
+}
+
+
+message StopDownloadRequest {
+    string client_identity = 1;
+    string content_identity = 2;
+}
+
+message StopDownloadResponse {
+    string content_identity = 1;
+}
+
+
+message DisconnectRequest {
+    string client_identity = 1;
+}
+
+message DisconnectResponse {
+    string client_identity = 1;
+}
+
+message SendPeerIceCandidateRequest {
+    string client_identity = 1;
+    string candidate = 3;
+}
+
+message SendPeerIceCandidateResponse {
+    string client_identity = 1;
+}
+
+message ReceiveRequest {
+    string id = 1;
+}
+
+message ReceiveResponse {
+    string data = 1;
+}
+
+

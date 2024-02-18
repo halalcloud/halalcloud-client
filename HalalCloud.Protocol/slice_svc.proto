@@ -1,0 +1,45 @@
+syntax = "proto3";
+package v6.services.pub;
+option go_package = "github.com/city404/v6-public-rpc-proto/go/v6/slice";
+
+service PubSlice {
+    rpc GetSlice (Slice) returns (Slice) {}
+    rpc CreateSlice (Slice) returns (Slice) {}
+    rpc GetMeta (Meta) returns (Meta) {}
+    rpc CreateMeta (Meta) returns (Meta) {}
+    rpc AddFastLookup(FastLookup) returns (FastLookup) {}
+    rpc GetFastLookup(FastLookupRequest) returns (FastLookup) {}
+}
+
+message Slice {
+    string identity = 1; // identity
+    int32 type = 2; 
+    int32 status = 3; 
+    int64 update_ts = 5;
+    string peer = 6;
+    int64 create_ts = 7;
+    string server = 8;
+    bool need_data = 9;
+    bytes data = 10;
+}
+
+message Meta {
+    string identity = 1; // identity
+    bytes data = 2;
+}
+
+message FastLookup {
+    string identity = 1;
+    string wcs_etag = 2;
+    string sha1 = 3;
+    string head_sha1 = 4;
+    int64 file_size = 5;
+    string special_sha1 = 6;
+    string name = 7;
+    string lh_hash = 8;
+}
+
+message FastLookupRequest {
+    int32 type = 1;
+    FastLookup info = 2;
+}

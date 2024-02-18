@@ -1,0 +1,9 @@
+syntax = "proto3";
+package v6.services.pub.common;
+option go_package = "github.com/city404/v6-public-rpc-proto/go/v6/common";
+
+message ScanListRequest {
+    string token = 1;
+    int64 limit = 2;
+    map<string, bool> order_by = 3;
+}
