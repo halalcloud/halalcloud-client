@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalalCloud.Client.Playground", "HalalCloud.Client.Playground\HalalCloud.Client.Playground.vcxproj", "{86D4AFAD-E229-4849-965B-3D1DE93CA98C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalalCloud.Client.Core", "HalalCloud.Client.Core\HalalCloud.Client.Core.csproj", "{26199F5E-0D91-4AA6-87FB-0917D789A496}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -27,6 +29,16 @@ Global
 		{86D4AFAD-E229-4849-965B-3D1DE93CA98C}.Release|x64.Build.0 = Release|x64
 		{86D4AFAD-E229-4849-965B-3D1DE93CA98C}.Release|x86.ActiveCfg = Release|Win32
 		{86D4AFAD-E229-4849-965B-3D1DE93CA98C}.Release|x86.Build.0 = Release|Win32
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Debug|ARM64.Build.0 = Debug|ARM64
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Debug|x64.ActiveCfg = Debug|x64
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Debug|x64.Build.0 = Debug|x64
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Debug|x86.ActiveCfg = Debug|x86
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Release|ARM64.ActiveCfg = Release|ARM64
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Release|ARM64.Build.0 = Release|ARM64
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Release|x64.ActiveCfg = Release|x64
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Release|x64.Build.0 = Release|x64
+		{26199F5E-0D91-4AA6-87FB-0917D789A496}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
