@@ -1,6 +1,5 @@
 ﻿using Grpc.Core.Interceptors;
 using Grpc.Core;
-using System.Text;
 
 namespace HalalCloud.Client.Core
 {
@@ -28,12 +27,7 @@ namespace HalalCloud.Client.Core
 
             {
                 string sign = context.Method.FullName + timestamp + appid + appversion + authorization + appsecret;
-
-                using var provider = System.Security.Cryptography.MD5.Create();
-                StringBuilder builder = new StringBuilder();
-                foreach (byte b in provider.ComputeHash(Encoding.UTF8.GetBytes(sign)))
-                    builder.Append(b.ToString("x2").ToLower());
-                metadata.Add("sign", builder.ToString());
+                metadata.Add("sign", Utilities.ConvertToMD5String(sign).ToLower());
             }
 
             var deadline = DateTime.UtcNow.AddSeconds(5);
