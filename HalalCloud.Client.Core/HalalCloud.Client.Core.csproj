@@ -11,6 +11,7 @@
     <RuntimeIdentifier Condition="'$(PlatformTarget)'=='arm64'">win-arm64</RuntimeIdentifier>
     <PublishAot>true</PublishAot>
     <IsAotCompatible>true</IsAotCompatible>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <Target Name="AutoPublish" AfterTargets="Build">
