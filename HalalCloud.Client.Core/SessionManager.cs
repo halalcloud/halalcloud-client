@@ -1,7 +1,6 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
-using System.Threading.Channels;
 using V6.Services.Pub;
 
 namespace HalalCloud.Client.Core
@@ -39,6 +38,38 @@ namespace HalalCloud.Client.Core
             Request.ReturnType = 2;
             Request.Callback = Callback;
             return Client.VerifyAuthToken(Request);
+        }
+
+        public string AccessToken
+        {
+            get
+            {
+                if (RpcInterceptor == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return RpcInterceptor.AccessToken;
+            }
+            set
+            {
+                if (RpcInterceptor == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                RpcInterceptor.AccessToken = value;
+            }
+        }
+
+        public CallInvoker Invoker
+        {
+            get
+            {
+                if (RpcInvoker == null)
+                {
+                    throw new InvalidOperationException();
+                }
+                return RpcInvoker;
+            }
         }
     }
 }

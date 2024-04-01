@@ -1,11 +1,12 @@
 ﻿using Grpc.Core.Interceptors;
 using Grpc.Core;
-using System.Net;
 
 namespace HalalCloud.Client.Core
 {
     public class SignatureInterceptor : Interceptor
     {
+        public string AccessToken { get; set; } = string.Empty;
+
         private ClientInterceptorContext<TRequest, TResponse> GetNewContext<TRequest, TResponse>(
             ClientInterceptorContext<TRequest, TResponse> context)
             where TRequest : class
@@ -16,8 +17,6 @@ namespace HalalCloud.Client.Core
             string ApplicationId = "devDebugger/1.0";
             string ApplicationVersion = "1.0.0";
             string ApplicationSecret = "Nkx3Y2xvZ2luLmNu";
-            string AccessToken = string.Empty;
-            // string AccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1c2VyLWNlbnRlci12MWJldGExLjIwMjMwOSIsInN1YiI6IntcIklkZW50aXR5XCI6XCIxZmM0NDk2Mzk2NzA0NzcxOTQ1ZGEwNjMyOWMzMjllYVwiLFwiVHlwZVwiOjAsXCJTdGF0dXNcIjowLFwiVmVyc2lvblwiOjMsXCJVcGRhdGVUc1wiOjE3MDQzNzQxOTMxMDQsXCJOYW1lXCI6XCJLdXJpa28gTW91XCIsXCJBZGRvblwiOlwiXCIsXCJDcmVhdGVUc1wiOjE3MDQzNzQxOTMxMDQsXCJIYXNoXCI6XCJcIixcIkZsYWdcIjowLFwiVmFsaWRhdGVcIjowLFwiSWNvblwiOlwiXCJ9IiwiYXVkIjpbImJzczoxIl0sImV4cCI6MTcwNTM3NjAyNSwiaWF0IjoxNzA1Mjg5NTA1LCJqdGkiOiIxZmM0NDk2Mzk2NzA0NzcxOTQ1ZGEwNjMyOWMzMjllYSJ9.yuYus7TdaeBxWZbDpEmXhC_KODqSKdsoCZjfur299n8";
             long TimeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             metadata.Add("timestamp", TimeStamp.ToString());
