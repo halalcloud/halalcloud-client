@@ -1,5 +1,6 @@
 ﻿using Grpc.Core.Interceptors;
 using Grpc.Core;
+using System.Net;
 
 namespace HalalCloud.Client.Core
 {
@@ -12,23 +13,32 @@ namespace HalalCloud.Client.Core
         {
             var metadata = context.Options.Headers ?? new Metadata();
 
-            string timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds().ToString();
-            string appid = "devDebugger/1.0";
-            string appversion = "1.0.0";
-            string appsecret = "Nkx3Y2xvZ2luLmNu";
+            string ApplicationId = "devDebugger/1.0";
+            string ApplicationVersion = "1.0.0";
+            string ApplicationSecret = "Nkx3Y2xvZ2luLmNu";
+            string AccessToken = string.Empty;
+            // string AccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1c2VyLWNlbnRlci12MWJldGExLjIwMjMwOSIsInN1YiI6IntcIklkZW50aXR5XCI6XCIxZmM0NDk2Mzk2NzA0NzcxOTQ1ZGEwNjMyOWMzMjllYVwiLFwiVHlwZVwiOjAsXCJTdGF0dXNcIjowLFwiVmVyc2lvblwiOjMsXCJVcGRhdGVUc1wiOjE3MDQzNzQxOTMxMDQsXCJOYW1lXCI6XCJLdXJpa28gTW91XCIsXCJBZGRvblwiOlwiXCIsXCJDcmVhdGVUc1wiOjE3MDQzNzQxOTMxMDQsXCJIYXNoXCI6XCJcIixcIkZsYWdcIjowLFwiVmFsaWRhdGVcIjowLFwiSWNvblwiOlwiXCJ9IiwiYXVkIjpbImJzczoxIl0sImV4cCI6MTcwNTM3NjAyNSwiaWF0IjoxNzA1Mjg5NTA1LCJqdGkiOiIxZmM0NDk2Mzk2NzA0NzcxOTQ1ZGEwNjMyOWMzMjllYSJ9.yuYus7TdaeBxWZbDpEmXhC_KODqSKdsoCZjfur299n8";
+            long TimeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-            metadata.Add("timestamp", timestamp);
-            metadata.Add("appid", appid);
-            metadata.Add("appversion", appversion);
+            metadata.Add("timestamp", TimeStamp.ToString());
+            metadata.Add("appid", ApplicationId);
+            metadata.Add("appversion", ApplicationVersion);
 
-            string authorization = string.Empty;
-            //string authorization = "Bearer " + "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1c2VyLWNlbnRlci12MWJldGExLjIwMjMwOSIsInN1YiI6IntcIklkZW50aXR5XCI6XCIxZmM0NDk2Mzk2NzA0NzcxOTQ1ZGEwNjMyOWMzMjllYVwiLFwiVHlwZVwiOjAsXCJTdGF0dXNcIjowLFwiVmVyc2lvblwiOjMsXCJVcGRhdGVUc1wiOjE3MDQzNzQxOTMxMDQsXCJOYW1lXCI6XCJLdXJpa28gTW91XCIsXCJBZGRvblwiOlwiXCIsXCJDcmVhdGVUc1wiOjE3MDQzNzQxOTMxMDQsXCJIYXNoXCI6XCJcIixcIkZsYWdcIjowLFwiVmFsaWRhdGVcIjowLFwiSWNvblwiOlwiXCJ9IiwiYXVkIjpbImJzczoxIl0sImV4cCI6MTcwNTM3NjAyNSwiaWF0IjoxNzA1Mjg5NTA1LCJqdGkiOiIxZmM0NDk2Mzk2NzA0NzcxOTQ1ZGEwNjMyOWMzMjllYSJ9.yuYus7TdaeBxWZbDpEmXhC_KODqSKdsoCZjfur299n8";
-            //metadata.Add("authorization", authorization);
-
+            string Authorization = Utilities.GenerateAuthorization(AccessToken);
+            if (!string.IsNullOrWhiteSpace(Authorization))
             {
-                string sign = context.Method.FullName + timestamp + appid + appversion + authorization + appsecret;
-                metadata.Add("sign", Utilities.ConvertToMD5String(sign).ToLower());
+                metadata.Add("authorization", Authorization);
             }
+
+            metadata.Add(
+                "sign",
+                Utilities.ComputeSignature(
+                    ApplicationId,
+                    ApplicationVersion,
+                    ApplicationSecret,
+                    Authorization,
+                    context.Method.FullName,
+                    TimeStamp).ToLower());
 
             var deadline = DateTime.UtcNow.AddSeconds(5);
 
