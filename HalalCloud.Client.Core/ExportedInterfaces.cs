@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using V6.Services.Pub;
 
 namespace HalalCloud.Client.Core
@@ -9,23 +10,23 @@ namespace HalalCloud.Client.Core
             CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccCreateSessionManager")]
         public static unsafe int CreateSessionManager(
-            IntPtr* Interface)
+            IntPtr* NativeSession)
         {
             try
             {
-                if (Interface == null)
+                if (NativeSession == null)
                 {
                     throw new ArgumentException();
                 }
 
-                *Interface = GCHandle.ToIntPtr(GCHandle.Alloc(
-                    new SessionManager(),
-                    GCHandleType.Pinned));
+                SessionManager Session = new SessionManager();
+
+                *NativeSession = GCHandle.ToIntPtr(GCHandle.Alloc(Session));
                 return 0;
             }
             catch (Exception e)
             {
-                *Interface = IntPtr.Zero;
+                *NativeSession = IntPtr.Zero;
                 return e.HResult;
             }
         }
@@ -40,16 +41,16 @@ namespace HalalCloud.Client.Core
             CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccCreateAuthToken")]
         public static unsafe int CreateAuthToken(
-            IntPtr Interface)
+            IntPtr NativeSession)
         {
             try
             {
-                if (Interface == IntPtr.Zero)
+                if (NativeSession == IntPtr.Zero)
                 {
                     throw new ArgumentException();
                 }
 
-                SessionManager? Session = GetSessionManager(Interface);
+                SessionManager? Session = GetSessionManager(NativeSession);
                 if (Session == null)
                 {
                     throw new ArgumentException();

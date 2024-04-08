@@ -18,7 +18,7 @@ DECLARE_HANDLE(HCC_SESSION);
 typedef HCC_SESSION *PHCC_SESSION;
 
 EXTERN_C HRESULT WINAPI HccCreateSessionManager(
-    _In_ PHCC_SESSION Session);
+    _Out_ PHCC_SESSION Session);
 
 EXTERN_C HRESULT WINAPI HccCreateAuthToken(
     _In_ HCC_SESSION Session);
