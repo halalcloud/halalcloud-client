@@ -10,23 +10,23 @@ namespace HalalCloud.Client.Core
             CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccCreateSessionManager")]
         public static unsafe int CreateSessionManager(
-            IntPtr* NativeSession)
+            IntPtr* Session)
         {
             try
             {
-                if (NativeSession == null)
+                if (Session == null)
                 {
                     throw new ArgumentException();
                 }
 
-                SessionManager Session = new SessionManager();
+                SessionManager ManagedSession = new SessionManager();
 
-                *NativeSession = GCHandle.ToIntPtr(GCHandle.Alloc(Session));
+                *Session = GCHandle.ToIntPtr(GCHandle.Alloc(ManagedSession));
                 return 0;
             }
             catch (Exception e)
             {
-                *NativeSession = IntPtr.Zero;
+                *Session = IntPtr.Zero;
                 return e.HResult;
             }
         }
@@ -41,22 +41,22 @@ namespace HalalCloud.Client.Core
             CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccCreateAuthToken")]
         public static unsafe int CreateAuthToken(
-            IntPtr NativeSession)
+            IntPtr Session)
         {
             try
             {
-                if (NativeSession == IntPtr.Zero)
+                if (Session == IntPtr.Zero)
                 {
                     throw new ArgumentException();
                 }
 
-                SessionManager? Session = GetSessionManager(NativeSession);
-                if (Session == null)
+                SessionManager? ManagedSession = GetSessionManager(Session);
+                if (ManagedSession == null)
                 {
                     throw new ArgumentException();
                 }
 
-                OauthTokenResponse Response = Session.CreateAuthToken();
+                OauthTokenResponse Response = ManagedSession.CreateAuthToken();
                 Console.WriteLine(Response.ReturnUrl);
                 Console.WriteLine(Response.Callback);
 
