@@ -20,6 +20,9 @@ typedef HCC_SESSION *PHCC_SESSION;
 EXTERN_C HRESULT WINAPI HccCreateSessionManager(
     _Out_ PHCC_SESSION Session);
 
+EXTERN_C HRESULT WINAPI HccCloseSessionManager(
+    _In_ HCC_SESSION Session);
+
 EXTERN_C HRESULT WINAPI HccCreateAuthToken(
     _In_ HCC_SESSION Session);
 
@@ -31,6 +34,8 @@ int main()
     if (SUCCEEDED(hr))
     {
         hr = ::HccCreateAuthToken(Session);
+
+        ::HccCloseSessionManager(Session);
     }
 
     std::printf(

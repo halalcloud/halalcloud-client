@@ -31,6 +31,29 @@ namespace HalalCloud.Client.Core
             }
         }
 
+        [UnmanagedCallersOnly(
+            CallConvs = [typeof(CallConvStdcall)],
+            EntryPoint = "HccCloseSessionManager")]
+        public static unsafe int CloseSessionManager(
+            IntPtr Session)
+        {
+            try
+            {
+                if (Session == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                GCHandle.FromIntPtr(Session).Free();
+
+                return 0;
+            }
+            catch (Exception e)
+            {
+                return e.HResult;
+            }
+        }
+
         private static SessionManager? GetSessionManager(
             IntPtr Interface)
         {
