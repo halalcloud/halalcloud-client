@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Reflection.Metadata;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using V6.Services.Pub;
 
@@ -26,7 +28,10 @@ namespace HalalCloud.Client.Core
             }
             catch (Exception e)
             {
-                *Session = IntPtr.Zero;
+                if (Session != null)
+                {
+                    *Session = IntPtr.Zero;
+                }
                 return e.HResult;
             }
         }
@@ -60,15 +65,51 @@ namespace HalalCloud.Client.Core
             return GCHandle.FromIntPtr(Interface).Target as SessionManager;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        public struct CreateAuthTokenResponse
+        {
+            [MarshalAs(UnmanagedType.LPUTF8Str)]
+            public string Url;
+
+            [MarshalAs(UnmanagedType.LPUTF8Str)]
+            public string Addon;
+
+            [MarshalAs(UnmanagedType.LPUTF8Str)]
+            public string Input;
+
+            [MarshalAs(UnmanagedType.LPUTF8Str)]
+            public string Type;
+
+            [MarshalAs(UnmanagedType.LPUTF8Str)]
+            public string Callback;
+
+            [MarshalAs(UnmanagedType.LPUTF8Str)]
+            public string ReturnUrl;
+
+            public int ReturnType;
+
+            [MarshalAs(UnmanagedType.LPUTF8Str)]
+            public string Captcha;
+
+            [MarshalAs(UnmanagedType.LPUTF8Str)]
+            public string State;  
+        }
+
         [UnmanagedCallersOnly(
             CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccCreateAuthToken")]
         public static unsafe int CreateAuthToken(
-            IntPtr Session)
+            IntPtr Session,
+            IntPtr NativeResponse)
         {
             try
             {
                 if (Session == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                if (NativeResponse == IntPtr.Zero)
                 {
                     throw new ArgumentException();
                 }
@@ -80,8 +121,21 @@ namespace HalalCloud.Client.Core
                 }
 
                 OauthTokenResponse Response = ManagedSession.CreateAuthToken();
-                Console.WriteLine(Response.ReturnUrl);
-                Console.WriteLine(Response.Callback);
+
+                CreateAuthTokenResponse ManagedResponse =
+                    new CreateAuthTokenResponse();
+
+                ManagedResponse.Url = Response.Url;
+                ManagedResponse.Addon = Response.Addon;
+                ManagedResponse.Input = Response.Input;
+                ManagedResponse.Type = Response.Type;
+                ManagedResponse.Callback = Response.Callback;
+                ManagedResponse.ReturnUrl = Response.ReturnUrl;
+                ManagedResponse.ReturnType = Response.ReturnType;
+                ManagedResponse.Captcha = Response.Captcha;
+                ManagedResponse.State = Response.State;
+
+                Marshal.StructureToPtr(ManagedResponse, NativeResponse, true);
 
                 return 0;
             }
