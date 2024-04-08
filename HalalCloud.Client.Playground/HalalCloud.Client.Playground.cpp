@@ -12,18 +12,31 @@
 #include <cstdio>
 #include <cwchar>
 
+#include <Windows.h>
+
+DECLARE_HANDLE(HCC_SESSION);
+typedef HCC_SESSION *PHCC_SESSION;
+
+EXTERN_C HRESULT WINAPI HccCreateSessionManager(
+    _In_ PHCC_SESSION Session);
+
+EXTERN_C HRESULT WINAPI HccCreateAuthToken(
+    _In_ HCC_SESSION Session);
+
 int main()
 {
-    // I can't use that because of the limitation in VC-LTL.
-    // std::setlocale(LC_ALL, "zh_CN.UTF-8");
+    HCC_SESSION Session = nullptr;
 
-    std::setlocale(LC_ALL, "chs");
+    HRESULT hr = ::HccCreateSessionManager(&Session);
+    if (SUCCEEDED(hr))
+    {
+        hr = ::HccCreateAuthToken(Session);
+    }
 
-    std::wprintf(
-        L"Halal Cloud Client Playground\n"
-        L"================================================================\n"
-        L"他喵的 MSVC 2019 工具集坑了我们价值百万美刀的项目！\n"
-        L"The F@cking MSVC 2019 toolset ruined our $1M project!\n");
+    std::printf(
+        "================================================================\n"
+        "HalalCloud.Client.Playground has been completed.\n");
+    std::getchar();
 
     return 0;
 }

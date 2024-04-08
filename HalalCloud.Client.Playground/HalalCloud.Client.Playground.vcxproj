@@ -21,6 +21,20 @@
   <Import Project="..\Mile.Project.Windows\Mile.Project.Platform.ARM64.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.Default.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.props" />
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalDependencies Condition="'$(Platform)'=='x64'">$(OutDir)net8.0\win-x64\native\HalalCloud.Client.Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Platform)'=='ARM64'">$(OutDir)net8.0\win-arm64\native\HalalCloud.Client.Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup Condition="'$(Platform)'=='x64'">
+    <ReferenceCopyLocalPaths Include="$(OutDir)net8.0\win-x64\native\HalalCloud.Client.Core.dll" />
+    <ReferenceCopyLocalPaths Include="$(OutDir)net8.0\win-x64\native\HalalCloud.Client.Core.pdb" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Platform)'=='ARM64'">
+    <ReferenceCopyLocalPaths Include="$(OutDir)net8.0\win-arm64\native\HalalCloud.Client.Core.dll" />
+    <ReferenceCopyLocalPaths Include="$(OutDir)net8.0\win-arm64\native\HalalCloud.Client.Core.pdb" />
+  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
   </ItemGroup>

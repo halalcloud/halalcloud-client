@@ -5,7 +5,9 @@ namespace HalalCloud.Client.Core
 {
     public class ExportedInterfaces
     {
-        [UnmanagedCallersOnly(EntryPoint = "HccCreateSessionManager")]
+        [UnmanagedCallersOnly(
+            CallConvs = [typeof(CallConvStdcall)],
+            EntryPoint = "HccCreateSessionManager")]
         public static unsafe int CreateSessionManager(
             IntPtr* Interface)
         {
@@ -34,7 +36,9 @@ namespace HalalCloud.Client.Core
             return GCHandle.FromIntPtr(Interface).Target as SessionManager;
         }
 
-        [UnmanagedCallersOnly(EntryPoint = "HccCreateAuthToken")]
+        [UnmanagedCallersOnly(
+            CallConvs = [typeof(CallConvStdcall)],
+            EntryPoint = "HccCreateAuthToken")]
         public static unsafe int CreateAuthToken(
             IntPtr Interface)
         {
