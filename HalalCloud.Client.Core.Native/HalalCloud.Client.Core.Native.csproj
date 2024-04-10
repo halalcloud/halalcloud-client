@@ -18,6 +18,8 @@
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" />
   </Target>
 
+  <Import Project="..\YY.Windows.CRT.NativeAOT\YY.Windows.CRT.NativeAOT.props" />
+
   <ItemGroup>
     <ProjectReference Include="..\HalalCloud.Client.Core\HalalCloud.Client.Core.csproj" />
   </ItemGroup>
