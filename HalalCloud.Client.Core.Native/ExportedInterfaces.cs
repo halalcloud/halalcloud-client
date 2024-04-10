@@ -1,6 +1,4 @@
-﻿using System;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using V6.Services.Pub;
 
@@ -65,36 +63,6 @@ namespace HalalCloud.Client.Core
             return GCHandle.FromIntPtr(Interface).Target as SessionManager;
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        public struct CreateAuthTokenResponse
-        {
-            [MarshalAs(UnmanagedType.LPUTF8Str)]
-            public string Url;
-
-            [MarshalAs(UnmanagedType.LPUTF8Str)]
-            public string Addon;
-
-            [MarshalAs(UnmanagedType.LPUTF8Str)]
-            public string Input;
-
-            [MarshalAs(UnmanagedType.LPUTF8Str)]
-            public string Type;
-
-            [MarshalAs(UnmanagedType.LPUTF8Str)]
-            public string Callback;
-
-            [MarshalAs(UnmanagedType.LPUTF8Str)]
-            public string ReturnUrl;
-
-            public int ReturnType;
-
-            [MarshalAs(UnmanagedType.LPUTF8Str)]
-            public string Captcha;
-
-            [MarshalAs(UnmanagedType.LPUTF8Str)]
-            public string State;  
-        }
-
         [UnmanagedCallersOnly(
             CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccCreateAuthToken")]
@@ -122,8 +90,8 @@ namespace HalalCloud.Client.Core
 
                 OauthTokenResponse Response = ManagedSession.CreateAuthToken();
 
-                CreateAuthTokenResponse ManagedResponse =
-                    new CreateAuthTokenResponse();
+                Native.OauthTokenResponse ManagedResponse =
+                    new Native.OauthTokenResponse();
 
                 ManagedResponse.Url = Response.Url;
                 ManagedResponse.Addon = Response.Addon;
