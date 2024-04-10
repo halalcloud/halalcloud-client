@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using HalalCloud.Client.Core.Interop;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using V6.Services.Pub;
 
@@ -68,7 +69,7 @@ namespace HalalCloud.Client.Core
             EntryPoint = "HccCreateAuthToken")]
         public static unsafe int CreateAuthToken(
             IntPtr Session,
-            IntPtr NativeResponse)
+            IntPtr Response)
         {
             try
             {
@@ -77,7 +78,7 @@ namespace HalalCloud.Client.Core
                     throw new ArgumentException();
                 }
 
-                if (NativeResponse == IntPtr.Zero)
+                if (Response == IntPtr.Zero)
                 {
                     throw new ArgumentException();
                 }
@@ -88,22 +89,11 @@ namespace HalalCloud.Client.Core
                     throw new ArgumentException();
                 }
 
-                OauthTokenResponse Response = ManagedSession.CreateAuthToken();
-
-                Native.OauthTokenResponse ManagedResponse =
-                    new Native.OauthTokenResponse();
-
-                ManagedResponse.Url = Response.Url;
-                ManagedResponse.Addon = Response.Addon;
-                ManagedResponse.Input = Response.Input;
-                ManagedResponse.Type = Response.Type;
-                ManagedResponse.Callback = Response.Callback;
-                ManagedResponse.ReturnUrl = Response.ReturnUrl;
-                ManagedResponse.ReturnType = Response.ReturnType;
-                ManagedResponse.Captcha = Response.Captcha;
-                ManagedResponse.State = Response.State;
-
-                Marshal.StructureToPtr(ManagedResponse, NativeResponse, true);
+                Marshal.StructureToPtr(
+                    new NativeOauthTokenResponse(
+                        ManagedSession.CreateAuthToken()),
+                    Response,
+                    true);
 
                 return 0;
             }

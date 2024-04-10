@@ -23,7 +23,7 @@ EXTERN_C HRESULT WINAPI HccCreateSessionManager(
 EXTERN_C HRESULT WINAPI HccCloseSessionManager(
     _In_ HCC_SESSION Session);
 
-typedef struct _HCC_CREATE_AUTH_TOKEN_RESPONSE
+typedef struct _HCC_OAUTH_TOKEN_RESPONSE
 {
     LPSTR Url; // Free via CoTaskMemFree.
     LPSTR Addon; // Free via CoTaskMemFree.
@@ -34,15 +34,15 @@ typedef struct _HCC_CREATE_AUTH_TOKEN_RESPONSE
     INT32 ReturnType;
     LPSTR Captcha; // Free via CoTaskMemFree.
     LPSTR State; // Free via CoTaskMemFree.
-} HCC_CREATE_AUTH_TOKEN_RESPONSE, *PHCC_CREATE_AUTH_TOKEN_RESPONSE;
+} HCC_OAUTH_TOKEN_RESPONSE, *PHCC_OAUTH_TOKEN_RESPONSE;
 
 EXTERN_C HRESULT WINAPI HccCreateAuthToken(
     _In_ HCC_SESSION Session,
-    _Out_ PHCC_CREATE_AUTH_TOKEN_RESPONSE Response);
+    _Out_ PHCC_OAUTH_TOKEN_RESPONSE Response);
 
 int main()
 {
-    HCC_CREATE_AUTH_TOKEN_RESPONSE Response = { 0 };
+    HCC_OAUTH_TOKEN_RESPONSE Response = { 0 };
 
     HCC_SESSION Session = nullptr;
     HRESULT hr = ::HccCreateSessionManager(&Session);
