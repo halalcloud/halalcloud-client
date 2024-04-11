@@ -7,7 +7,7 @@ namespace HalalCloud.Client.Core.Interop
     public struct NativeLastLoginResponse
     {
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Identity;
+        public string Identity = string.Empty;
 
         /// <summary>
         /// millisecond
@@ -15,17 +15,20 @@ namespace HalalCloud.Client.Core.Interop
         public long LastLoginTs;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string LastLoginIp;
+        public string LastLoginIp = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string LastLoginDevice;
+        public string LastLoginDevice = string.Empty;
 
-        public NativeLastLoginResponse(LastLoginResponse Source)
+        public NativeLastLoginResponse(LastLoginResponse? Source)
         {
-            Identity = Source.Identity;
-            LastLoginTs = Source.LastLoginTs;
-            LastLoginIp = Source.LastLoginIp;
-            LastLoginDevice = Source.LastLoginDevice;
-    }
+            if (Source != null)
+            {
+                Identity = Source.Identity;
+                LastLoginTs = Source.LastLoginTs;
+                LastLoginIp = Source.LastLoginIp;
+                LastLoginDevice = Source.LastLoginDevice;
+            }
+        }
     }
 }

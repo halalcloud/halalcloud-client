@@ -13,14 +13,17 @@ namespace HalalCloud.Client.Core.Interop
         public NativeLastLoginResponse LastLogin;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string State;
+        public string State = string.Empty;
 
-        public NativeLoginResponse(LoginResponse Source)
+        public NativeLoginResponse(LoginResponse? Source)
         {
-            Token = new NativeToken(Source.Token);
-            User = new NativeUser(Source.User);
-            LastLogin = new NativeLastLoginResponse(Source.LastLogin);
-            State = Source.State;
+            if (Source != null)
+            {
+                Token = new NativeToken(Source.Token);
+                User = new NativeUser(Source.User);
+                LastLogin = new NativeLastLoginResponse(Source.LastLogin);
+                State = Source.State;
+            }
         }
     }
 }

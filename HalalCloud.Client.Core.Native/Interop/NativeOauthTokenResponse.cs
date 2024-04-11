@@ -7,42 +7,45 @@ namespace HalalCloud.Client.Core.Interop
     public struct NativeOauthTokenResponse
     {
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Url;
+        public string Url = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Addon;
+        public string Addon = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Input;
+        public string Input = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Type;
+        public string Type = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Callback;
+        public string Callback = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string ReturnUrl;
+        public string ReturnUrl = string.Empty;
 
         public int ReturnType;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Captcha;
+        public string Captcha = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string State;
+        public string State = string.Empty;
 
-        public NativeOauthTokenResponse(OauthTokenResponse Source)
+        public NativeOauthTokenResponse(OauthTokenResponse? Source)
         {
-            Url = Source.Url;
-            Addon = Source.Addon;
-            Input = Source.Input;
-            Type = Source.Type;
-            Callback = Source.Callback;
-            ReturnUrl = Source.ReturnUrl;
-            ReturnType = Source.ReturnType;
-            Captcha = Source.Captcha;
-            State = Source.State;
+            if (Source != null)
+            {
+                Url = Source.Url;
+                Addon = Source.Addon;
+                Input = Source.Input;
+                Type = Source.Type;
+                Callback = Source.Callback;
+                ReturnUrl = Source.ReturnUrl;
+                ReturnType = Source.ReturnType;
+                Captcha = Source.Captcha;
+                State = Source.State;
+            }
         }
     }
 }

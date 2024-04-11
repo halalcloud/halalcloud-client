@@ -10,7 +10,7 @@ namespace HalalCloud.Client.Core.Interop
         /// identity for user, unique in system
         /// </summary>
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Identity;
+        public string Identity = string.Empty;
 
         /// <summary>
         /// 1: user, 2: admin, 3: super admin
@@ -25,34 +25,37 @@ namespace HalalCloud.Client.Core.Interop
         public long UpdateTs;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Password;
+        public string Password = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Name;
+        public string Name = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Addon;
+        public string Addon = string.Empty;
 
         public long CreateTs;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Hash;
+        public string Hash = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Icon;
+        public string Icon = string.Empty;
 
-        public NativeUser(User Source)
+        public NativeUser(User? Source)
         {
-            Identity = Source.Identity;
-            Type = Source.Type;
-            Status = Source.Status;
-            UpdateTs = Source.UpdateTs;
-            Password = Source.Password;
-            Name = Source.Name;
-            Addon = Source.Addon;
-            CreateTs = Source.CreateTs;
-            Hash = Source.Hash;
-            Icon = Source.Icon;
-    }
+            if (Source != null)
+            {
+                Identity = Source.Identity;
+                Type = Source.Type;
+                Status = Source.Status;
+                UpdateTs = Source.UpdateTs;
+                Password = Source.Password;
+                Name = Source.Name;
+                Addon = Source.Addon;
+                CreateTs = Source.CreateTs;
+                Hash = Source.Hash;
+                Icon = Source.Icon;
+            }
+        }
     }
 }

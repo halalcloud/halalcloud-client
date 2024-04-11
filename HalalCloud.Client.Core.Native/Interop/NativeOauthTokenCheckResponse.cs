@@ -13,14 +13,17 @@ namespace HalalCloud.Client.Core.Interop
         public int Status;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Message;
+        public string Message = string.Empty;
 
-        public NativeOauthTokenCheckResponse(OauthTokenCheckResponse Source)
+        public NativeOauthTokenCheckResponse(OauthTokenCheckResponse? Source)
         {
-            Login = new NativeLoginResponse(Source.Login);
-            Oauth = new NativeOauthTokenResponse(Source.Oauth);
-            Status = Source.Status;
-            Message = Source.Message;
-    }
+            if (Source != null)
+            {
+                Login = new NativeLoginResponse(Source.Login);
+                Oauth = new NativeOauthTokenResponse(Source.Oauth);
+                Status = Source.Status;
+                Message = Source.Message;
+            }
+        }
     }
 }

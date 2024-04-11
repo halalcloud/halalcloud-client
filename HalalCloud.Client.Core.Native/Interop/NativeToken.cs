@@ -7,21 +7,21 @@ namespace HalalCloud.Client.Core.Interop
     public struct NativeToken
     {
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Identity;
+        public string Identity = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string UserIdentity;
+        public string UserIdentity = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string Device;
+        public string Device = string.Empty;
 
         public int Version;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string AccessToken;
+        public string AccessToken = string.Empty;
 
         [MarshalAs(UnmanagedType.LPUTF8Str)]
-        public string RefreshToken;
+        public string RefreshToken = string.Empty;
 
         public long UpdateTs;
 
@@ -29,17 +29,20 @@ namespace HalalCloud.Client.Core.Interop
 
         public long RefreshTokenExpireTs;
 
-        public NativeToken(Token Source)
+        public NativeToken(Token? Source)
         {
-            Identity = Source.Identity;
-            UserIdentity = Source.UserIdentity;
-            Device = Source.Device;
-            Version = Source.Version;
-            AccessToken = Source.AccessToken;
-            RefreshToken = Source.RefreshToken;
-            UpdateTs = Source.UpdateTs;
-            AccessTokenExpireTs = Source.AccessTokenExpireTs;
-            RefreshTokenExpireTs = Source.RefreshTokenExpireTs;
-    }
+            if (Source != null)
+            {
+                Identity = Source.Identity;
+                UserIdentity = Source.UserIdentity;
+                Device = Source.Device;
+                Version = Source.Version;
+                AccessToken = Source.AccessToken;
+                RefreshToken = Source.RefreshToken;
+                UpdateTs = Source.UpdateTs;
+                AccessTokenExpireTs = Source.AccessTokenExpireTs;
+                RefreshTokenExpireTs = Source.RefreshTokenExpireTs;
+            }
+        }
     }
 }
