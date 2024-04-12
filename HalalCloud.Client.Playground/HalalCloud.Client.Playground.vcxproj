@@ -36,10 +36,14 @@
     <ReferenceCopyLocalPaths Include="$(OutDir)net8.0\win-arm64\native\HalalCloud.Client.Core.Native.pdb" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="HalalCloud.Client.Core.Native.cpp" />
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="HalalCloud.Client.Playground.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HalalCloud.Client.Core.Native.h" />
   </ItemGroup>
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.targets" />
 </Project>

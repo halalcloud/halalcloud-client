@@ -5,5 +5,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
+    <ClCompile Include="HalalCloud.Client.Core.Native.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HalalCloud.Client.Core.Native.h" />
   </ItemGroup>
 </Project>
