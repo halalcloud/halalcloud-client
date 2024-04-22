@@ -14,24 +14,38 @@
 
 #include <Windows.h>
 
+#include <Mile.Helpers.CppBase.h>
+
 #include "HalalCloud.Client.Core.Native.h"
 
 int main()
 {
-    HCC_OAUTH_TOKEN_RESPONSE Response = { 0 };
-
     HCC_SESSION Session = nullptr;
     HRESULT hr = ::HccCreateSessionManager(&Session);
     if (SUCCEEDED(hr))
     {
+        HCC_OAUTH_TOKEN_RESPONSE Response = { 0 };
         hr = ::HccCreateAuthToken(Session, &Response);
         if (SUCCEEDED(hr))
         {
             std::printf(
                 "ReturnUrl = %s\n"
-                "Callback = %s\n",
+                "Callback = %s\n"
+                "================================================================\n",
                 Response.ReturnUrl,
                 Response.Callback);
+
+            {
+                std::wstring ConvertedReturnUrl =
+                    Mile::ToWideString(CP_UTF8, Response.ReturnUrl);
+
+                SHELLEXECUTEINFOW ExecInfo = { 0 };
+                ExecInfo.cbSize = sizeof(SHELLEXECUTEINFOW);
+                ExecInfo.lpVerb = L"open";
+                ExecInfo.lpFile = ConvertedReturnUrl.c_str();
+                ExecInfo.nShow = SW_SHOWNORMAL;
+                ::ShellExecuteExW(&ExecInfo);
+            }
 
             std::printf("Waiting");
             for (;;)
@@ -52,13 +66,25 @@ int main()
                 if (CheckResponse.Status == 6)
                 {
                     std::printf("\n");
-                    std::printf("%s\n", CheckResponse.Login.Token.AccessToken);
+                    std::printf(
+                        "AccessToken = %s\n"
+                        "AccessTokenExpireTs = %lld\n"
+                        "RefreshToken = %s\n"
+                        "RefreshTokenExpireTs = %lld\n"
+                        "================================================================\n",
+                        CheckResponse.Login.Token.AccessToken,
+                        CheckResponse.Login.Token.AccessTokenExpireTs,
+                        CheckResponse.Login.Token.RefreshToken,
+                        CheckResponse.Login.Token.RefreshTokenExpireTs);
                     break;
                 }
+
+                ::HccFreeOauthTokenCheckResponse(&CheckResponse);
 
                 ::Sleep(200);
             }
 
+            ::HccFreeOauthTokenResponse(&Response);
         }
         
 
