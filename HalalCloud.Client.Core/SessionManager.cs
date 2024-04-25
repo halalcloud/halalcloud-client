@@ -40,6 +40,26 @@ namespace HalalCloud.Client.Core
             return Client.VerifyAuthToken(Request);
         }
 
+        public Token LoginWithRefreshToken(
+            string RefreshToken)
+        {
+            PubUser.PubUserClient Client =
+               new PubUser.PubUserClient(RpcInvoker);
+            Token Request = new Token();
+            Request.RefreshToken = RefreshToken;
+            return Client.Refresh(Request);
+        }
+
+        public void Logout(
+            string RefreshToken)
+        {
+            PubUser.PubUserClient Client =
+               new PubUser.PubUserClient(RpcInvoker);
+            Token Request = new Token();
+            Request.RefreshToken = RefreshToken;
+            Client.Logoff(Request);
+        }
+
         public string AccessToken
         {
             get
