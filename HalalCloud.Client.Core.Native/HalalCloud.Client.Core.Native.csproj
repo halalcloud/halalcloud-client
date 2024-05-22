@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Platforms>x86;x64;ARM64</Platforms>
@@ -18,7 +18,9 @@
     <MSBuild Projects="$(MSBuildProjectFullPath)" Targets="Publish" />
   </Target>
 
-  <Import Project="..\YY.Windows.CRT.NativeAOT\YY.Windows.CRT.NativeAOT.props" />
+  <ItemGroup>
+    <PackageReference Include="VC-LTL" Version="5.0.10-Beta2" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HalalCloud.Client.Core\HalalCloud.Client.Core.csproj" />
