@@ -143,5 +143,45 @@ namespace HalalCloud.Client.Core
                 return e.HResult;
             }
         }
+
+        [UnmanagedCallersOnly(
+            CallConvs = [typeof(CallConvStdcall)],
+            EntryPoint = "HccLoginWithRefreshToken")]
+        public static unsafe int LoginWithRefreshToken(
+            IntPtr Session,
+            IntPtr RefreshToken,
+            IntPtr Response)
+        {
+            try
+            {
+                if (Session == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                if (Response == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                SessionManager? ManagedSession = GetSessionManager(Session);
+                if (ManagedSession == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                Marshal.StructureToPtr(new NativeToken(
+                    ManagedSession.LoginWithRefreshToken(
+                        Marshal.PtrToStringUTF8(RefreshToken) ?? string.Empty)),
+                    Response,
+                    true);
+
+                return 0;
+            }
+            catch (Exception e)
+            {
+                return e.HResult;
+            }
+        }
     }
 }

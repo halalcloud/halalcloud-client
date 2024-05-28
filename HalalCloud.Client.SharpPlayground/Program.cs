@@ -11,6 +11,12 @@ namespace HalalCloud.Client.SharpPlayground
         {
             SessionManager Session = new SessionManager();
 
+            //var y = Session.LoginWithRefreshToken(
+            //    @"rt__1fc4496396704771945da06329c329ea_c4b3676b-3339-4c8f-8300-6f24423a79ce");
+            //Session.AccessToken = y.AccessToken;
+
+            //Session.Logout(y.RefreshToken);
+
             OauthTokenResponse Response = Session.CreateAuthToken();
             Console.WriteLine(Response.ReturnUrl);
             Process.Start(new ProcessStartInfo
