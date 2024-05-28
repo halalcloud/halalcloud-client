@@ -14,6 +14,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalalCloud.Client.Core", "H
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalalCloud.Client.Core.Native", "HalalCloud.Client.Core.Native\HalalCloud.Client.Core.Native.csproj", "{4E5C7C08-FC6B-44AB-82D8-E0E95F285B66}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalalCloud.Client", "HalalCloud.Client\HalalCloud.Client.vcxproj", "{2597465E-3330-43D7-93CC-790CBB26B69E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -68,6 +70,18 @@ Global
 		{4E5C7C08-FC6B-44AB-82D8-E0E95F285B66}.Release|x64.ActiveCfg = Release|x64
 		{4E5C7C08-FC6B-44AB-82D8-E0E95F285B66}.Release|x64.Build.0 = Release|x64
 		{4E5C7C08-FC6B-44AB-82D8-E0E95F285B66}.Release|x86.ActiveCfg = Release|x86
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Debug|ARM64.Build.0 = Debug|ARM64
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Debug|x64.ActiveCfg = Debug|x64
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Debug|x64.Build.0 = Debug|x64
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Debug|x86.ActiveCfg = Debug|Win32
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Debug|x86.Build.0 = Debug|Win32
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Release|ARM64.ActiveCfg = Release|ARM64
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Release|ARM64.Build.0 = Release|ARM64
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Release|x64.ActiveCfg = Release|x64
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Release|x64.Build.0 = Release|x64
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Release|x86.ActiveCfg = Release|Win32
+		{2597465E-3330-43D7-93CC-790CBB26B69E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

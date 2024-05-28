@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{2597465E-3330-43D7-93CC-790CBB26B69E}</ProjectGuid>
+    <RootNamespace>HalalCloud.Client</RootNamespace>
+    <MileProjectType>WindowsApplication</MileProjectType>
+    <MileProjectManifestFile>HalalCloud.Client.manifest</MileProjectManifestFile>
+    <MileProjectEnableVCLTLSupport>true</MileProjectEnableVCLTLSupport>
+    <MileProjectUseProjectProperties>true</MileProjectUseProjectProperties>
+    <MileProjectCompanyName>Halal Cloud</MileProjectCompanyName>
+    <MileProjectFileDescription>Halal Cloud Client for Windows</MileProjectFileDescription>
+    <MileProjectInternalName>HalalCloud.Client</MileProjectInternalName>
+    <MileProjectLegalCopyright>© Halal Cloud. All rights reserved.</MileProjectLegalCopyright>
+    <MileProjectOriginalFilename>HalalCloud.Client.exe</MileProjectOriginalFilename>
+    <MileProjectProductName>Halal Cloud Client</MileProjectProductName>
+    <MileProjectVersion>1.0.0.0</MileProjectVersion>
+    <MileProjectVersionTag Condition="false">Alpha 1</MileProjectVersionTag>
+  </PropertyGroup>
+  <Import Project="..\Mile.Project.Windows\Mile.Project.Platform.x86.props" />
+  <Import Project="..\Mile.Project.Windows\Mile.Project.Platform.x64.props" />
+  <Import Project="..\Mile.Project.Windows\Mile.Project.Platform.ARM64.props" />
+  <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.Default.props" />
+  <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.props" />
+  <ItemGroup>
+    <ClCompile Include="HalalCloud.Client.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="HalalCloud.Client.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Mile.Windows.Helpers">
+      <Version>1.0.558</Version>
+    </PackageReference>
+  </ItemGroup>
+  <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.targets" />
+</Project>
