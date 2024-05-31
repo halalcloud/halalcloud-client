@@ -10,22 +10,13 @@
 
 #include <Windows.h>
 
-int WINAPI wWinMain(
-    _In_ HINSTANCE hInstance,
-    _In_opt_ HINSTANCE hPrevInstance,
-    _In_ LPWSTR lpCmdLine,
-    _In_ int nShowCmd)
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QWidget>
+
+int main(int argc, char* argv[])
 {
-    UNREFERENCED_PARAMETER(hInstance);
-    UNREFERENCED_PARAMETER(hPrevInstance);
-    UNREFERENCED_PARAMETER(lpCmdLine);
-    UNREFERENCED_PARAMETER(nShowCmd);
-
-    ::MessageBoxW(
-        nullptr,
-        L"Hello World!\n",
-        L"Halal Cloud Client",
-        0);
-
-    return 0;
+    QApplication a(argc, argv);
+    QWidget w;
+    w.show();
+    return a.exec();
 }
