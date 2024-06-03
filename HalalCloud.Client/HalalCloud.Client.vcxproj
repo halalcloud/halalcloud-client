@@ -40,6 +40,7 @@
     <Import Project="$(QtMsBuild)\qt.props" />
   </ImportGroup>
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.props" />
+  <Import Project="..\HalalCloud.Client.Icon\HalalCloud.Client.Icon.props" />
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.cpp" />
   </ItemGroup>
