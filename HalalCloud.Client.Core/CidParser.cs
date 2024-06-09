@@ -90,8 +90,7 @@ namespace HalalCloud.Client.Core
             {
                 string Content = string.Empty;
 
-                (Result.Encoding, Content) =
-                    CidParser.ParseMultibase(InputString);
+                (Result.Encoding, Content) = ParseMultibase(InputString);
 
                 // Current implementation only supports CIDv1 with Base32
                 // encoding.
@@ -105,8 +104,7 @@ namespace HalalCloud.Client.Core
                 int Parsed = 0;
                 byte[] Undecoded = Original;
 
-                (Result.Version, Parsed) =
-                    CidParser.ParseUnsignedVarint(Undecoded);
+                (Result.Version, Parsed) = ParseUnsignedVarint(Undecoded);
 
                 // Current implementation only supports CIDv1.
                 if (1 != Result.Version)
@@ -116,20 +114,17 @@ namespace HalalCloud.Client.Core
 
                 Undecoded = Undecoded.AsSpan().Slice(Parsed).ToArray();
 
-                (Result.ContentType, Parsed) =
-                    CidParser.ParseUnsignedVarint(Undecoded);
+                (Result.ContentType, Parsed) = ParseUnsignedVarint(Undecoded);
 
                 Undecoded = Undecoded.AsSpan().Slice(Parsed).ToArray();
 
-                (Result.HashType, Parsed) =
-                    CidParser.ParseUnsignedVarint(Undecoded);
+                (Result.HashType, Parsed) = ParseUnsignedVarint(Undecoded);
 
                 Undecoded = Undecoded.AsSpan().Slice(Parsed).ToArray();
 
                 long HashLength = 0;
 
-                (HashLength, Parsed) =
-                    CidParser.ParseUnsignedVarint(Undecoded);
+                (HashLength, Parsed) = ParseUnsignedVarint(Undecoded);
 
                 Undecoded = Undecoded.AsSpan().Slice(Parsed).ToArray();
 
