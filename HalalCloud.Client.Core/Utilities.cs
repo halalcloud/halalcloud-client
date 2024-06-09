@@ -51,5 +51,11 @@ namespace HalalCloud.Client.Core
             Source.Append(ApplicationSecret);
             return ConvertByteArrayToHexString(ComputeMD5(Source.ToString()));
         }
+
+        public static string ToHashString(
+            byte[] Hash)
+        {
+            return BitConverter.ToString(Hash).Replace("-", "");
+        }
     }
 }
