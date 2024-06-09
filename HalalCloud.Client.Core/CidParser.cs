@@ -59,6 +59,39 @@
         }
 
         /// <summary>
+        /// Parse a multibase string.
+        /// </summary>
+        /// <param name="InputString">The input multibase string.</param>
+        /// <returns>The parse result.</returns>
+        public static (MultibaseEncoding Type, string Content) ParseMultibase(
+            string InputString)
+        {
+            if (string.IsNullOrEmpty(InputString))
+            {
+                return (MultibaseEncoding.None, string.Empty);
+            }
+
+            MultibaseEncoding Encoding = InputString[0] switch
+            {
+                '\x0000' => MultibaseEncoding.None,
+                '\x0001' => MultibaseEncoding.None,
+                'f' => MultibaseEncoding.Base16,
+                'F' => MultibaseEncoding.Base16Upper,
+                'b' => MultibaseEncoding.Base32,
+                'B' => MultibaseEncoding.Base32Upper,
+                'z' => MultibaseEncoding.Base58Btc,
+                'm' => MultibaseEncoding.Base64,
+                'u' => MultibaseEncoding.Base64Url,
+                'U' => MultibaseEncoding.Base64UrlPad,
+                'Q' => MultibaseEncoding.None,
+                '/' => MultibaseEncoding.None,
+                _ => MultibaseEncoding.Unsupported,
+            };
+
+            return (Encoding, InputString.Substring(1));
+        }
+
+        /// <summary>
         /// Parse an integer from a byte array with unsigned varint (VARiable
         /// INTeger) format.
         /// </summary>
