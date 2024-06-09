@@ -1,4 +1,6 @@
-﻿namespace HalalCloud.Client.Core
+﻿using SimpleBase;
+
+namespace HalalCloud.Client.Core
 {
     public class CidParser
     {
@@ -66,6 +68,79 @@
                     break;
                 }
             }
+
+            return Result;
+        }
+
+        /// <summary>
+        /// Parse a CID string.
+        /// </summary>
+        /// <param name="InputString">The input string.</param>
+        /// <returns>The parsed Information.</returns>
+        /// <remarks>Only CIDv1 with Base32 encoding is supported.</remarks>
+        /// <see cref="https://github.com/multiformats/cid#how-does-it-work"/>
+        /// <see cref="https://github.com/multiformats/multicodec#description"/>
+        /// <see cref="https://github.com/multiformats/multihash#format"/>
+        public static CidInformation ParseCid(
+            string InputString)
+        {
+            CidInformation Result = new CidInformation();
+
+            do
+            {
+                string Content = string.Empty;
+
+                (Result.Encoding, Content) =
+                    CidParser.ParseMultibase(InputString);
+
+                // Current implementation only supports CIDv1 with Base32
+                // encoding.
+                if (MultibaseEncoding.Base32 != Result.Encoding)
+                {
+                    break;
+                }
+
+                byte[] Original = Base32.Rfc4648.Decode(Content);
+
+                int Parsed = 0;
+                byte[] Undecoded = Original;
+
+                (Result.Version, Parsed) =
+                    CidParser.ParseUnsignedVarint(Undecoded);
+
+                // Current implementation only supports CIDv1.
+                if (1 != Result.Version)
+                {
+                    break;
+                }
+
+                Undecoded = Undecoded.AsSpan().Slice(Parsed).ToArray();
+
+                (Result.ContentType, Parsed) =
+                    CidParser.ParseUnsignedVarint(Undecoded);
+
+                Undecoded = Undecoded.AsSpan().Slice(Parsed).ToArray();
+
+                (Result.HashType, Parsed) =
+                    CidParser.ParseUnsignedVarint(Undecoded);
+
+                Undecoded = Undecoded.AsSpan().Slice(Parsed).ToArray();
+
+                long HashLength = 0;
+
+                (HashLength, Parsed) =
+                    CidParser.ParseUnsignedVarint(Undecoded);
+
+                Undecoded = Undecoded.AsSpan().Slice(Parsed).ToArray();
+
+                if (Undecoded.Length != HashLength)
+                {
+                    break;
+                }
+
+                Result.HashValue = Undecoded;
+
+            } while (false);
 
             return Result;
         }
