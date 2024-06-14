@@ -42,23 +42,27 @@ namespace HalalCloud.Client.SharpPlayground
                 Thread.Sleep(200);
             }
 
+            Session.CreateDirectory("/", "Folder2");
+
             PubUserFileClient File = new PubUserFileClient(Session.Invoker);
 
             FileListRequest fileListRequest = new FileListRequest();
             fileListRequest.Parent = new V6.Services.Pub.File();
-            fileListRequest.Parent.Path = "/复制的文件";
+            fileListRequest.Parent.Path = "/";//"/复制的文件";
             fileListRequest.Filter = new V6.Services.Pub.File();
             fileListRequest.Filter.Deleted = true;
-            //fileListRequest.Filter.Dir = true;
+            fileListRequest.Filter.Dir = true;
             fileListRequest.Filter.Hidden = true;
             fileListRequest.Filter.Locked = true;
             fileListRequest.Filter.Shared = true;
             fileListRequest.Filter.Starred = true;
             fileListRequest.Filter.Trashed = true;
-            //fileListRequest.ListInfo = new V6.Services.Pub.Common.ScanListRequest();
-            //fileListRequest.ListInfo.Limit = 2000;
+            fileListRequest.ListInfo = new V6.Services.Pub.Common.ScanListRequest();
+            fileListRequest.ListInfo.Limit = 2000;
 
             var x = File.List(fileListRequest);
+
+            var y = x.Files.First().Type;
 
             Console.WriteLine("Hello, World!");
             Console.ReadKey();

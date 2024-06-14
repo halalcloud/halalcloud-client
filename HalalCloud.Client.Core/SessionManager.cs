@@ -2,6 +2,7 @@
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using V6.Services.Pub;
+using static V6.Services.Pub.PubUserFile;
 
 namespace HalalCloud.Client.Core
 {
@@ -90,6 +91,18 @@ namespace HalalCloud.Client.Core
                 }
                 return RpcInvoker;
             }
+        }
+
+        public V6.Services.Pub.File CreateDirectory(
+            string Path,
+            string Name)
+        {
+            PubUserFileClient Client =
+                new PubUserFileClient(RpcInvoker);
+            V6.Services.Pub.File Request = new V6.Services.Pub.File();
+            Request.Path = Path;
+            Request.Name = Name;
+            return Client.Create(Request);
         }
     }
 }
