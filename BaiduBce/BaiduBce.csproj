@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <AssemblyName>BceSdkDotNet</AssemblyName>
+    <AssemblyName>BaiduBce</AssemblyName>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
-    <TargetFramework>net35</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>11.0</LangVersion>
@@ -16,9 +16,8 @@
     <EmbeddedResource Include="BaiduBce.mime.types" LogicalName="BaiduBce.mime.types" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="log4net" />
-    <Reference Include="System.Core" />
-    <Reference Include="Newtonsoft.Json" />
-    <Reference Include="System.Web" />
+    <PackageReference Include="log4net" Version="2.0.17" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>
