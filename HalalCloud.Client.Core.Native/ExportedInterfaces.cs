@@ -183,5 +183,55 @@ namespace HalalCloud.Client.Core
                 return e.HResult;
             }
         }
+
+        [UnmanagedCallersOnly(
+            CallConvs = [typeof(CallConvStdcall)],
+            EntryPoint = "HccUploadFile")]
+        public static unsafe int UploadFile(
+            IntPtr Session,
+            IntPtr SourceFilePath,
+            IntPtr TargetDirectoryPath,
+            IntPtr TargetFileName)
+        {
+            try
+            {
+                if (Session == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                if (SourceFilePath == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                if (TargetDirectoryPath == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                if (TargetFileName == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                SessionManager? ManagedSession = GetSessionManager(Session);
+                if (ManagedSession == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                ManagedSession.UploadFile(
+                    Marshal.PtrToStringUTF8(SourceFilePath) ?? string.Empty,
+                    Marshal.PtrToStringUTF8(TargetDirectoryPath) ?? string.Empty,
+                    Marshal.PtrToStringUTF8(TargetFileName) ?? string.Empty);
+
+                return 0;
+            }
+            catch (Exception e)
+            {
+                return e.HResult;
+            }
+        }
     }
 }

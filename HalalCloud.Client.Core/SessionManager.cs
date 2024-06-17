@@ -1,4 +1,8 @@
-﻿using Grpc.Core;
+﻿using BaiduBce.Auth;
+using BaiduBce.Services.Bos.Model;
+using BaiduBce.Services.Bos;
+using BaiduBce;
+using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using V6.Services.Pub;
@@ -103,6 +107,34 @@ namespace HalalCloud.Client.Core
             Request.Path = Path;
             Request.Name = Name;
             return Client.Create(Request);
+        }
+
+        public void UploadFile(
+            string SourceFilePath,
+            string TargetDirectoryPath,
+            string TargetFileName)
+        {
+            PubUserFileClient RpcClient = new PubUserFileClient(RpcInvoker);
+            V6.Services.Pub.File RpcRequest = new V6.Services.Pub.File();
+            RpcRequest.Path = TargetDirectoryPath;
+            RpcRequest.Name = TargetFileName;
+            UploadToken RpcResponse = RpcClient.CreateUploadToken(RpcRequest);
+
+            BceClientConfiguration UploadConfiguration =
+                new BceClientConfiguration();
+            UploadConfiguration.Credentials =
+                new DefaultBceSessionCredentials(
+                    RpcResponse.AccessKey,
+                    RpcResponse.SecretKey,
+                    RpcResponse.Token);
+            UploadConfiguration.Endpoint = RpcResponse.Endpoint;
+            BosClient UploadClient = new BosClient(UploadConfiguration);
+
+            FileInfo UploadFile = new FileInfo(SourceFilePath);
+            PutObjectResponse UploadResponse = UploadClient.PutObject(
+                RpcResponse.Bucket,
+                RpcResponse.Key,
+                UploadFile);
         }
     }
 }

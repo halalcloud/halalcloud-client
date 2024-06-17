@@ -22,4 +22,8 @@
     </Protobuf>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BaiduBce\BaiduBce.csproj" />
+  </ItemGroup>
+
 </Project>
