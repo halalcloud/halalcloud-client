@@ -42,25 +42,40 @@ namespace HalalCloud.Client.SharpPlayground
                 Thread.Sleep(200);
             }
 
-            Session.CreateDirectory("/", "Folder2");
+            //Session.CreateDirectory("/", "Folder2");
+
+            //Session.UploadFile(
+            //    @"C:\Users\mouri\Downloads\RISC-V Manual\unpriv-isa-asciidoc.html",
+            //    "/",
+            //    "unpriv-isa-asciidoc.html");
 
             PubUserFileClient File = new PubUserFileClient(Session.Invoker);
 
             FileListRequest fileListRequest = new FileListRequest();
             fileListRequest.Parent = new V6.Services.Pub.File();
             fileListRequest.Parent.Path = "/";//"/复制的文件";
-            fileListRequest.Filter = new V6.Services.Pub.File();
-            fileListRequest.Filter.Deleted = true;
-            fileListRequest.Filter.Dir = true;
-            fileListRequest.Filter.Hidden = true;
-            fileListRequest.Filter.Locked = true;
-            fileListRequest.Filter.Shared = true;
-            fileListRequest.Filter.Starred = true;
-            fileListRequest.Filter.Trashed = true;
+            //fileListRequest.Filter = new V6.Services.Pub.File();
+            //fileListRequest.Filter.Deleted = true;
+            //fileListRequest.Filter.Dir = true;
+            //fileListRequest.Filter.Hidden = true;
+            //fileListRequest.Filter.Locked = true;
+            //fileListRequest.Filter.Shared = true;
+            //fileListRequest.Filter.Starred = true;
+            //fileListRequest.Filter.Trashed = true;
             fileListRequest.ListInfo = new V6.Services.Pub.Common.ScanListRequest();
             fileListRequest.ListInfo.Limit = 2000;
 
             var x = File.List(fileListRequest);
+
+            foreach (var item in x.Files)
+            {
+                Console.WriteLine(
+                    "{0}\t{1}\t{2}\t{3}",
+                    DateTimeOffset.FromUnixTimeMilliseconds(item.CreateTs),
+                    item.Dir ? "<DIR>" : string.Empty,
+                    0 != item.Size ? item.Size.ToString() : string.Empty,
+                    item.Name);
+            }
 
             var y = x.Files.First().Type;
 
