@@ -49,35 +49,17 @@ namespace HalalCloud.Client.SharpPlayground
             //    "/",
             //    "unpriv-isa-asciidoc.html");
 
-            PubUserFileClient File = new PubUserFileClient(Session.Invoker);
+            List<FileInformation> Files = Session.EnumerateFiles("/");
 
-            FileListRequest fileListRequest = new FileListRequest();
-            fileListRequest.Parent = new V6.Services.Pub.File();
-            fileListRequest.Parent.Path = "/";//"/复制的文件";
-            //fileListRequest.Filter = new V6.Services.Pub.File();
-            //fileListRequest.Filter.Deleted = true;
-            //fileListRequest.Filter.Dir = true;
-            //fileListRequest.Filter.Hidden = true;
-            //fileListRequest.Filter.Locked = true;
-            //fileListRequest.Filter.Shared = true;
-            //fileListRequest.Filter.Starred = true;
-            //fileListRequest.Filter.Trashed = true;
-            fileListRequest.ListInfo = new V6.Services.Pub.Common.ScanListRequest();
-            fileListRequest.ListInfo.Limit = 2000;
-
-            var x = File.List(fileListRequest);
-
-            foreach (var item in x.Files)
+            foreach (var Item in Files)
             {
                 Console.WriteLine(
                     "{0}\t{1}\t{2}\t{3}",
-                    DateTimeOffset.FromUnixTimeMilliseconds(item.CreateTs),
-                    item.Dir ? "<DIR>" : string.Empty,
-                    0 != item.Size ? item.Size.ToString() : string.Empty,
-                    item.Name);
+                    Item.CreationTime,
+                    Item.IsDirectory ? "<DIR>" : string.Empty,
+                    0 != Item.FileSize ? Item.FileSize.ToString() : string.Empty,
+                    Item.FileName);
             }
-
-            var y = x.Files.First().Type;
 
             Console.WriteLine("Hello, World!");
             Console.ReadKey();

@@ -101,8 +101,7 @@ namespace HalalCloud.Client.Core
             string Path,
             string Name)
         {
-            PubUserFileClient Client =
-                new PubUserFileClient(RpcInvoker);
+            PubUserFileClient Client = new PubUserFileClient(RpcInvoker);
             V6.Services.Pub.File Request = new V6.Services.Pub.File();
             Request.Path = Path;
             Request.Name = Name;
@@ -135,6 +134,50 @@ namespace HalalCloud.Client.Core
                 RpcResponse.Bucket,
                 RpcResponse.Key,
                 UploadFile);
+        }
+
+        public List<FileInformation> EnumerateFiles(
+            string Path)
+        {
+            PubUserFileClient Client = new PubUserFileClient(RpcInvoker);
+
+            FileListRequest Request = new FileListRequest();
+            Request.Parent = new V6.Services.Pub.File();
+            Request.Parent.Path = Path;
+
+            List<FileInformation> Result = new List<FileInformation>();
+
+            string NextToken = string.Empty;
+
+            do
+            {
+                FileListResponse Response = Client.List(Request);
+                NextToken = Response.ListInfo.Token;
+                foreach (var Item in Response.Files)
+                {
+                    FileInformation Information = new FileInformation();
+                    Information.CreationTime =
+                        DateTimeOffset.FromUnixTimeMilliseconds(
+                            Item.CreateTs).DateTime;
+                    Information.LastWriteTime =
+                        DateTimeOffset.FromUnixTimeMilliseconds(
+                            Item.UpdateTs).DateTime;
+                    Information.FileSize = Convert.ToUInt64(Item.Size);
+                    if (Item.Dir)
+                    {
+                        Information.FileAttributes |= FileAttributes.Directory;
+                    }
+                    if (Item.Hidden)
+                    {
+                        Information.FileAttributes |= FileAttributes.Hidden;
+                    }
+                    Information.FileName = Item.Name;
+                    Result.Add(Information);
+                }
+
+            } while (!string.IsNullOrEmpty(NextToken));
+
+            return Result;
         }
     }
 }
