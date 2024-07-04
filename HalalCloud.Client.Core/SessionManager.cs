@@ -45,6 +45,37 @@ namespace HalalCloud.Client.Core
             return Client.VerifyAuthToken(Request);
         }
 
+        public delegate void LoginNotifyAuthenticationUriCallback(
+            string AuthenticationUri);
+
+        public Token LoginWithAuthenticationUri(
+            LoginNotifyAuthenticationUriCallback Callback)
+        {
+            PubUser.PubUserClient Client =
+                new PubUser.PubUserClient(RpcInvoker);
+
+            LoginRequest Request = new LoginRequest();
+            Request.ReturnType = 2;
+            OauthTokenResponse CreateResponse = Client.CreateAuthToken(Request);
+
+            Callback(CreateResponse.ReturnUrl);
+
+            Request.Type = "2";
+            Request.Callback = CreateResponse.Callback;
+
+            while (true)
+            {
+                OauthTokenCheckResponse VerifyResponse =
+                    Client.VerifyAuthToken(Request);
+                if (VerifyResponse.Status == 6)
+                {
+                    return VerifyResponse.Login.Token;
+                }
+
+                Thread.Sleep(200);
+            }
+        }
+
         public Token LoginWithRefreshToken(
             string RefreshToken)
         {

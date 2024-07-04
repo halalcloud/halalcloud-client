@@ -17,30 +17,49 @@ namespace HalalCloud.Client.SharpPlayground
 
             //Session.Logout(y.RefreshToken);
 
-            OauthTokenResponse Response = Session.CreateAuthToken();
-            Console.WriteLine(Response.ReturnUrl);
-            Process.Start(new ProcessStartInfo
             {
-                FileName = Response.ReturnUrl,
-                UseShellExecute = true
-            });
+                Token Response = Session.LoginWithAuthenticationUri(
+                    (AuthenticationUri) =>
+                    {
+                        Console.WriteLine(AuthenticationUri);
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = AuthenticationUri,
+                            UseShellExecute = true
+                        });
 
-            Console.Write("Waiting");
-            for (; ; )
-            {
-                OauthTokenCheckResponse CheckResponse = Session.VerifyAuthToken(
-                    Response.Callback);
-                if (CheckResponse.Status == 6)
-                {
-                    Console.WriteLine(".");
-                    Session.AccessToken = CheckResponse.Login.Token.AccessToken;
-                    Console.WriteLine(Session.AccessToken);
-                    break;
-                }
+                        Console.WriteLine("Waiting...");
+                    });
 
-                Console.Write(".");
-                Thread.Sleep(200);
+                Session.AccessToken = Response.AccessToken;
+                Console.WriteLine(Session.AccessToken);
             }
+
+
+            //OauthTokenResponse Response = Session.CreateAuthToken();
+            //Console.WriteLine(Response.ReturnUrl);
+            //Process.Start(new ProcessStartInfo
+            //{
+            //    FileName = Response.ReturnUrl,
+            //    UseShellExecute = true
+            //});
+
+            //Console.Write("Waiting");
+            //for (; ; )
+            //{
+            //    OauthTokenCheckResponse CheckResponse = Session.VerifyAuthToken(
+            //        Response.Callback);
+            //    if (CheckResponse.Status == 6)
+            //    {
+            //        Console.WriteLine(".");
+            //        Session.AccessToken = CheckResponse.Login.Token.AccessToken;
+            //        Console.WriteLine(Session.AccessToken);
+            //        break;
+            //    }
+
+            //    Console.Write(".");
+            //    Thread.Sleep(200);
+            //}
 
             //Session.CreateDirectory("/", "Folder2");
 
