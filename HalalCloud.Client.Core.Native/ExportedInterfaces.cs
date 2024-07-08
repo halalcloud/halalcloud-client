@@ -134,6 +134,44 @@ namespace HalalCloud.Client.Core
         }
 
         [UnmanagedCallersOnly(
+           CallConvs = [typeof(CallConvStdcall)],
+           EntryPoint = "HccGetTokenInformation")]
+        public static unsafe int GetTokenInformation(
+           IntPtr Session,
+           IntPtr Information)
+        {
+            try
+            {
+                if (Session == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                if (Information == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                SessionManager? ManagedSession = GetSessionManager(Session);
+                if (ManagedSession == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                Marshal.StructureToPtr(
+                    new NativeToken(ManagedSession.AccessToken),
+                    Information,
+                    true);
+
+                return 0;
+            }
+            catch (Exception e)
+            {
+                return e.HResult;
+            }
+        }
+
+        [UnmanagedCallersOnly(
             CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccUploadFile")]
         public static unsafe int UploadFile(
