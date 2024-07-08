@@ -12,23 +12,6 @@
 
 #include <cstring>
 
-EXTERN_C VOID WINAPI HccFreeOauthTokenResponse(
-    PHCC_OAUTH_TOKEN_RESPONSE Value)
-{
-    if (Value)
-    {
-        ::CoTaskMemFree(Value->Url);
-        ::CoTaskMemFree(Value->Addon);
-        ::CoTaskMemFree(Value->Input);
-        ::CoTaskMemFree(Value->Type);
-        ::CoTaskMemFree(Value->Callback);
-        ::CoTaskMemFree(Value->ReturnUrl);
-        ::CoTaskMemFree(Value->Captcha);
-        ::CoTaskMemFree(Value->State);
-        std::memset(Value, 0, sizeof(HCC_OAUTH_TOKEN_RESPONSE));
-    }
-}
-
 EXTERN_C VOID WINAPI HccFreeToken(
     PHCC_TOKEN Value)
 {
@@ -80,17 +63,5 @@ EXTERN_C VOID WINAPI HccFreeLoginResponse(
         ::HccFreeLastLoginResponse(&Value->LastLogin);
         ::CoTaskMemFree(Value->State);
         std::memset(Value, 0, sizeof(HCC_LOGIN_RESPONSE));
-    }
-}
-
-EXTERN_C VOID WINAPI HccFreeOauthTokenCheckResponse(
-    PHCC_OAUTH_TOKEN_CHECK_RESPONSE Value)
-{
-    if (Value)
-    {
-        ::HccFreeLoginResponse(&Value->Login);
-        ::HccFreeOauthTokenResponse(&Value->Oauth);
-        ::CoTaskMemFree(Value->Message);
-        std::memset(Value, 0, sizeof(HCC_OAUTH_TOKEN_CHECK_RESPONSE));
     }
 }

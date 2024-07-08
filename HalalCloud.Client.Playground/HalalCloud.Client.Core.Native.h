@@ -22,26 +22,6 @@ EXTERN_C HRESULT WINAPI HccCreateSessionManager(
 EXTERN_C HRESULT WINAPI HccCloseSessionManager(
     _In_ HCC_SESSION Session);
 
-typedef struct _HCC_OAUTH_TOKEN_RESPONSE
-{
-    LPSTR Url;
-    LPSTR Addon;
-    LPSTR Input;
-    LPSTR Type;
-    LPSTR Callback;
-    LPSTR ReturnUrl;
-    INT32 ReturnType;
-    LPSTR Captcha;
-    LPSTR State;
-} HCC_OAUTH_TOKEN_RESPONSE, *PHCC_OAUTH_TOKEN_RESPONSE;
-
-EXTERN_C VOID WINAPI HccFreeOauthTokenResponse(
-    PHCC_OAUTH_TOKEN_RESPONSE Value);
-
-EXTERN_C HRESULT WINAPI HccCreateAuthToken(
-    _In_ HCC_SESSION Session,
-    _Out_ PHCC_OAUTH_TOKEN_RESPONSE Response);
-
 typedef struct _HCC_TOKEN
 {
     LPSTR Identity;
@@ -99,22 +79,6 @@ typedef struct _HCC_LOGIN_RESPONSE
 
 EXTERN_C VOID WINAPI HccFreeLoginResponse(
     PHCC_LOGIN_RESPONSE Value);
-
-typedef struct _HCC_OAUTH_TOKEN_CHECK_RESPONSE
-{
-    HCC_LOGIN_RESPONSE Login;
-    HCC_OAUTH_TOKEN_RESPONSE Oauth;
-    INT32 Status;
-    LPSTR Message;
-} HCC_OAUTH_TOKEN_CHECK_RESPONSE, *PHCC_OAUTH_TOKEN_CHECK_RESPONSE;
-
-EXTERN_C VOID WINAPI HccFreeOauthTokenCheckResponse(
-    PHCC_OAUTH_TOKEN_CHECK_RESPONSE Value);
-
-EXTERN_C HRESULT WINAPI HccVerifyAuthToken(
-    _In_ HCC_SESSION Session,
-    _In_ LPSTR Callback,
-    _Out_ PHCC_OAUTH_TOKEN_CHECK_RESPONSE Response);
 
 typedef void(*PHCC_LOGIN_NOTIFY_AUTHENTICATION_URI_CALLBACK)(
     LPSTR AuthenticationUri);

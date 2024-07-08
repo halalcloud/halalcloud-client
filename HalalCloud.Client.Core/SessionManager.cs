@@ -70,27 +70,6 @@ namespace HalalCloud.Client.Core
                 context.Options.WithHeaders(metadata).WithDeadline(deadline));
         }
 
-        public OauthTokenResponse CreateAuthToken()
-        {
-            PubUser.PubUserClient Client=
-                new PubUser.PubUserClient(RpcInvoker);
-            LoginRequest Request = new LoginRequest();
-            Request.ReturnType = 2;
-            return Client.CreateAuthToken(Request);
-        }
-
-        public OauthTokenCheckResponse VerifyAuthToken(
-            string Callback)
-        {
-            PubUser.PubUserClient Client =
-               new PubUser.PubUserClient(RpcInvoker);
-            LoginRequest Request = new LoginRequest();
-            Request.Type = "2";
-            Request.ReturnType = 2;
-            Request.Callback = Callback;
-            return Client.VerifyAuthToken(Request);
-        }
-
         public delegate void LoginNotifyAuthenticationUriCallback(
             string AuthenticationUri);
 
