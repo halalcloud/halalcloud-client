@@ -1,7 +1,5 @@
 ﻿using HalalCloud.Client.Core;
 using System.Diagnostics;
-using V6.Services.Pub;
-using static V6.Services.Pub.PubUserFile;
 
 namespace HalalCloud.Client.SharpPlayground
 {
@@ -15,7 +13,7 @@ namespace HalalCloud.Client.SharpPlayground
             //    @"rt__1fc4496396704771945da06329c329ea_c4b3676b-3339-4c8f-8300-6f24423a79ce");
             //Session.AccessToken = y.AccessToken;
 
-            //Session.Logout(y.RefreshToken);
+            //Session.Logout();
 
             {
                 Session.LoginWithAuthenticationUri(
@@ -41,32 +39,6 @@ namespace HalalCloud.Client.SharpPlayground
                         Session.AccessToken.RefreshToken);
                 }
             }
-
-
-            //OauthTokenResponse Response = Session.CreateAuthToken();
-            //Console.WriteLine(Response.ReturnUrl);
-            //Process.Start(new ProcessStartInfo
-            //{
-            //    FileName = Response.ReturnUrl,
-            //    UseShellExecute = true
-            //});
-
-            //Console.Write("Waiting");
-            //for (; ; )
-            //{
-            //    OauthTokenCheckResponse CheckResponse = Session.VerifyAuthToken(
-            //        Response.Callback);
-            //    if (CheckResponse.Status == 6)
-            //    {
-            //        Console.WriteLine(".");
-            //        Session.AccessToken = CheckResponse.Login.Token.AccessToken;
-            //        Console.WriteLine(Session.AccessToken);
-            //        break;
-            //    }
-
-            //    Console.Write(".");
-            //    Thread.Sleep(200);
-            //}
 
             //Session.CreateDirectory("/", "Folder2");
 
