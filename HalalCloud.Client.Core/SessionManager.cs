@@ -35,14 +35,11 @@ namespace HalalCloud.Client.Core
         {
             var metadata = context.Options.Headers ?? new Metadata();
 
-            string ApplicationId = "devDebugger/1.0";
-            string ApplicationVersion = "1.0.0";
-            string ApplicationSecret = "Nkx3Y2xvZ2luLmNu";
             long TimeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
             metadata.Add("timestamp", TimeStamp.ToString());
-            metadata.Add("appid", ApplicationId);
-            metadata.Add("appversion", ApplicationVersion);
+            metadata.Add("appid", RpcClientApplicationId);
+            metadata.Add("appversion", RpcClientApplicationVersion);
 
             string Authorization = string.Empty;
             if (AccessToken != null &&
@@ -58,9 +55,9 @@ namespace HalalCloud.Client.Core
             metadata.Add(
                 "sign",
                 Utilities.ComputeSignature(
-                    ApplicationId,
-                    ApplicationVersion,
-                    ApplicationSecret,
+                    RpcClientApplicationId,
+                    RpcClientApplicationVersion,
+                    RpcClientApplicationSecret,
                     Authorization,
                     context.Method.FullName,
                     TimeStamp).ToLower());
