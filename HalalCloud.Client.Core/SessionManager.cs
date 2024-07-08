@@ -119,8 +119,8 @@ namespace HalalCloud.Client.Core
                 PubUser.PubUserClient Client =
                     new PubUser.PubUserClient(RpcInvoker);
                 Token Request = AccessToken;
-                AccessToken = null;
                 Client.Logoff(AccessToken);
+                AccessToken = null;
             }
         }
 

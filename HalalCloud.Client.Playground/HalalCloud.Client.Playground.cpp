@@ -82,7 +82,11 @@ int main()
                 }
             }
 
-            ::HccLogout(Session);
+            hr = ::HccLogout(Session);
+            if (SUCCEEDED(hr))
+            {
+                std::printf("Logout Success!\n");
+            }
         }
 
         ::HccCloseSessionManager(Session);
