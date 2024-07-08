@@ -3,11 +3,11 @@ using Grpc.Core;
 
 namespace HalalCloud.Client.Core
 {
-    public class SignatureInterceptor : Interceptor
+    public class SignatureInterceptor : ClientInterceptor
     {
         public string AccessToken { get; set; } = string.Empty;
 
-        private ClientInterceptorContext<TRequest, TResponse> GetNewContext<TRequest, TResponse>(
+        public override ClientInterceptorContext<TRequest, TResponse> ContextHandler<TRequest, TResponse>(
             ClientInterceptorContext<TRequest, TResponse> context)
             where TRequest : class
             where TResponse : class
@@ -45,44 +45,6 @@ namespace HalalCloud.Client.Core
                 context.Method,
                 context.Host,
                 context.Options.WithHeaders(metadata).WithDeadline(deadline));
-        }
-
-        public override TResponse BlockingUnaryCall<TRequest, TResponse>(
-            TRequest request,
-            ClientInterceptorContext<TRequest, TResponse> context,
-            BlockingUnaryCallContinuation<TRequest, TResponse> continuation)
-        {
-            return continuation(request, GetNewContext(context));
-        }
-
-        public override AsyncUnaryCall<TResponse> AsyncUnaryCall<TRequest, TResponse>(
-            TRequest request,
-            ClientInterceptorContext<TRequest, TResponse> context,
-            AsyncUnaryCallContinuation<TRequest, TResponse> continuation)
-        {
-            return continuation(request, GetNewContext(context));
-        }
-
-        public override AsyncServerStreamingCall<TResponse> AsyncServerStreamingCall<TRequest, TResponse>(
-            TRequest request,
-            ClientInterceptorContext<TRequest, TResponse> context,
-            AsyncServerStreamingCallContinuation<TRequest, TResponse> continuation)
-        {
-            return continuation(request, GetNewContext(context));
-        }
-
-        public override AsyncClientStreamingCall<TRequest, TResponse> AsyncClientStreamingCall<TRequest, TResponse>(
-            ClientInterceptorContext<TRequest, TResponse> context,
-            AsyncClientStreamingCallContinuation<TRequest, TResponse> continuation)
-        {
-            return continuation(GetNewContext(context));
-        }
-
-        public override AsyncDuplexStreamingCall<TRequest, TResponse> AsyncDuplexStreamingCall<TRequest, TResponse>(
-            ClientInterceptorContext<TRequest, TResponse> context,
-            AsyncDuplexStreamingCallContinuation<TRequest, TResponse> continuation)
-        {
-            return continuation(GetNewContext(context));
         }
     }
 }
