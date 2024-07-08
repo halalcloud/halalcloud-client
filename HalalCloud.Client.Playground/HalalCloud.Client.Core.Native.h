@@ -118,7 +118,6 @@ EXTERN_C HRESULT WINAPI HccVerifyAuthToken(
 
 EXTERN_C HRESULT WINAPI HccLoginWithRefreshToken(
     _In_ HCC_SESSION Session,
-    _In_ LPSTR RefreshToken,
-    _Out_ PHCC_TOKEN Response);
+    _In_ LPSTR RefreshToken);
 
 #endif // !HALALCLOUD_CLIENT_CORE_NATIVE

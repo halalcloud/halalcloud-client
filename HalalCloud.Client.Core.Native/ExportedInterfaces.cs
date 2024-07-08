@@ -149,17 +149,11 @@ namespace HalalCloud.Client.Core
             EntryPoint = "HccLoginWithRefreshToken")]
         public static unsafe int LoginWithRefreshToken(
             IntPtr Session,
-            IntPtr RefreshToken,
-            IntPtr Response)
+            IntPtr RefreshToken)
         {
             try
             {
                 if (Session == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                if (Response == IntPtr.Zero)
                 {
                     throw new ArgumentException();
                 }
@@ -170,11 +164,8 @@ namespace HalalCloud.Client.Core
                     throw new ArgumentException();
                 }
 
-                Marshal.StructureToPtr(new NativeToken(
-                    ManagedSession.LoginWithRefreshToken(
-                        Marshal.PtrToStringUTF8(RefreshToken) ?? string.Empty)),
-                    Response,
-                    true);
+                ManagedSession.LoginWithRefreshToken(
+                    Marshal.PtrToStringUTF8(RefreshToken) ?? string.Empty);
 
                 return 0;
             }

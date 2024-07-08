@@ -123,26 +123,26 @@ namespace HalalCloud.Client.Core
             }
         }
 
-        public Token LoginWithRefreshToken(
+        public void LoginWithRefreshToken(
             string RefreshToken)
         {
             PubUser.PubUserClient Client =
                new PubUser.PubUserClient(RpcInvoker);
             Token Request = new Token();
             Request.RefreshToken = RefreshToken;
-            Token Response = Client.Refresh(Request);
-            AccessToken = Response;
-            return Response;
+            AccessToken = Client.Refresh(Request);
         }
 
-        public void Logout(
-            string RefreshToken)
+        public void Logout()
         {
-            PubUser.PubUserClient Client =
-               new PubUser.PubUserClient(RpcInvoker);
-            Token Request = new Token();
-            Request.RefreshToken = RefreshToken;
-            Client.Logoff(Request);
+            if (AccessToken != null)
+            {
+                PubUser.PubUserClient Client =
+                    new PubUser.PubUserClient(RpcInvoker);
+                Token Request = AccessToken;
+                AccessToken = null;
+                Client.Logoff(AccessToken);
+            }
         }
 
         public CallInvoker Invoker
