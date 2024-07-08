@@ -116,6 +116,13 @@ EXTERN_C HRESULT WINAPI HccVerifyAuthToken(
     _In_ LPSTR Callback,
     _Out_ PHCC_OAUTH_TOKEN_CHECK_RESPONSE Response);
 
+typedef void(*PHCC_LOGIN_NOTIFY_AUTHENTICATION_URI_CALLBACK)(
+    LPSTR AuthenticationUri);
+
+EXTERN_C HRESULT WINAPI HccLoginWithAuthenticationUri(
+    _In_ HCC_SESSION Session,
+    _In_ PHCC_LOGIN_NOTIFY_AUTHENTICATION_URI_CALLBACK Callback);
+
 EXTERN_C HRESULT WINAPI HccLoginWithRefreshToken(
     _In_ HCC_SESSION Session,
     _In_ LPSTR RefreshToken);

@@ -66,6 +66,44 @@ namespace HalalCloud.Client.Core
 
         [UnmanagedCallersOnly(
             CallConvs = [typeof(CallConvStdcall)],
+            EntryPoint = "HccLoginWithAuthenticationUri")]
+        public static unsafe int LoginWithAuthenticationUri(
+            IntPtr Session,
+            IntPtr Callback)
+        {
+            try
+            {
+                if (Session == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                if (Callback == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                SessionManager? ManagedSession = GetSessionManager(Session);
+                if (ManagedSession == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                ManagedSession.LoginWithAuthenticationUri(
+                    Marshal.GetDelegateForFunctionPointer<
+                        SessionManager.LoginNotifyAuthenticationUriCallback>(
+                        Callback));
+
+                return 0;
+            }
+            catch (Exception e)
+            {
+                return e.HResult;
+            }
+        }
+
+        [UnmanagedCallersOnly(
+            CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccCreateAuthToken")]
         public static unsafe int CreateAuthToken(
             IntPtr Session,

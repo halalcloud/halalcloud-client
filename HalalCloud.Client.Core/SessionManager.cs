@@ -94,7 +94,7 @@ namespace HalalCloud.Client.Core
         public delegate void LoginNotifyAuthenticationUriCallback(
             string AuthenticationUri);
 
-        public Token LoginWithAuthenticationUri(
+        public void LoginWithAuthenticationUri(
             LoginNotifyAuthenticationUriCallback Callback)
         {
             PubUser.PubUserClient Client =
@@ -116,7 +116,7 @@ namespace HalalCloud.Client.Core
                 if (VerifyResponse.Status == 6)
                 {
                     AccessToken = VerifyResponse.Login.Token;
-                    return VerifyResponse.Login.Token;
+                    return;
                 }
 
                 Thread.Sleep(200);
