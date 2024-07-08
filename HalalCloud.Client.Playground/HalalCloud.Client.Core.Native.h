@@ -58,28 +58,6 @@ typedef struct _HCC_USER
 EXTERN_C VOID WINAPI HccFreeUser(
     PHCC_USER Value);
 
-typedef struct _HCC_LAST_LOGIN_RESPONSE
-{
-    LPSTR Identity;
-    INT64 LastLoginTs;
-    LPSTR LastLoginIp;
-    LPSTR LastLoginDevice;
-} HCC_LAST_LOGIN_RESPONSE, *PHCC_LAST_LOGIN_RESPONSE;
-
-EXTERN_C VOID WINAPI HccFreeLastLoginResponse(
-    PHCC_LAST_LOGIN_RESPONSE Value);
-
-typedef struct _HCC_LOGIN_RESPONSE
-{
-    HCC_TOKEN Token;
-    HCC_USER User;
-    HCC_LAST_LOGIN_RESPONSE LastLogin;
-    LPSTR State;
-} HCC_LOGIN_RESPONSE, *PHCC_LOGIN_RESPONSE;
-
-EXTERN_C VOID WINAPI HccFreeLoginResponse(
-    PHCC_LOGIN_RESPONSE Value);
-
 typedef void(*PHCC_LOGIN_NOTIFY_AUTHENTICATION_URI_CALLBACK)(
     LPSTR AuthenticationUri);
 

@@ -40,28 +40,3 @@ EXTERN_C VOID WINAPI HccFreeUser(
         std::memset(Value, 0, sizeof(HCC_USER));
     }
 }
-
-EXTERN_C VOID WINAPI HccFreeLastLoginResponse(
-    PHCC_LAST_LOGIN_RESPONSE Value)
-{
-    if (Value)
-    {
-        ::CoTaskMemFree(Value->Identity);
-        ::CoTaskMemFree(Value->LastLoginIp);
-        ::CoTaskMemFree(Value->LastLoginDevice);
-        std::memset(Value, 0, sizeof(HCC_LAST_LOGIN_RESPONSE));
-    }
-}
-
-EXTERN_C VOID WINAPI HccFreeLoginResponse(
-    PHCC_LOGIN_RESPONSE Value)
-{
-    if (Value)
-    {
-        ::HccFreeToken(&Value->Token);
-        ::HccFreeUser(&Value->User);
-        ::HccFreeLastLoginResponse(&Value->LastLogin);
-        ::CoTaskMemFree(Value->State);
-        std::memset(Value, 0, sizeof(HCC_LOGIN_RESPONSE));
-    }
-}
