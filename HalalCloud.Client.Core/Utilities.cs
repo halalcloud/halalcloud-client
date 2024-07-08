@@ -19,18 +19,6 @@ namespace HalalCloud.Client.Core
             return BitConverter.ToString(ByteArray).Replace("-", "");
         }
 
-        public static string GenerateAuthorization(
-            string AccessToken)
-        {
-            StringBuilder Result = new StringBuilder();
-            if (!string.IsNullOrWhiteSpace(AccessToken))
-            {
-                Result.Append("Bearer ");
-                Result.Append(AccessToken);
-            }
-            return Result.ToString();
-        }
-
         public static string ComputeSignature(
             string ApplicationId,
             string ApplicationVersion,

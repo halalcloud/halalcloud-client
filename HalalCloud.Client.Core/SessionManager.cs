@@ -10,18 +10,67 @@ using static V6.Services.Pub.PubUserFile;
 
 namespace HalalCloud.Client.Core
 {
-    public class SessionManager
+    public class SessionManager : ClientInterceptor
     {
         private string RpcServerUrl = "https://grpcuserapi.2dland.cn";
+        private string RpcClientApplicationId = "devDebugger/1.0";
+        private string RpcClientApplicationVersion = "1.0.0";
+        private string RpcClientApplicationSecret = "Nkx3Y2xvZ2luLmNu";
+
         private GrpcChannel? RpcChannel = null;
-        private SignatureInterceptor? RpcInterceptor = null;
         private CallInvoker? RpcInvoker = null;
+
+        public Token? AccessToken { get; set; } = null;
 
         public SessionManager()
         {
             RpcChannel = GrpcChannel.ForAddress(RpcServerUrl);
-            RpcInterceptor = new SignatureInterceptor();
-            RpcInvoker = RpcChannel.Intercept(RpcInterceptor);
+            RpcInvoker = RpcChannel.Intercept(this);
+        }
+
+        public override ClientInterceptorContext<TRequest, TResponse> ContextHandler<TRequest, TResponse>(
+            ClientInterceptorContext<TRequest, TResponse> context)
+            where TRequest : class
+            where TResponse : class
+        {
+            var metadata = context.Options.Headers ?? new Metadata();
+
+            string ApplicationId = "devDebugger/1.0";
+            string ApplicationVersion = "1.0.0";
+            string ApplicationSecret = "Nkx3Y2xvZ2luLmNu";
+            long TimeStamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+            metadata.Add("timestamp", TimeStamp.ToString());
+            metadata.Add("appid", ApplicationId);
+            metadata.Add("appversion", ApplicationVersion);
+
+            string Authorization = string.Empty;
+            if (AccessToken != null &&
+                !string.IsNullOrWhiteSpace(AccessToken.AccessToken))
+            {
+                Authorization = "Bearer " + AccessToken.AccessToken;
+            }
+            if (!string.IsNullOrWhiteSpace(Authorization))
+            {
+                metadata.Add("authorization", Authorization);
+            }
+
+            metadata.Add(
+                "sign",
+                Utilities.ComputeSignature(
+                    ApplicationId,
+                    ApplicationVersion,
+                    ApplicationSecret,
+                    Authorization,
+                    context.Method.FullName,
+                    TimeStamp).ToLower());
+
+            var deadline = DateTime.UtcNow.AddSeconds(5);
+
+            return new ClientInterceptorContext<TRequest, TResponse>(
+                context.Method,
+                context.Host,
+                context.Options.WithHeaders(metadata).WithDeadline(deadline));
         }
 
         public OauthTokenResponse CreateAuthToken()
@@ -69,6 +118,7 @@ namespace HalalCloud.Client.Core
                     Client.VerifyAuthToken(Request);
                 if (VerifyResponse.Status == 6)
                 {
+                    AccessToken = VerifyResponse.Login.Token;
                     return VerifyResponse.Login.Token;
                 }
 
@@ -83,7 +133,9 @@ namespace HalalCloud.Client.Core
                new PubUser.PubUserClient(RpcInvoker);
             Token Request = new Token();
             Request.RefreshToken = RefreshToken;
-            return Client.Refresh(Request);
+            Token Response = Client.Refresh(Request);
+            AccessToken = Response;
+            return Response;
         }
 
         public void Logout(
@@ -94,26 +146,6 @@ namespace HalalCloud.Client.Core
             Token Request = new Token();
             Request.RefreshToken = RefreshToken;
             Client.Logoff(Request);
-        }
-
-        public string AccessToken
-        {
-            get
-            {
-                if (RpcInterceptor == null)
-                {
-                    throw new InvalidOperationException();
-                }
-                return RpcInterceptor.AccessToken;
-            }
-            set
-            {
-                if (RpcInterceptor == null)
-                {
-                    throw new InvalidOperationException();
-                }
-                RpcInterceptor.AccessToken = value;
-            }
         }
 
         public CallInvoker Invoker

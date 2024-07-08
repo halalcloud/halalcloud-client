@@ -18,7 +18,7 @@ namespace HalalCloud.Client.SharpPlayground
             //Session.Logout(y.RefreshToken);
 
             {
-                Token Response = Session.LoginWithAuthenticationUri(
+                Session.LoginWithAuthenticationUri(
                     (AuthenticationUri) =>
                     {
                         Console.WriteLine(AuthenticationUri);
@@ -31,8 +31,15 @@ namespace HalalCloud.Client.SharpPlayground
                         Console.WriteLine("Waiting...");
                     });
 
-                Session.AccessToken = Response.AccessToken;
-                Console.WriteLine(Session.AccessToken);
+                if (Session.AccessToken != null)
+                {
+                    Console.WriteLine(
+                        "AccessToken = {0}",
+                        Session.AccessToken.AccessToken);
+                    Console.WriteLine(
+                        "RefreshToken = {0}",
+                        Session.AccessToken.RefreshToken);
+                }
             }
 
 
