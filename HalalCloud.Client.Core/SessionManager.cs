@@ -124,6 +124,14 @@ namespace HalalCloud.Client.Core
             }
         }
 
+        public V6.Services.Pub.User GetUserInformation()
+        {
+            PubUser.PubUserClient Client =
+                new PubUser.PubUserClient(RpcInvoker);
+            V6.Services.Pub.User Request = new V6.Services.Pub.User();
+            return Client.Get(Request);
+        }
+
         public CallInvoker Invoker
         {
             get

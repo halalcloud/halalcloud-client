@@ -45,16 +45,33 @@ int main()
         if (SUCCEEDED(hr))
         {
             std::printf("Login Success!\n");
-            HCC_TOKEN Information = { 0 };
-            hr = ::HccGetTokenInformation(Session, &Information);
-            if (SUCCEEDED(hr))
+
             {
-                std::printf(
-                    "AccessToken = \"%s\"\n"
-                    "RefreshToken = \"%s\"\n",
-                    Information.AccessToken,
-                    Information.RefreshToken);
-                ::HccFreeToken(&Information);
+                HCC_TOKEN Information = { 0 };
+                hr = ::HccGetTokenInformation(Session, &Information);
+                if (SUCCEEDED(hr))
+                {
+                    std::printf(
+                        "AccessToken = \"%s\"\n"
+                        "RefreshToken = \"%s\"\n",
+                        Information.AccessToken,
+                        Information.RefreshToken);
+                    ::HccFreeToken(&Information);
+                }
+            }
+
+            {
+                HCC_USER Information = { 0 };
+                hr = ::HccGetUserInformation(Session, &Information);
+                if (SUCCEEDED(hr))
+                {
+                    std::printf(
+                        "Identity = \"%s\"\n"
+                        "Name = \"%s\"\n",
+                        Information.Identity,
+                        Information.Name);
+                    ::HccFreeUser(&Information);
+                }
             }
         }
 
