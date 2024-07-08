@@ -56,6 +56,14 @@ int main()
                         "RefreshToken = \"%s\"\n",
                         Information.AccessToken,
                         Information.RefreshToken);
+                    hr = ::HccLoginWithRefreshToken(
+                        Session,
+                        Information.RefreshToken);
+                    if (SUCCEEDED(hr))
+                    {
+                        std::printf("Refresh Success!\n");
+                    }
+
                     ::HccFreeToken(&Information);
                 }
             }
@@ -73,6 +81,8 @@ int main()
                     ::HccFreeUser(&Information);
                 }
             }
+
+            ::HccLogout(Session);
         }
 
         ::HccCloseSessionManager(Session);

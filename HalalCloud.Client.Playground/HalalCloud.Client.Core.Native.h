@@ -77,4 +77,7 @@ EXTERN_C HRESULT WINAPI HccGetUserInformation(
     _In_ HCC_SESSION Session,
     _In_ PHCC_USER Information);
 
+EXTERN_C HRESULT WINAPI HccLogout(
+    _In_ HCC_SESSION Session);
+
 #endif // !HALALCLOUD_CLIENT_CORE_NATIVE

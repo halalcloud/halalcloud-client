@@ -210,6 +210,35 @@ namespace HalalCloud.Client.Core
         }
 
         [UnmanagedCallersOnly(
+           CallConvs = [typeof(CallConvStdcall)],
+           EntryPoint = "HccLogout")]
+        public static unsafe int Logout(
+           IntPtr Session)
+        {
+            try
+            {
+                if (Session == IntPtr.Zero)
+                {
+                    throw new ArgumentException();
+                }
+
+                SessionManager? ManagedSession = GetSessionManager(Session);
+                if (ManagedSession == null)
+                {
+                    throw new ArgumentException();
+                }
+
+                ManagedSession.Logout();
+
+                return 0;
+            }
+            catch (Exception e)
+            {
+                return e.HResult;
+            }
+        }
+
+        [UnmanagedCallersOnly(
             CallConvs = [typeof(CallConvStdcall)],
             EntryPoint = "HccUploadFile")]
         public static unsafe int UploadFile(
