@@ -67,7 +67,7 @@ EXTERN_C HRESULT WINAPI HccLoginWithAuthenticationUri(
 
 EXTERN_C HRESULT WINAPI HccLoginWithRefreshToken(
     _In_ HCC_SESSION Session,
-    _In_ LPSTR RefreshToken);
+    _In_ LPCSTR RefreshToken);
 
 EXTERN_C HRESULT WINAPI HccGetTokenInformation(
     _In_ HCC_SESSION Session,
