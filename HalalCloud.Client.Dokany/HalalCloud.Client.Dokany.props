@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   PROJECT:   Halal Cloud Client
-  FILE:      HalalCloud.Client.Dokany.targets
-  PURPOSE:   MSBuild targets file for HalalCloud.Client.Dokany
+  FILE:      HalalCloud.Client.Dokany.props
+  PURPOSE:   MSBuild props file for HalalCloud.Client.Dokany
 
   LICENSE:   The MIT License
 
