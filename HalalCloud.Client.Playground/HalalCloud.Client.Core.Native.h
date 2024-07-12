@@ -80,4 +80,10 @@ EXTERN_C HRESULT WINAPI HccGetUserInformation(
 EXTERN_C HRESULT WINAPI HccLogout(
     _In_ HCC_SESSION Session);
 
+EXTERN_C HRESULT WINAPI HccUploadFile(
+    _In_ HCC_SESSION Session,
+    _In_ LPCSTR SourceFilePath,
+    _In_ LPCSTR TargetDirectoryPath,
+    _In_ LPCSTR TargetFileName);
+
 #endif // !HALALCLOUD_CLIENT_CORE_NATIVE
