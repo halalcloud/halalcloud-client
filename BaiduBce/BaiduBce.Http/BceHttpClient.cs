@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -6,15 +6,16 @@ using System.Reflection;
 using BaiduBce.Auth;
 using BaiduBce.Internal;
 using BaiduBce.Util;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace BaiduBce.Http;
 
 internal class BceHttpClient
 {
-	private static readonly ILog log = LogManager.GetLogger(typeof(BceHttpClient));
+    private static readonly ILogger Logger =
+       LogUtils.Factory.CreateLogger<BceHttpClient>();
 
-	public HttpWebResponse Execute(InternalRequest request)
+    public HttpWebResponse Execute(InternalRequest request)
 	{
 		BceClientConfiguration config = request.Config;
 		if (config.Credentials != null)
@@ -54,10 +55,10 @@ internal class BceHttpClient
 			}
 			catch (NotSupportedException ex)
 			{
-				if (log.IsDebugEnabled)
-				{
-					log.Debug((object)"error when put data.", (Exception)ex);
-				}
+                if (Logger.IsEnabled(LogLevel.Debug))
+                {
+                    Logger.LogDebug(ex, "error when put data.");
+                }
 			}
 		}
 		try

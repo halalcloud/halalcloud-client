@@ -1,7 +1,8 @@
-using System.Net;
+﻿using System.Net;
 using BaiduBce.Internal;
 using BaiduBce.Services.Sts.Model;
-using log4net;
+using BaiduBce.Util;
+using Microsoft.Extensions.Logging;
 
 namespace BaiduBce.Services.Sts;
 
@@ -11,9 +12,10 @@ public class StsClient : BceClientBase
 
 	private const string serviceEndpointFormat = "{0}://sts.{1}.baidubce.com";
 
-	private ILog logger = LogManager.GetLogger(typeof(StsClient));
+    private static readonly ILogger Logger =
+       LogUtils.Factory.CreateLogger<StsClient>();
 
-	public StsClient()
+    public StsClient()
 		: this(new BceClientConfiguration
 		{
 			Protocol = "https"

@@ -1,13 +1,15 @@
+﻿using BaiduBce.Util;
+using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Net;
-using log4net;
 
 namespace BaiduBce;
 
 public class DefaultRetryPolicy : IRetryPolicy
 {
-	private static readonly ILog log = LogManager.GetLogger(typeof(DefaultRetryPolicy));
+    private static readonly ILogger Logger =
+        LogUtils.Factory.CreateLogger<DefaultRetryPolicy>();
 
 	public const int DefaultMaxErrorRetry = 3;
 
@@ -42,11 +44,11 @@ public class DefaultRetryPolicy : IRetryPolicy
 			}
 			catch (Exception ex)
 			{
-				if (log.IsDebugEnabled)
-				{
-					log.Debug((object)"Unable to execute request", ex);
-				}
-				if (!(ex is BceBaseException))
+                if (Logger.IsEnabled(LogLevel.Debug))
+                {
+                    Logger.LogDebug(ex, "Unable to execute request");
+                }
+                if (!(ex is BceBaseException))
 				{
 					ex = new BceClientException("Unable to execute request", ex);
 				}
@@ -82,12 +84,12 @@ public class DefaultRetryPolicy : IRetryPolicy
 		}
 		if (exception.InnerException is WebException)
 		{
-			log.Debug((object)"Retry for WebException.");
+            Logger.LogDebug("Retry for WebException.");
 			return true;
 		}
 		if (exception.InnerException is IOException)
 		{
-			log.Debug((object)"Retry for IOException.");
+            Logger.LogDebug("Retry for IOException.");
 			return true;
 		}
 		if (exception is BceServiceException)
@@ -95,22 +97,22 @@ public class DefaultRetryPolicy : IRetryPolicy
 			BceServiceException ex = exception as BceServiceException;
 			if (ex.StatusCode == 500)
 			{
-				log.Debug((object)"Retry for internal server error.");
+                Logger.LogDebug("Retry for internal server error.");
 				return true;
 			}
 			if (ex.StatusCode == 503)
 			{
-				log.Debug((object)"Retry for service unavailable.");
+                Logger.LogDebug("Retry for service unavailable.");
 				return true;
 			}
 			if (ex.StatusCode == 400 && ex.ErrorCode == "Http400")
 			{
-				log.Debug((object)"Retry for bad request.");
+                Logger.LogDebug("Retry for bad request.");
 				return true;
 			}
 			if (ex.ErrorCode == "RequestExpired")
 			{
-				log.Debug((object)"Retry for request expired.");
+                Logger.LogDebug("Retry for request expired.");
 				return true;
 			}
 		}

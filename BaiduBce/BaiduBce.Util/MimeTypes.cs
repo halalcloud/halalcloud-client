@@ -1,7 +1,7 @@
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using log4net;
 
 namespace BaiduBce.Util;
 
@@ -9,13 +9,13 @@ public static class MimeTypes
 {
 	public const string MimeTypeOctetStream = "application/octet-stream";
 
-	private static readonly ILog log;
+    private static readonly ILogger Logger =
+        LogUtils.Factory.CreateLogger(typeof(MimeTypes));
 
-	private static IDictionary<string, string> extensionToMimetypeMap;
+    private static IDictionary<string, string> extensionToMimetypeMap;
 
 	static MimeTypes()
 	{
-		log = LogManager.GetLogger(typeof(MimeTypes));
 		extensionToMimetypeMap = new Dictionary<string, string>();
 		Stream manifestResourceStream = typeof(MimeTypes).Assembly.GetManifestResourceStream("BaiduBce.mime.types");
 		if (manifestResourceStream != null)
@@ -26,7 +26,7 @@ public static class MimeTypes
 				return;
 			}
 		}
-		log.Warn((object)"Unable to find 'mime.types'");
+        Logger.LogWarning("Unable to find 'mime.types'");
 	}
 
 	private static void LoadAndReplaceMimetypes(Stream stream)

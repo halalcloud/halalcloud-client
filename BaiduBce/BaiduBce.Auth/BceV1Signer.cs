@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -6,15 +6,16 @@ using System.Text;
 using System.Web;
 using BaiduBce.Internal;
 using BaiduBce.Util;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace BaiduBce.Auth;
 
 public class BceV1Signer : ISigner
 {
-	private static readonly ILog log;
+    private static readonly ILogger Logger =
+        LogUtils.Factory.CreateLogger<BceV1Signer>();
 
-	private const string BceAuthVersion = "bce-auth-v1";
+    private const string BceAuthVersion = "bce-auth-v1";
 
 	private const string DefaultEncoding = "UTF-8";
 
@@ -24,7 +25,6 @@ public class BceV1Signer : ISigner
 
 	static BceV1Signer()
 	{
-		log = LogManager.GetLogger(typeof(BceV1Signer));
 		defaultHeadersToSign = new HashSet<string>();
 		HexTable = (from v in Enumerable.Range(0, 256)
 			select v.ToString("x2")).ToArray();
@@ -67,7 +67,7 @@ public class BceV1Signer : ISigner
 		string text3 = request.HttpMethod + "\n" + canonicalURIPath + "\n" + canonicalQueryString + "\n" + canonicalHeaders;
 		string text4 = Sha256Hex(signingKey, text3);
 		string text5 = text + "/" + text2 + "/" + text4;
-		log.Debug((object)string.Format("CanonicalRequest:{0}\tAuthorization:{1}", text3.Replace("\n", "[\\n]"), text5));
+        Logger.LogDebug(string.Format("CanonicalRequest:{0}\tAuthorization:{1}", text3.Replace("\n", "[\\n]"), text5));
 		return text5;
 	}
 

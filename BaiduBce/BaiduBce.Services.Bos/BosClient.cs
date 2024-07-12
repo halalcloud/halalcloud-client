@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -9,7 +9,7 @@ using BaiduBce.Internal;
 using BaiduBce.Model;
 using BaiduBce.Services.Bos.Model;
 using BaiduBce.Util;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace BaiduBce.Services.Bos;
 
@@ -19,9 +19,10 @@ public class BosClient : BceClientBase
 
 	private const string serviceEndpointFormat = "{0}://{1}.bcebos.com";
 
-	private ILog logger = LogManager.GetLogger(typeof(BosClient));
+    private static readonly ILogger Logger =
+       LogUtils.Factory.CreateLogger<BosClient>();
 
-	public BosClient()
+    public BosClient()
 		: this(new BceClientConfiguration())
 	{
 	}
@@ -471,7 +472,7 @@ public class BosClient : BceClientBase
 			CheckNotNull(stream, "Either file or inputStream should be set for PutObjectRequest.");
 			if (objectMetadata.ContentLength <= 0)
 			{
-				logger.Warn((object)"No content length specified for stream data.");
+                Logger.LogWarning("No content length specified for stream data.");
 				objectMetadata.ContentLength = stream.Length;
 			}
 			else if (objectMetadata.ContentLength > stream.Length)
@@ -944,7 +945,7 @@ public class BosClient : BceClientBase
 				}
 				catch (FormatException ex)
 				{
-					logger.Warn((object)("Fail to parse length from Content-Range: " + text), (Exception)ex);
+                    Logger.LogWarning(ex, ("Fail to parse length from Content-Range: " + text));
 				}
 			}
 		}
