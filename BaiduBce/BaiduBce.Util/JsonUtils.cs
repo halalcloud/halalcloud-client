@@ -1,41 +1,34 @@
-using System;
-using System.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.IO;
+using System.Text;
+using System.Text.Json;
 
-namespace BaiduBce.Util;
-
-public static class JsonUtils
+namespace BaiduBce.Util
 {
-	private static JsonSerializer serializer = new JsonSerializer
-	{
-		NullValueHandling = (NullValueHandling)1,
-		DateFormatHandling = (DateFormatHandling)0,
-		MissingMemberHandling = (MissingMemberHandling)0
-	};
+    public static class JsonUtils
+    {
+        public static T ToObject<T>(StreamReader input)
+        {
+            try
+            {
+                return (T)JsonSerializer.Deserialize(
+                    new StreamReader(
+                        input.BaseStream,
+                        Encoding.UTF8).ReadToEnd(),
+                    typeof(T),
+                    JsonContext.Default);
+            }
+            catch
+            {
+                return default;
+            }
+        }
 
-	private static JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
-	{
-		ContractResolver = (IContractResolver)new CamelCasePropertyNamesContractResolver()
-	};
-
-	public static T ToObject<T>(StreamReader input)
-	{
-		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0007: Expected O, but got Unknown
-		JsonReader val = (JsonReader)new JsonTextReader((TextReader)input);
-		try
-		{
-			return serializer.Deserialize<T>(val);
-		}
-		finally
-		{
-			((IDisposable)val)?.Dispose();
-		}
-	}
-
-	public static string SerializeObject(object value)
-	{
-		return JsonConvert.SerializeObject(value, jsonSerializerSettings);
-	}
+        public static string SerializeObject(object value)
+        {
+            return JsonSerializer.Serialize(
+                value,
+                value.GetType(),
+                JsonContext.Default);
+        }
+    }
 }

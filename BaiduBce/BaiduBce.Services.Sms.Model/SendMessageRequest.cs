@@ -1,6 +1,6 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using BaiduBce.Model;
-using Newtonsoft.Json;
 
 namespace BaiduBce.Services.Sms.Model;
 
@@ -18,7 +18,7 @@ public class SendMessageRequest : BceRequestBase
 
 	public string UserExtId { get; set; }
 
-	[JsonProperty(PropertyName = "merchantUrlId")]
+	[JsonPropertyName("merchantUrlId")]
 	public string CallbackUrlId { get; set; }
 
 	public string ClientToken { get; set; }

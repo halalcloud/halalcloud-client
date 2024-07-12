@@ -1,5 +1,5 @@
-using BaiduBce.Model;
-using Newtonsoft.Json;
+﻿using BaiduBce.Model;
+using System.Text.Json.Serialization;
 
 namespace BaiduBce.Services.Sms.Model;
 
@@ -9,12 +9,12 @@ public class QuotaUpdateRequest : BceRequestBase
 
 	public int QuotaPerMonth { get; set; }
 
-	[JsonProperty(PropertyName = "rateLimitPerMobilePerSignByDay")]
+	[JsonPropertyName("rateLimitPerMobilePerSignByDay")]
 	public int RateLimitPerDay { get; set; }
 
-	[JsonProperty(PropertyName = "rateLimitPerMobilePerSignByHour")]
+	[JsonPropertyName("rateLimitPerMobilePerSignByHour")]
 	public int RateLimitPerHour { get; set; }
 
-	[JsonProperty(PropertyName = "rateLimitPerMobilePerSignByMinute")]
+	[JsonPropertyName("rateLimitPerMobilePerSignByMinute")]
 	public int RateLimitPerMinute { get; set; }
 }

@@ -1,5 +1,5 @@
-using BaiduBce.Model;
-using Newtonsoft.Json;
+﻿using BaiduBce.Model;
+using System.Text.Json.Serialization;
 
 namespace BaiduBce.Services.Sms.Model;
 
@@ -13,26 +13,26 @@ public class QuotaQueryResponse : BceResponseBase
 
 	public int QuotaRemainThisMonth { get; set; }
 
-	[JsonProperty(PropertyName = "rateLimitPerMobilePerSignByDay")]
+	[JsonPropertyName("rateLimitPerMobilePerSignByDay")]
 	public int RateLimitPerDay { get; set; }
 
-	[JsonProperty(PropertyName = "rateLimitPerMobilePerSignByHour")]
+	[JsonPropertyName("rateLimitPerMobilePerSignByHour")]
 	public int RateLimitPerHour { get; set; }
 
-	[JsonProperty(PropertyName = "rateLimitPerMobilePerSignByMinute")]
+	[JsonPropertyName("rateLimitPerMobilePerSignByMinute")]
 	public int RateLimitPerMinute { get; set; }
 
 	public bool RateLimitWhitelist { get; set; }
 
-	[JsonProperty(PropertyName = "applyQuotaPerDay")]
+	[JsonPropertyName("applyQuotaPerDay")]
 	public int QuotaPerDayApply { get; set; }
 
-	[JsonProperty(PropertyName = "applyQuotaPerMonth")]
+	[JsonPropertyName("applyQuotaPerMonth")]
 	public int QuotaPerMonthApply { get; set; }
 
-	[JsonProperty(PropertyName = "applyCheckStatus")]
+	[JsonPropertyName("applyCheckStatus")]
 	public string QuotaApplyCheckStatus { get; set; }
 
-	[JsonProperty(PropertyName = "checkReply")]
+	[JsonPropertyName("checkReply")]
 	public string QuotaApplyCheckReply { get; set; }
 }
