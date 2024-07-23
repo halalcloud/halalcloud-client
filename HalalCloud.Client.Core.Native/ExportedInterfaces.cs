@@ -66,8 +66,8 @@ namespace HalalCloud.Client.Core
 
         [UnmanagedCallersOnly(
             CallConvs = [typeof(CallConvStdcall)],
-            EntryPoint = "HccLoginWithAuthenticationUri")]
-        public static unsafe int LoginWithAuthenticationUri(
+            EntryPoint = "HccAuthenticate")]
+        public static unsafe int Authenticate(
             IntPtr Session,
             IntPtr Callback)
         {
@@ -89,9 +89,9 @@ namespace HalalCloud.Client.Core
                     throw new ArgumentException();
                 }
 
-                ManagedSession.LoginWithAuthenticationUri(
+                ManagedSession.Authenticate(
                     Marshal.GetDelegateForFunctionPointer<
-                        SessionManager.LoginNotifyAuthenticationUriCallback>(
+                        SessionManager.AuthenticationNotifyCallback>(
                         Callback));
 
                 return 0;
@@ -104,8 +104,8 @@ namespace HalalCloud.Client.Core
 
         [UnmanagedCallersOnly(
             CallConvs = [typeof(CallConvStdcall)],
-            EntryPoint = "HccLoginWithRefreshToken")]
-        public static unsafe int LoginWithRefreshToken(
+            EntryPoint = "HccImpersonate")]
+        public static unsafe int Impersonate(
             IntPtr Session,
             IntPtr RefreshToken)
         {
@@ -122,7 +122,7 @@ namespace HalalCloud.Client.Core
                     throw new ArgumentException();
                 }
 
-                ManagedSession.LoginWithRefreshToken(
+                ManagedSession.Impersonate(
                     Marshal.PtrToStringUTF8(RefreshToken) ?? string.Empty);
 
                 return 0;

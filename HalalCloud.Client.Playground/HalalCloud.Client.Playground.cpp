@@ -24,7 +24,7 @@ int main()
     HRESULT hr = ::HccCreateSessionManager(&Session);
     if (SUCCEEDED(hr))
     {
-        hr = ::HccLoginWithAuthenticationUri(
+        hr = ::HccAuthenticate(
             Session,
             [](LPSTR AuthenticationUri)
         {
@@ -62,7 +62,7 @@ int main()
                         "RefreshToken = \"%s\"\n",
                         Information.AccessToken,
                         Information.RefreshToken);
-                    hr = ::HccLoginWithRefreshToken(
+                    hr = ::HccImpersonate(
                         Session,
                         Information.RefreshToken);
                     if (SUCCEEDED(hr))

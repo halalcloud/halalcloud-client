@@ -58,14 +58,14 @@ typedef struct _HCC_USER
 EXTERN_C VOID WINAPI HccFreeUser(
     PHCC_USER Value);
 
-typedef void(*PHCC_LOGIN_NOTIFY_AUTHENTICATION_URI_CALLBACK)(
+typedef void(*PHCC_AUTHENTICATION_NOTIFY_CALLBACK)(
     LPSTR AuthenticationUri);
 
-EXTERN_C HRESULT WINAPI HccLoginWithAuthenticationUri(
+EXTERN_C HRESULT WINAPI HccAuthenticate(
     _In_ HCC_SESSION Session,
-    _In_ PHCC_LOGIN_NOTIFY_AUTHENTICATION_URI_CALLBACK Callback);
+    _In_ PHCC_AUTHENTICATION_NOTIFY_CALLBACK Callback);
 
-EXTERN_C HRESULT WINAPI HccLoginWithRefreshToken(
+EXTERN_C HRESULT WINAPI HccImpersonate(
     _In_ HCC_SESSION Session,
     _In_ LPCSTR RefreshToken);
 

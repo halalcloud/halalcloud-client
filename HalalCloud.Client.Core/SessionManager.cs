@@ -70,11 +70,11 @@ namespace HalalCloud.Client.Core
                 context.Options.WithHeaders(metadata).WithDeadline(deadline));
         }
 
-        public delegate void LoginNotifyAuthenticationUriCallback(
+        public delegate void AuthenticationNotifyCallback(
             string AuthenticationUri);
 
-        public void LoginWithAuthenticationUri(
-            LoginNotifyAuthenticationUriCallback Callback)
+        public void Authenticate(
+            AuthenticationNotifyCallback Callback)
         {
             PubUser.PubUserClient Client =
                 new PubUser.PubUserClient(RpcInvoker);
@@ -102,7 +102,7 @@ namespace HalalCloud.Client.Core
             }
         }
 
-        public void LoginWithRefreshToken(
+        public void Impersonate(
             string RefreshToken)
         {
             PubUser.PubUserClient Client =
