@@ -46,6 +46,12 @@ int main()
         {
             std::printf("Login Success!\n");
 
+            /*hr = ::HccUploadFile(
+                Session,
+                "D:\\Updates\\9p.cap",
+                "/",
+                "9p.cap");*/
+
             {
                 HCC_TOKEN Information = { 0 };
                 hr = ::HccGetTokenInformation(Session, &Information);
