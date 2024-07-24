@@ -49,8 +49,7 @@ int main()
             /*hr = ::HccUploadFile(
                 Session,
                 "D:\\Updates\\9p.cap",
-                "/",
-                "9p.cap");*/
+                "/9p.cap");*/
 
             {
                 HCC_TOKEN Information = { 0 };

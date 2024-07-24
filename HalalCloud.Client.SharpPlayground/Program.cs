@@ -39,12 +39,11 @@ namespace HalalCloud.Client.SharpPlayground
                 }
             }
 
-            //Session.CreateDirectory("/", "Folder2");
+            //Session.CreateDirectory("/Folder2");
 
             //Session.UploadFile(
             //    @"C:\Users\mouri\Downloads\RISC-V Manual\unpriv-isa-asciidoc.html",
-            //    "/",
-            //    "unpriv-isa-asciidoc.html");
+            //    "/unpriv-isa-asciidoc.html");
 
             List<FileInformation> Files = Session.EnumerateFiles("/");
 

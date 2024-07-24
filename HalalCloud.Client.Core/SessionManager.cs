@@ -146,25 +146,21 @@ namespace HalalCloud.Client.Core
         }
 
         public V6.Services.Pub.File CreateDirectory(
-            string Path,
-            string Name)
+            string Path)
         {
             PubUserFileClient Client = new PubUserFileClient(RpcInvoker);
             V6.Services.Pub.File Request = new V6.Services.Pub.File();
             Request.Path = Path;
-            Request.Name = Name;
             return Client.Create(Request);
         }
 
         public void UploadFile(
             string SourceFilePath,
-            string TargetDirectoryPath,
-            string TargetFileName)
+            string TargetFilePath)
         {
             PubUserFileClient RpcClient = new PubUserFileClient(RpcInvoker);
             V6.Services.Pub.File RpcRequest = new V6.Services.Pub.File();
-            RpcRequest.Path = TargetDirectoryPath;
-            RpcRequest.Name = TargetFileName;
+            RpcRequest.Path = TargetFilePath;
             UploadToken RpcResponse = RpcClient.CreateUploadToken(RpcRequest);
 
             BceClientConfiguration UploadConfiguration =

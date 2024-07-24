@@ -1,7 +1,6 @@
 ﻿using HalalCloud.Client.Core.Interop;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using V6.Services.Pub;
 
 namespace HalalCloud.Client.Core
 {
@@ -244,8 +243,7 @@ namespace HalalCloud.Client.Core
         public static unsafe int UploadFile(
             IntPtr Session,
             IntPtr SourceFilePath,
-            IntPtr TargetDirectoryPath,
-            IntPtr TargetFileName)
+            IntPtr TargetFilePath)
         {
             try
             {
@@ -259,12 +257,7 @@ namespace HalalCloud.Client.Core
                     throw new ArgumentException();
                 }
 
-                if (TargetDirectoryPath == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                if (TargetFileName == IntPtr.Zero)
+                if (TargetFilePath == IntPtr.Zero)
                 {
                     throw new ArgumentException();
                 }
@@ -277,8 +270,7 @@ namespace HalalCloud.Client.Core
 
                 ManagedSession.UploadFile(
                     Marshal.PtrToStringUTF8(SourceFilePath) ?? string.Empty,
-                    Marshal.PtrToStringUTF8(TargetDirectoryPath) ?? string.Empty,
-                    Marshal.PtrToStringUTF8(TargetFileName) ?? string.Empty);
+                    Marshal.PtrToStringUTF8(TargetFilePath) ?? string.Empty);
 
                 return 0;
             }
