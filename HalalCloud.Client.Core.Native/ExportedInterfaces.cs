@@ -16,20 +16,15 @@ namespace HalalCloud.Client.Core
             {
                 if (Session == null)
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentNullException();
                 }
 
-                SessionManager ManagedSession = new SessionManager();
+                *Session = new SessionManager().ToIntPtr();
 
-                *Session = GCHandle.ToIntPtr(GCHandle.Alloc(ManagedSession));
                 return 0;
             }
             catch (Exception e)
             {
-                if (Session != null)
-                {
-                    *Session = IntPtr.Zero;
-                }
                 return e.HResult;
             }
         }
@@ -42,12 +37,7 @@ namespace HalalCloud.Client.Core
         {
             try
             {
-                if (Session == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                GCHandle.FromIntPtr(Session).Free();
+                Session.ToGcHandle().Free();
 
                 return 0;
             }
@@ -55,12 +45,6 @@ namespace HalalCloud.Client.Core
             {
                 return e.HResult;
             }
-        }
-
-        private static SessionManager? GetSessionManager(
-            IntPtr Interface)
-        {
-            return GCHandle.FromIntPtr(Interface).Target as SessionManager;
         }
 
         [UnmanagedCallersOnly(
@@ -72,26 +56,9 @@ namespace HalalCloud.Client.Core
         {
             try
             {
-                if (Session == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                if (Callback == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                SessionManager? ManagedSession = GetSessionManager(Session);
-                if (ManagedSession == null)
-                {
-                    throw new ArgumentException();
-                }
-
-                ManagedSession.Authenticate(
-                    Marshal.GetDelegateForFunctionPointer<
-                        SessionManager.AuthenticationNotifyCallback>(
-                        Callback));
+                Session.ToObject<SessionManager>().Authenticate(
+                    Callback.ToDelegate<
+                        SessionManager.AuthenticationNotifyCallback>());
 
                 return 0;
             }
@@ -110,19 +77,8 @@ namespace HalalCloud.Client.Core
         {
             try
             {
-                if (Session == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                SessionManager? ManagedSession = GetSessionManager(Session);
-                if (ManagedSession == null)
-                {
-                    throw new ArgumentException();
-                }
-
-                ManagedSession.Impersonate(
-                    Marshal.PtrToStringUTF8(RefreshToken) ?? string.Empty);
+                Session.ToObject<SessionManager>().Impersonate(
+                    RefreshToken.ToUtf8String());
 
                 return 0;
             }
@@ -141,21 +97,8 @@ namespace HalalCloud.Client.Core
         {
             try
             {
-                if (Session == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                if (Information == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                SessionManager? ManagedSession = GetSessionManager(Session);
-                if (ManagedSession == null)
-                {
-                    throw new ArgumentException();
-                }
+                SessionManager ManagedSession =
+                    Session.ToObject<SessionManager>();
 
                 Marshal.StructureToPtr(
                     new NativeToken(ManagedSession.AccessToken),
@@ -179,21 +122,8 @@ namespace HalalCloud.Client.Core
         {
             try
             {
-                if (Session == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                if (Information == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                SessionManager? ManagedSession = GetSessionManager(Session);
-                if (ManagedSession == null)
-                {
-                    throw new ArgumentException();
-                }
+                SessionManager ManagedSession =
+                    Session.ToObject<SessionManager>();
 
                 Marshal.StructureToPtr(
                     new NativeUser(ManagedSession.GetUserInformation()),
@@ -216,18 +146,7 @@ namespace HalalCloud.Client.Core
         {
             try
             {
-                if (Session == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                SessionManager? ManagedSession = GetSessionManager(Session);
-                if (ManagedSession == null)
-                {
-                    throw new ArgumentException();
-                }
-
-                ManagedSession.Logout();
+                Session.ToObject<SessionManager>().Logout();
 
                 return 0;
             }
@@ -247,30 +166,9 @@ namespace HalalCloud.Client.Core
         {
             try
             {
-                if (Session == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                if (SourceFilePath == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                if (TargetFilePath == IntPtr.Zero)
-                {
-                    throw new ArgumentException();
-                }
-
-                SessionManager? ManagedSession = GetSessionManager(Session);
-                if (ManagedSession == null)
-                {
-                    throw new ArgumentException();
-                }
-
-                ManagedSession.UploadFile(
-                    Marshal.PtrToStringUTF8(SourceFilePath) ?? string.Empty,
-                    Marshal.PtrToStringUTF8(TargetFilePath) ?? string.Empty);
+                Session.ToObject<SessionManager>().UploadFile(
+                    SourceFilePath.ToUtf8String(),
+                    TargetFilePath.ToUtf8String());
 
                 return 0;
             }
