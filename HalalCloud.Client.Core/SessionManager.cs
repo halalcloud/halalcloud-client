@@ -7,6 +7,7 @@ using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using V6.Services.Pub;
 using static V6.Services.Pub.PubUserFile;
+using V6.Services.Pub.Common;
 
 namespace HalalCloud.Client.Core
 {
@@ -191,6 +192,7 @@ namespace HalalCloud.Client.Core
             FileListRequest Request = new FileListRequest();
             Request.Parent = new V6.Services.Pub.File();
             Request.Parent.Path = Path;
+            Request.ListInfo = new ScanListRequest();
 
             List<FileInformation> Result = new List<FileInformation>();
 
@@ -198,6 +200,7 @@ namespace HalalCloud.Client.Core
 
             do
             {
+                Request.ListInfo.Token = NextToken;
                 FileListResponse Response = Client.List(Request);
                 NextToken = Response.ListInfo.Token;
                 foreach (var Item in Response.Files)
