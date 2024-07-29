@@ -57,6 +57,10 @@ namespace HalalCloud.Client.SharpPlayground
                     Item.FileName);
             }
 
+            FileStorageInformation StorageInformation =
+                Session.GetFileStorageInformation(
+                    "/9p.cap");
+
             Console.WriteLine("Hello, World!");
             Console.ReadKey();
         }

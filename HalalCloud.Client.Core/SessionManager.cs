@@ -173,6 +173,27 @@ namespace HalalCloud.Client.Core
             UploadConfiguration.Endpoint = RpcResponse.Endpoint;
             BosClient UploadClient = new BosClient(UploadConfiguration);
 
+            //InitiateMultipartUploadRequest InitiateRequest =
+            //    new InitiateMultipartUploadRequest();
+            //InitiateRequest.BucketName = RpcResponse.Bucket;
+            //InitiateRequest.Key = RpcResponse.Key;
+            //InitiateMultipartUploadResponse InitiateResponse =
+            //    UploadClient.InitiateMultipartUpload(InitiateRequest);
+
+            //ListMultipartUploadsRequest ListRequest =
+            //    new ListMultipartUploadsRequest();
+            //ListRequest.BucketName = RpcResponse.Bucket;
+            //ListMultipartUploadsResponse ListResponse =
+            //    UploadClient.ListMultipartUploads(ListRequest);
+
+            //foreach (MultipartUploadSummary Upload in ListResponse.Uploads)
+            //{
+            //    Console.WriteLine(
+            //        "Key = {0}, UploadId = {1}",
+            //        Upload.Key,
+            //        Upload.UploadId);
+            //}
+
             FileInfo UploadFile = new FileInfo(SourceFilePath);
             PutObjectResponse UploadResponse = UploadClient.PutObject(
                 RpcResponse.Bucket,
@@ -222,6 +243,55 @@ namespace HalalCloud.Client.Core
                 }
 
             } while (!string.IsNullOrEmpty(NextToken));
+
+            return Result;
+        }
+
+        public FileStorageInformation GetFileStorageInformation(
+            string Path)
+        {
+            PubUserFileClient Client = new PubUserFileClient(RpcInvoker);
+
+            V6.Services.Pub.File Request = new V6.Services.Pub.File();
+            Request.Path = Path;
+
+            ParseFileSliceResponse Response = Client.ParseFileSlice(Request);
+
+            int RawNodesCount = Response.RawNodes.Count;
+            if (RawNodesCount != Response.Sizes.Count)
+            {
+                throw new InvalidDataException(
+                    "The count for raw_nodes and sizes should be equal.");
+            }
+
+            FileStorageInformation Result = new FileStorageInformation
+            {
+                Identifier = Response.ContentIdentity,
+                Size = Response.FileSize,
+                Path = Response.Path,
+                Type = FileStorageType.Unknown,
+                Nodes = new List<FileStorageNode>()
+            };
+            switch (Response.StoreType)
+            {
+                case 0:
+                    Result.Type = FileStorageType.Ipfs;
+                    break;
+                case 10:
+                    Result.Type = FileStorageType.BaiduObjectStorage;
+                    break;
+                default:
+                    break;
+            }
+            for (int i = 0; i < RawNodesCount; ++i)
+            {
+                Result.Nodes.Add(new FileStorageNode
+                {
+                    Offset = Response.Sizes[i].StartIndex,
+                    Size = Response.Sizes[i].Size,
+                    Identifier = Response.RawNodes[i]
+                });
+            }
 
             return Result;
         }
