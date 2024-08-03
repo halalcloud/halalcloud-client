@@ -257,11 +257,32 @@ namespace HalalCloud.Client.Core
 
             ParseFileSliceResponse Response = Client.ParseFileSlice(Request);
 
-            int RawNodesCount = Response.RawNodes.Count;
-            if (RawNodesCount != Response.Sizes.Count)
+            List<long> Sizes = new List<long>();
+            foreach (var Size in Response.Sizes)
+            {
+                for (long i = Size.StartIndex; i < Size.EndIndex + 1; ++i)
+                {
+                    Sizes.Add(Size.Size);
+                }
+            }
+            if (Response.RawNodes.Count != Sizes.Count)
             {
                 throw new InvalidDataException(
                     "The count for raw_nodes and sizes should be equal.");
+            }
+
+            long FileSize = 0;
+            List<long> Offsets = new List<long>();
+            foreach (long Size in Sizes)
+            {
+                Offsets.Add(FileSize);
+                FileSize += Size;
+            }
+            if (Response.FileSize != FileSize)
+            {
+                throw new InvalidDataException(
+                    "The file size from response and the file size calculated "
+                    + "by offsets should be equal.");
             }
 
             FileStorageInformation Result = new FileStorageInformation
@@ -283,12 +304,12 @@ namespace HalalCloud.Client.Core
                 default:
                     break;
             }
-            for (int i = 0; i < RawNodesCount; ++i)
+            for (int i = 0; i < Response.RawNodes.Count; ++i)
             {
                 Result.Nodes.Add(new FileStorageNode
                 {
-                    Offset = Response.Sizes[i].StartIndex,
-                    Size = Response.Sizes[i].Size,
+                    Offset = Offsets[i],
+                    Size = Sizes[i],
                     Identifier = Response.RawNodes[i]
                 });
             }
