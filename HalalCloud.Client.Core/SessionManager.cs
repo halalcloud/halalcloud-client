@@ -268,7 +268,7 @@ namespace HalalCloud.Client.Core
             if (Response.RawNodes.Count != Sizes.Count)
             {
                 throw new InvalidDataException(
-                    "The count for raw_nodes and sizes should be equal.");
+                    "The file nodes information acquisition failed.");
             }
 
             long FileSize = 0;
@@ -281,8 +281,7 @@ namespace HalalCloud.Client.Core
             if (Response.FileSize != FileSize)
             {
                 throw new InvalidDataException(
-                    "The file size from response and the file size calculated "
-                    + "by offsets should be equal.");
+                    "The file size verification failed.");
             }
 
             FileStorageInformation Result = new FileStorageInformation
