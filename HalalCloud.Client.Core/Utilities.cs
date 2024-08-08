@@ -45,5 +45,14 @@ namespace HalalCloud.Client.Core
         {
             return BitConverter.ToString(Hash).Replace("-", "");
         }
+
+        public static void EnsurePathExists(
+            string Path)
+        {
+            if (!Directory.Exists(Path))
+            {
+                Directory.CreateDirectory(Path);
+            }
+        }
     }
 }
