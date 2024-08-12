@@ -19,7 +19,7 @@
   </Target>
 
   <ItemGroup>
-    <PackageReference Include="VC-LTL" Version="5.0.10-Beta2" />
+    <PackageReference Include="VC-LTL" Version="5.1.1" />
   </ItemGroup>
 
   <ItemGroup>
