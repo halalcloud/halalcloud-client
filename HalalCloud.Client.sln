@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalalCloud.Client.Core.Unit
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BaiduBce", "BaiduBce\BaiduBce.csproj", "{465C567B-F56B-47C3-A3A1-CC8682C92725}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalalCloud.RpcClient", "HalalCloud.RpcClient\HalalCloud.RpcClient.csproj", "{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -106,6 +108,16 @@ Global
 		{465C567B-F56B-47C3-A3A1-CC8682C92725}.Release|x64.Build.0 = Release|Any CPU
 		{465C567B-F56B-47C3-A3A1-CC8682C92725}.Release|x86.ActiveCfg = Release|Any CPU
 		{465C567B-F56B-47C3-A3A1-CC8682C92725}.Release|x86.Build.0 = Release|Any CPU
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Debug|ARM64.Build.0 = Debug|ARM64
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Debug|x64.ActiveCfg = Debug|x64
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Debug|x64.Build.0 = Debug|x64
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Debug|x86.ActiveCfg = Debug|x86
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Release|ARM64.ActiveCfg = Release|ARM64
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Release|ARM64.Build.0 = Release|ARM64
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Release|x64.ActiveCfg = Release|x64
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Release|x64.Build.0 = Release|x64
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
