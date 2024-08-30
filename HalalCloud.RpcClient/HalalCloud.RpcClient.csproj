@@ -23,4 +23,18 @@
     <PackageReference Include="VC-LTL" Version="5.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.26.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.62.0-pre1" />
+    <PackageReference Include="Grpc.Tools" Version="2.62.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="..\HalalCloud.Protocol\**\*.proto" GrpcServices="Client" ProtoRoot="..\HalalCloud.Protocol\">
+      <Link>Protocol\%(RecursiveDir)%(FileName)%(Extension)</Link>
+    </Protobuf>
+  </ItemGroup>
+
 </Project>
