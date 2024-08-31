@@ -11,6 +11,10 @@
     <PublishAot>true</PublishAot>
     <IsAotCompatible>true</IsAotCompatible>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Version>1.0.$([System.DateTime]::Today.Subtract($([System.DateTime]::Parse('2024-01-16'))).TotalDays).0</Version>
+    <Authors>Halal Cloud</Authors>
+    <Copyright>© Halal Cloud. All rights reserved.</Copyright>
+    <Product>Halal Cloud Client</Product>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
     <Platforms>x86;x64;ARM64</Platforms>
