@@ -113,9 +113,9 @@ namespace HalalCloud.RpcClient
         }
 
         public static Dictionary<string, Marshaller<string>> Marshallsers =
-           new Dictionary<string, Marshaller<string>>()
-           {
-                                {
+            new Dictionary<string, Marshaller<string>>()
+            {
+                {
                     "BatchOperationRequest",
                     CreateMarshaller<BatchOperationRequest>()
                 },
@@ -415,7 +415,6 @@ namespace HalalCloud.RpcClient
                     "UserValidateInfo",
                     CreateMarshaller<UserValidateInfo>()
                 },
-
-           };
+            };
     }
 }
