@@ -453,7 +453,7 @@ namespace HalalCloud.RpcClient
                     JsonContext.Marshallsers["UserNameValidateResponse"])
             };
 
-        public Token? TokenObject { get; set; } = null;
+        public string AccessToken { get; set; } = string.Empty;
 
         public Session()
         {
@@ -475,10 +475,9 @@ namespace HalalCloud.RpcClient
             metadata.Add("appversion", RpcClientApplicationVersion);
 
             string Authorization = string.Empty;
-            if (TokenObject != null &&
-                !string.IsNullOrWhiteSpace(TokenObject.AccessToken))
+            if (string.IsNullOrWhiteSpace(AccessToken))
             {
-                Authorization = "Bearer " + TokenObject.AccessToken;
+                Authorization = "Bearer " + AccessToken;
             }
             if (!string.IsNullOrWhiteSpace(Authorization))
             {

@@ -22,9 +22,9 @@ EXTERN_C HRESULT WINAPI HccRpcCreateSession(
 EXTERN_C HRESULT WINAPI HccRpcCloseSession(
     _In_ HCC_RPC_SESSION Instance);
 
-EXTERN_C HRESULT WINAPI HccRpcSetToken(
+EXTERN_C HRESULT WINAPI HccRpcSetAccessToken(
     _In_ HCC_RPC_SESSION Instance,
-    _In_ LPCSTR AccessTokenJson);
+    _In_ LPCSTR AccessToken);
 
 EXTERN_C HRESULT WINAPI HccRpcRequest(
     _In_ HCC_RPC_SESSION Instance,

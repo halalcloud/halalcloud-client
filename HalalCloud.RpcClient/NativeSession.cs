@@ -49,18 +49,15 @@ namespace HalalCloud.RpcClient
 
         [UnmanagedCallersOnly(
             CallConvs = [typeof(CallConvStdcall)],
-            EntryPoint = "HccRpcSetToken")]
-        public static unsafe int SetToken(
+            EntryPoint = "HccRpcSetAccessToken")]
+        public static unsafe int SetAccessToken(
             IntPtr Instance,
-            IntPtr AccessTokenJson)
+            IntPtr AccessToken)
         {
             try
             {
-
-                Instance.ToObject<Session>().TokenObject =
-                    JsonSerializer.Deserialize(
-                        AccessTokenJson.ToUtf8String(),
-                        JsonContext.Default.Token)!;
+                Instance.ToObject<Session>().AccessToken =
+                    AccessToken.ToUtf8String();
 
                 return 0;
             }
