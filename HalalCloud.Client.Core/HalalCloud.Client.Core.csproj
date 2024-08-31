@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\HalalCloud.Protocol\**\*.proto" GrpcServices="Client" ProtoRoot="..\HalalCloud.Protocol\">
+    <Protobuf Include="..\HalalCloud.RpcClient\Protocol\**\*.proto" GrpcServices="Client" ProtoRoot="..\HalalCloud.RpcClient\Protocol\">
       <Link>Protocol\%(RecursiveDir)%(FileName)%(Extension)</Link>
     </Protobuf>
   </ItemGroup>
