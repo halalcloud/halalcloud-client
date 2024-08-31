@@ -16,6 +16,8 @@
 
 #include <Mile.Helpers.CppBase.h>
 
+#include <Mile.Json.h>
+
 #include "HalalCloud.Client.Core.Native.h"
 
 #include <HalalCloud.RpcClient.h>
