@@ -28,12 +28,16 @@ int main()
     HRESULT hr = ::HccRpcCreateSession(&RpcSession);
     if (SUCCEEDED(hr))
     {
-        LPCSTR ResponseJson = nullptr;
+        LPSTR ResponseJson = nullptr;
         hr = ::HccRpcRequest(
             RpcSession,
             "/v6.services.pub.PubUser/CreateAuthToken",
             "{ \"return_type\": 2 }",
             &ResponseJson);
+        if (SUCCEEDED(hr))
+        {
+            ::HccRpcFreeMemory(ResponseJson);
+        }
 
         ::HccRpcCloseSession(RpcSession);
     }

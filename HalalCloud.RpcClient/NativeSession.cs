@@ -94,5 +94,23 @@ namespace HalalCloud.RpcClient
                 return e.HResult;
             }
         }
+
+        [UnmanagedCallersOnly(
+            CallConvs = [typeof(CallConvStdcall)],
+            EntryPoint = "HccRpcFreeMemory")]
+        public static unsafe int FreeMemory(
+            IntPtr Block)
+        {
+            try
+            {
+                Marshal.FreeCoTaskMem(Block);
+
+                return 0;
+            }
+            catch (Exception e)
+            {
+                return e.HResult;
+            }
+        }
     }
 }

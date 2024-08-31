@@ -30,6 +30,9 @@ EXTERN_C HRESULT WINAPI HccRpcRequest(
     _In_ HCC_RPC_SESSION Instance,
     _In_ LPCSTR MethodFullName,
     _In_ LPCSTR RequestJson,
-    _Out_opt_ LPCSTR* ResponseJson);
+    _Out_opt_ LPSTR* ResponseJson);
+
+EXTERN_C HRESULT WINAPI HccRpcFreeMemory(
+    _In_ LPVOID Block);
 
 #endif // !HALALCLOUD_RPCCLIENT
