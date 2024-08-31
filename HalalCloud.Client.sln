@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalalCloud.Client.Playground", "HalalCloud.Client.Playground\HalalCloud.Client.Playground.vcxproj", "{86D4AFAD-E229-4849-965B-3D1DE93CA98C}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4E5C7C08-FC6B-44AB-82D8-E0E95F285B66} = {4E5C7C08-FC6B-44AB-82D8-E0E95F285B66}
+		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A} = {D5ECCC0A-B633-4BE3-9F74-31A8D744821A}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalalCloud.Client.SharpPlayground", "HalalCloud.Client.SharpPlayground\HalalCloud.Client.SharpPlayground.csproj", "{EA15F0CE-D188-4768-BCE5-677E13DDF171}"

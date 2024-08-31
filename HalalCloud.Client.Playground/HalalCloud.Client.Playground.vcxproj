@@ -21,6 +21,7 @@
   <Import Project="..\Mile.Project.Windows\Mile.Project.Platform.ARM64.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.Default.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.props" />
+  <Import Project="..\HalalCloud.RpcClient\HalalCloud.RpcClient.props" />
   <ItemDefinitionGroup>
     <Link>
       <AdditionalDependencies Condition="'$(Platform)'=='x64'">$(OutDir)net8.0-windows\win-x64\native\HalalCloud.Client.Core.Native.lib;%(AdditionalDependencies)</AdditionalDependencies>
