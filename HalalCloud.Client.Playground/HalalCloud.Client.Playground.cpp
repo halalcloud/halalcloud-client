@@ -18,10 +18,28 @@
 
 #include "HalalCloud.Client.Core.Native.h"
 
+#include <HalalCloud.RpcClient.h>
+
 int main()
 {
+    HCC_RPC_SESSION RpcSession = nullptr;
+    HRESULT hr = ::HccRpcCreateSession(&RpcSession);
+    if (SUCCEEDED(hr))
+    {
+        LPCSTR ResponseJson = nullptr;
+        hr = ::HccRpcRequest(
+            RpcSession,
+            "/v6.services.pub.PubUser/CreateAuthToken",
+            "{ \"return_type\": 2 }",
+            &ResponseJson);
+
+        ::HccRpcCloseSession(RpcSession);
+    }
+
+
+
     HCC_SESSION Session = nullptr;
-    HRESULT hr = ::HccCreateSessionManager(&Session);
+    hr = ::HccCreateSessionManager(&Session);
     if (SUCCEEDED(hr))
     {
         hr = ::HccAuthenticate(
