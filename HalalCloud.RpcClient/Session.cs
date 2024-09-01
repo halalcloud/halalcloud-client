@@ -502,19 +502,6 @@ namespace HalalCloud.RpcClient
                 context.Options.WithHeaders(metadata).WithDeadline(deadline));
         }
 
-        private static void SerializeMessageHelper(
-            IMessage Message,
-            SerializationContext Context)
-        {
-            Context.Complete(MessageExtensions.ToByteArray(Message));
-        }
-
-        private static IMessage DeserializeMessageHelper(
-            DeserializationContext Context, MessageParser Parser)
-        {
-            return Parser.ParseFrom(Context.PayloadAsNewBuffer());
-        }
-
         public string Request(
             string MethodFullName,
             string RequestJson)
