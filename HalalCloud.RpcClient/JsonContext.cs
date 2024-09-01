@@ -112,309 +112,155 @@ namespace HalalCloud.RpcClient
                 });
         }
 
-        public static Dictionary<string, Marshaller<string>> Marshallsers =
-            new Dictionary<string, Marshaller<string>>()
-            {
-                {
-                    "BatchOperationRequest",
-                    CreateMarshaller<BatchOperationRequest>()
-                },
-                {
-                    "BatchOperationResponse",
-                    CreateMarshaller<BatchOperationResponse>()
-                },
-                {
-                    "ChangePasswordRequest",
-                    CreateMarshaller<ChangePasswordRequest>()
-                },
-                {
-                    "Complaint",
-                    CreateMarshaller<Complaint>()
-                },
-                {
-                    "ComplaintDeleteRequest",
-                    CreateMarshaller<ComplaintDeleteRequest>()
-                },
-                {
-                    "ComplaintDeleteResponse",
-                    CreateMarshaller<ComplaintDeleteResponse>()
-                },
-                {
-                    "ComplaintListRequest",
-                    CreateMarshaller<ComplaintListRequest>()
-                },
-                {
-                    "ComplaintListResponse",
-                    CreateMarshaller<ComplaintListResponse>()
-                },
-                {
-                    "DavConfig",
-                    CreateMarshaller<DavConfig>()
-                },
-                {
-                    "DisconnectRequest",
-                    CreateMarshaller<DisconnectRequest>()
-                },
-                {
-                    "DisconnectResponse",
-                    CreateMarshaller<DisconnectResponse>()
-                },
-                {
-                    "DocFilePreview",
-                    CreateMarshaller<DocFilePreview>()
-                },
-                {
-                    "DownloadAndPreviewInfo",
-                    CreateMarshaller<DownloadAndPreviewInfo>()
-                },
-                {
-                    "FastLookup",
-                    CreateMarshaller<FastLookup>()
-                },
-                {
-                    "FastLookupRequest",
-                    CreateMarshaller<FastLookupRequest>()
-                },
-                {
-                    "File",
-                    CreateMarshaller<V6.Services.Pub.File>()
-                },
-                {
-                    "FileListRequest",
-                    CreateMarshaller<FileListRequest>()
-                },
-                {
-                    "FileListResponse",
-                    CreateMarshaller<FileListResponse>()
-                },
-                {
-                    "FileShare",
-                    CreateMarshaller<V6.Services.Pub.FileShare>()
-                },
-                {
-                    "FileShareDeleteRequest",
-                    CreateMarshaller<FileShareDeleteRequest>()
-                },
-                {
-                    "FileShareDeleteResponse",
-                    CreateMarshaller<FileShareDeleteResponse>()
-                },
-                {
-                    "FileShareListRequest",
-                    CreateMarshaller<FileShareListRequest>()
-                },
-                {
-                    "FileShareListResponse",
-                    CreateMarshaller<FileShareListResponse>()
-                },
-                {
-                    "GetIceCandidateRequest",
-                    CreateMarshaller<GetIceCandidateRequest>()
-                },
-                {
-                    "GetIceCandidateResponse",
-                    CreateMarshaller<GetIceCandidateResponse>()
-                },
-                {
-                    "LastLoginResponse",
-                    CreateMarshaller<LastLoginResponse>()
-                },
-                {
-                    "LoginRequest",
-                    CreateMarshaller<LoginRequest>()
-                },
-                {
-                    "LoginResponse",
-                    CreateMarshaller<LoginResponse>()
-                },
-                {
-                    "ManageRTCRequest",
-                    CreateMarshaller<ManageRTCRequest>()
-                },
-                {
-                    "ManageRTCResponse",
-                    CreateMarshaller<ManageRTCResponse>()
-                },
-                {
-                    "Meta",
-                    CreateMarshaller<Meta>()
-                },
-                {
-                    "OauthTokenCheckResponse",
-                    CreateMarshaller<OauthTokenCheckResponse>()
-                },
-                {
-                    "OauthTokenResponse",
-                    CreateMarshaller<OauthTokenResponse>()
-                },
-                {
-                    "OfflineTaskDeleteRequest",
-                    CreateMarshaller<OfflineTaskDeleteRequest>()
-                },
-                {
-                    "OfflineTaskDeleteResponse",
-                    CreateMarshaller<OfflineTaskDeleteResponse>()
-                },
-                {
-                    "OfflineTaskListRequest",
-                    CreateMarshaller<OfflineTaskListRequest>()
-                },
-                {
-                    "OfflineTaskListResponse",
-                    CreateMarshaller<OfflineTaskListResponse>()
-                },
-                {
-                    "OrderByInfo",
-                    CreateMarshaller<OrderByInfo>()
-                },
-                {
-                    "ParseFileSliceResponse",
-                    CreateMarshaller<ParseFileSliceResponse>()
-                },
-                {
-                    "ReceiveRequest",
-                    CreateMarshaller<ReceiveRequest>()
-                },
-                {
-                    "ReceiveResponse",
-                    CreateMarshaller<ReceiveResponse>()
-                },
-                {
-                    "RegisterRequest",
-                    CreateMarshaller<RegisterRequest>()
-                },
-                {
-                    "RpcHeaderValue",
-                    CreateMarshaller<RpcHeaderValue>()
-                },
-                {
-                    "RpcMetaData",
-                    CreateMarshaller<RpcMetaData>()
-                },
-                {
-                    "RpcTransport",
-                    CreateMarshaller<RpcTransport>()
-                },
-                {
-                    "RtcPeerInfo",
-                    CreateMarshaller<RtcPeerInfo>()
-                },
-                {
-                    "ScanListRequest",
-                    CreateMarshaller<ScanListRequest>()
-                },
-                {
-                    "SearchRequest",
-                    CreateMarshaller<SearchRequest>()
-                },
-                {
-                    "SendIceCandidateRequest",
-                    CreateMarshaller<SendIceCandidateRequest>()
-                },
-                {
-                    "SendIceCandidateResponse",
-                    CreateMarshaller<SendIceCandidateResponse>()
-                },
-                {
-                    "SendPeerIceCandidateRequest",
-                    CreateMarshaller<SendPeerIceCandidateRequest>()
-                },
-                {
-                    "SendPeerIceCandidateResponse",
-                    CreateMarshaller<SendPeerIceCandidateResponse>()
-                },
-                {
-                    "SftpConfig",
-                    CreateMarshaller<SftpConfig>()
-                },
-                {
-                    "Slice",
-                    CreateMarshaller<Slice>()
-                },
-                {
-                    "SliceDownloadAddressRequest",
-                    CreateMarshaller<SliceDownloadAddressRequest>()
-                },
-                {
-                    "SliceDownloadAddressResponse",
-                    CreateMarshaller<SliceDownloadAddressResponse>()
-                },
-                {
-                    "SliceDownloadInfo",
-                    CreateMarshaller<SliceDownloadInfo>()
-                },
-                {
-                    "SliceSize",
-                    CreateMarshaller<SliceSize>()
-                },
-                {
-                    "SmsVeifyCodeSendRequest",
-                    CreateMarshaller<SmsVeifyCodeSendRequest>()
-                },
-                {
-                    "SmsVeifyCodeSendRequestNotUser",
-                    CreateMarshaller<SmsVeifyCodeSendRequestNotUser>()
-                },
-                {
-                    "SmsVeifyCodeSendResponse",
-                    CreateMarshaller<SmsVeifyCodeSendResponse>()
-                },
-                {
-                    "StartDownloadRequest",
-                    CreateMarshaller<StartDownloadRequest>()
-                },
-                {
-                    "StartDownloadResponse",
-                    CreateMarshaller<StartDownloadResponse>()
-                },
-                {
-                    "StopDownloadRequest",
-                    CreateMarshaller<StopDownloadRequest>()
-                },
-                {
-                    "StopDownloadResponse",
-                    CreateMarshaller<StopDownloadResponse>()
-                },
-                {
-                    "TaskFile",
-                    CreateMarshaller<TaskFile>()
-                },
-                {
-                    "TaskMeta",
-                    CreateMarshaller<TaskMeta>()
-                },
-                {
-                    "TaskParseRequest",
-                    CreateMarshaller<TaskParseRequest>()
-                },
-                {
-                    "TaskParseResponse",
-                    CreateMarshaller<TaskParseResponse>()
-                },
-                {
-                    "Token",
-                    CreateMarshaller<Token>()
-                },
-                {
-                    "UploadToken",
-                    CreateMarshaller<UploadToken>()
-                },
-                {
-                    "User",
-                    CreateMarshaller<User>()
-                },
-                {
-                    "UserNameValidateResponse",
-                    CreateMarshaller<UserNameValidateResponse>()
-                },
-                {
-                    "UserTask",
-                    CreateMarshaller<UserTask>()
-                },
-                {
-                    "UserValidateInfo",
-                    CreateMarshaller<UserValidateInfo>()
-                },
-            };
+        public static Marshaller<string> BatchOperationRequestMarshaller =
+            CreateMarshaller<BatchOperationRequest>();
+        public static Marshaller<string> BatchOperationResponseMarshaller =
+            CreateMarshaller<BatchOperationResponse>();
+        public static Marshaller<string> ChangePasswordRequestMarshaller =
+            CreateMarshaller<ChangePasswordRequest>();
+        public static Marshaller<string> ComplaintMarshaller =
+            CreateMarshaller<Complaint>();
+        public static Marshaller<string> ComplaintDeleteRequestMarshaller =
+            CreateMarshaller<ComplaintDeleteRequest>();
+        public static Marshaller<string> ComplaintDeleteResponseMarshaller =
+            CreateMarshaller<ComplaintDeleteResponse>();
+        public static Marshaller<string> ComplaintListRequestMarshaller =
+            CreateMarshaller<ComplaintListRequest>();
+        public static Marshaller<string> ComplaintListResponseMarshaller =
+            CreateMarshaller<ComplaintListResponse>();
+        public static Marshaller<string> DavConfigMarshaller =
+            CreateMarshaller<DavConfig>();
+        public static Marshaller<string> DisconnectRequestMarshaller =
+            CreateMarshaller<DisconnectRequest>();
+        public static Marshaller<string> DisconnectResponseMarshaller =
+            CreateMarshaller<DisconnectResponse>();
+        public static Marshaller<string> DocFilePreviewMarshaller =
+            CreateMarshaller<DocFilePreview>();
+        public static Marshaller<string> DownloadAndPreviewInfoMarshaller =
+            CreateMarshaller<DownloadAndPreviewInfo>();
+        public static Marshaller<string> FastLookupMarshaller =
+            CreateMarshaller<FastLookup>();
+        public static Marshaller<string> FastLookupRequestMarshaller =
+            CreateMarshaller<FastLookupRequest>();
+        public static Marshaller<string> FileMarshaller =
+            CreateMarshaller<V6.Services.Pub.File>();
+        public static Marshaller<string> FileListRequestMarshaller =
+            CreateMarshaller<FileListRequest>();
+        public static Marshaller<string> FileListResponseMarshaller =
+            CreateMarshaller<FileListResponse>();
+        public static Marshaller<string> FileShareMarshaller =
+            CreateMarshaller<V6.Services.Pub.FileShare>();
+        public static Marshaller<string> FileShareDeleteRequestMarshaller =
+            CreateMarshaller<FileShareDeleteRequest>();
+        public static Marshaller<string> FileShareDeleteResponseMarshaller =
+            CreateMarshaller<FileShareDeleteResponse>();
+        public static Marshaller<string> FileShareListRequestMarshaller =
+            CreateMarshaller<FileShareListRequest>();
+        public static Marshaller<string> FileShareListResponseMarshaller =
+            CreateMarshaller<FileShareListResponse>();
+        public static Marshaller<string> GetIceCandidateRequestMarshaller =
+            CreateMarshaller<GetIceCandidateRequest>();
+        public static Marshaller<string> GetIceCandidateResponseMarshaller =
+            CreateMarshaller<GetIceCandidateResponse>();
+        public static Marshaller<string> LastLoginResponseMarshaller =
+            CreateMarshaller<LastLoginResponse>();
+        public static Marshaller<string> LoginRequestMarshaller =
+            CreateMarshaller<LoginRequest>();
+        public static Marshaller<string> LoginResponseMarshaller =
+            CreateMarshaller<LoginResponse>();
+        public static Marshaller<string> ManageRTCRequestMarshaller =
+            CreateMarshaller<ManageRTCRequest>();
+        public static Marshaller<string> ManageRTCResponseMarshaller =
+            CreateMarshaller<ManageRTCResponse>();
+        public static Marshaller<string> MetaMarshaller =
+            CreateMarshaller<Meta>();
+        public static Marshaller<string> OauthTokenCheckResponseMarshaller =
+            CreateMarshaller<OauthTokenCheckResponse>();
+        public static Marshaller<string> OauthTokenResponseMarshaller =
+            CreateMarshaller<OauthTokenResponse>();
+        public static Marshaller<string> OfflineTaskDeleteRequestMarshaller =
+            CreateMarshaller<OfflineTaskDeleteRequest>();
+        public static Marshaller<string> OfflineTaskDeleteResponseMarshaller =
+            CreateMarshaller<OfflineTaskDeleteResponse>();
+        public static Marshaller<string> OfflineTaskListRequestMarshaller =
+            CreateMarshaller<OfflineTaskListRequest>();
+        public static Marshaller<string> OfflineTaskListResponseMarshaller =
+            CreateMarshaller<OfflineTaskListResponse>();
+        public static Marshaller<string> OrderByInfoMarshaller =
+            CreateMarshaller<OrderByInfo>();
+        public static Marshaller<string> ParseFileSliceResponseMarshaller =
+            CreateMarshaller<ParseFileSliceResponse>();
+        public static Marshaller<string> ReceiveRequestMarshaller =
+            CreateMarshaller<ReceiveRequest>();
+        public static Marshaller<string> ReceiveResponseMarshaller =
+            CreateMarshaller<ReceiveResponse>();
+        public static Marshaller<string> RegisterRequestMarshaller =
+            CreateMarshaller<RegisterRequest>();
+        public static Marshaller<string> RpcHeaderValueMarshaller =
+            CreateMarshaller<RpcHeaderValue>();
+        public static Marshaller<string> RpcMetaDataMarshaller =
+            CreateMarshaller<RpcMetaData>();
+        public static Marshaller<string> RpcTransportMarshaller =
+            CreateMarshaller<RpcTransport>();
+        public static Marshaller<string> RtcPeerInfoMarshaller =
+            CreateMarshaller<RtcPeerInfo>();
+        public static Marshaller<string> ScanListRequestMarshaller =
+            CreateMarshaller<ScanListRequest>();
+        public static Marshaller<string> SearchRequestMarshaller =
+            CreateMarshaller<SearchRequest>();
+        public static Marshaller<string> SendIceCandidateRequestMarshaller =
+            CreateMarshaller<SendIceCandidateRequest>();
+        public static Marshaller<string> SendIceCandidateResponseMarshaller =
+            CreateMarshaller<SendIceCandidateResponse>();
+        public static Marshaller<string> SendPeerIceCandidateRequestMarshaller =
+            CreateMarshaller<SendPeerIceCandidateRequest>();
+        public static Marshaller<string> SendPeerIceCandidateResponseMarshaller =
+            CreateMarshaller<SendPeerIceCandidateResponse>();
+        public static Marshaller<string> SftpConfigMarshaller =
+            CreateMarshaller<SftpConfig>();
+        public static Marshaller<string> SliceMarshaller =
+            CreateMarshaller<Slice>();
+        public static Marshaller<string> SliceDownloadAddressRequestMarshaller =
+            CreateMarshaller<SliceDownloadAddressRequest>();
+        public static Marshaller<string> SliceDownloadAddressResponseMarshaller =
+            CreateMarshaller<SliceDownloadAddressResponse>();
+        public static Marshaller<string> SliceDownloadInfoMarshaller =
+            CreateMarshaller<SliceDownloadInfo>();
+        public static Marshaller<string> SliceSizeMarshaller =
+            CreateMarshaller<SliceSize>();
+        public static Marshaller<string> SmsVeifyCodeSendRequestMarshaller =
+            CreateMarshaller<SmsVeifyCodeSendRequest>();
+        public static Marshaller<string> SmsVeifyCodeSendRequestNotUserMarshaller =
+            CreateMarshaller<SmsVeifyCodeSendRequestNotUser>();
+        public static Marshaller<string> SmsVeifyCodeSendResponseMarshaller =
+            CreateMarshaller<SmsVeifyCodeSendResponse>();
+        public static Marshaller<string> StartDownloadRequestMarshaller =
+            CreateMarshaller<StartDownloadRequest>();
+        public static Marshaller<string> StartDownloadResponseMarshaller =
+            CreateMarshaller<StartDownloadResponse>();
+        public static Marshaller<string> StopDownloadRequestMarshaller =
+            CreateMarshaller<StopDownloadRequest>();
+        public static Marshaller<string> StopDownloadResponseMarshaller =
+            CreateMarshaller<StopDownloadResponse>();
+        public static Marshaller<string> TaskFileMarshaller =
+            CreateMarshaller<TaskFile>();
+        public static Marshaller<string> TaskMetaMarshaller =
+            CreateMarshaller<TaskMeta>();
+        public static Marshaller<string> TaskParseRequestMarshaller =
+            CreateMarshaller<TaskParseRequest>();
+        public static Marshaller<string> TaskParseResponseMarshaller =
+            CreateMarshaller<TaskParseResponse>();
+        public static Marshaller<string> TokenMarshaller =
+            CreateMarshaller<Token>();
+        public static Marshaller<string> UploadTokenMarshaller =
+            CreateMarshaller<UploadToken>();
+        public static Marshaller<string> UserMarshaller =
+            CreateMarshaller<User>();
+        public static Marshaller<string> UserNameValidateResponseMarshaller =
+            CreateMarshaller<UserNameValidateResponse>();
+        public static Marshaller<string> UserTaskMarshaller =
+            CreateMarshaller<UserTask>();
+        public static Marshaller<string> UserValidateInfoMarshaller =
+            CreateMarshaller<UserValidateInfo>();
     }
 }
