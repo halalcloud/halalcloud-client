@@ -1,8 +1,6 @@
-﻿using Google.Protobuf;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
-using V6.Services.Pub;
 
 namespace HalalCloud.RpcClient
 {
