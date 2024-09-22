@@ -11,4 +11,41 @@
 #ifndef HALALCLOUD_CLIENT_SESSION
 #define HALALCLOUD_CLIENT_SESSION
 
+#include <Mile.Helpers.CppBase.h>
+#include <HalalCloud.RpcClient.h>
+
+#include <Mile.Json.h>
+
+#include <functional>
+#include <string_view>
+
+namespace HalalCloud
+{
+    [[noreturn]] void ThrowExceptionWithHResult(
+        _In_ LPCSTR Checkpoint,
+        _In_ HRESULT Value);
+
+    class Session : Mile::DisableCopyConstruction
+    {
+    private:
+
+        HCC_RPC_SESSION m_Session = nullptr;
+
+    public:
+
+        Session();
+
+        ~Session();
+
+        HCC_RPC_SESSION NativeHandle();
+
+        nlohmann::json Request(
+            std::string_view MethodFullName,
+            nlohmann::json const& Request);
+
+        std::string Authenticate(
+            std::function<void(std::string_view)> Callback);
+    };
+}
+
 #endif // !HALALCLOUD_CLIENT_SESSION

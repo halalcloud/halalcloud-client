@@ -20,106 +20,84 @@
 
 #include "HalalCloud.Client.Core.Native.h"
 
-#include <HalalCloud.RpcClient.h>
+#include "HalalCloud.Client.Session.h"
 
 int main()
 {
-    HCC_RPC_SESSION RpcSession = nullptr;
-    HRESULT hr = ::HccRpcCreateSession(&RpcSession);
-    if (SUCCEEDED(hr))
+    HalalCloud::Session Session;
+
+    std::string Token = Session.Authenticate([](
+        std::string_view AuthenticationUri)
     {
-        LPSTR ResponseJson = nullptr;
-        hr = ::HccRpcRequest(
-            RpcSession,
-            "/v6.services.pub.PubUser/CreateAuthToken",
-            "{ \"return_type\": 2 }",
-            &ResponseJson);
-        if (SUCCEEDED(hr))
-        {
-            ::HccRpcFreeMemory(ResponseJson);
-        }
+        std::printf(
+            "AuthenticationUri = \"%s\"\n",
+            AuthenticationUri.data());
 
-        ::HccRpcCloseSession(RpcSession);
-    }
+        std::wstring ConvertedReturnUrl =
+            Mile::ToWideString(CP_UTF8, AuthenticationUri);
 
+        SHELLEXECUTEINFOW ExecInfo = { 0 };
+        ExecInfo.cbSize = sizeof(SHELLEXECUTEINFOW);
+        ExecInfo.lpVerb = L"open";
+        ExecInfo.lpFile = ConvertedReturnUrl.c_str();
+        ExecInfo.nShow = SW_SHOWNORMAL;
+        ::ShellExecuteExW(&ExecInfo);
 
+        std::printf("Waiting...\n");
+    });
 
-    HCC_SESSION Session = nullptr;
-    hr = ::HccCreateSessionManager(&Session);
-    if (SUCCEEDED(hr))
-    {
-        hr = ::HccAuthenticate(
-            Session,
-            [](LPSTR AuthenticationUri)
-        {
-            std::printf("AuthenticationUri = \"%s\"\n", AuthenticationUri);
+    std::printf("Login Success!\n");
 
-            std::wstring ConvertedReturnUrl =
-                Mile::ToWideString(CP_UTF8, AuthenticationUri);
+    std::printf(
+        "Token = \"%s\"\n",
+        Token.c_str());
 
-            SHELLEXECUTEINFOW ExecInfo = { 0 };
-            ExecInfo.cbSize = sizeof(SHELLEXECUTEINFOW);
-            ExecInfo.lpVerb = L"open";
-            ExecInfo.lpFile = ConvertedReturnUrl.c_str();
-            ExecInfo.nShow = SW_SHOWNORMAL;
-            ::ShellExecuteExW(&ExecInfo);
+    ///*hr = ::HccUploadFile(
+    //            Session,
+    //            "D:\\Updates\\9p.cap",
+    //            "/9p.cap");*/
 
-            std::printf("Waiting...\n");
-        });
-        if (SUCCEEDED(hr))
-        {
-            std::printf("Login Success!\n");
+    //{
+    //    HCC_TOKEN Information = { 0 };
+    //    hr = ::HccGetTokenInformation(Session, &Information);
+    //    if (SUCCEEDED(hr))
+    //    {
+    //        std::printf(
+    //            "AccessToken = \"%s\"\n"
+    //            "RefreshToken = \"%s\"\n",
+    //            Information.AccessToken,
+    //            Information.RefreshToken);
+    //        hr = ::HccImpersonate(
+    //            Session,
+    //            Information.RefreshToken);
+    //        if (SUCCEEDED(hr))
+    //        {
+    //            std::printf("Refresh Success!\n");
+    //        }
 
-            /*hr = ::HccUploadFile(
-                Session,
-                "D:\\Updates\\9p.cap",
-                "/9p.cap");*/
+    //        ::HccFreeToken(&Information);
+    //    }
+    //}
 
-            {
-                HCC_TOKEN Information = { 0 };
-                hr = ::HccGetTokenInformation(Session, &Information);
-                if (SUCCEEDED(hr))
-                {
-                    std::printf(
-                        "AccessToken = \"%s\"\n"
-                        "RefreshToken = \"%s\"\n",
-                        Information.AccessToken,
-                        Information.RefreshToken);
-                    hr = ::HccImpersonate(
-                        Session,
-                        Information.RefreshToken);
-                    if (SUCCEEDED(hr))
-                    {
-                        std::printf("Refresh Success!\n");
-                    }
+    //{
+    //    HCC_USER Information = { 0 };
+    //    hr = ::HccGetUserInformation(Session, &Information);
+    //    if (SUCCEEDED(hr))
+    //    {
+    //        std::printf(
+    //            "Identity = \"%s\"\n"
+    //            "Name = \"%s\"\n",
+    //            Information.Identity,
+    //            Information.Name);
+    //        ::HccFreeUser(&Information);
+    //    }
+    //}
 
-                    ::HccFreeToken(&Information);
-                }
-            }
-
-            {
-                HCC_USER Information = { 0 };
-                hr = ::HccGetUserInformation(Session, &Information);
-                if (SUCCEEDED(hr))
-                {
-                    std::printf(
-                        "Identity = \"%s\"\n"
-                        "Name = \"%s\"\n",
-                        Information.Identity,
-                        Information.Name);
-                    ::HccFreeUser(&Information);
-                }
-            }
-
-            hr = ::HccLogout(Session);
-            if (SUCCEEDED(hr))
-            {
-                std::printf("Logout Success!\n");
-            }
-        }
-
-        ::HccCloseSessionManager(Session);
-    }
+    //hr = ::HccLogout(Session);
+    //if (SUCCEEDED(hr))
+    //{
+    //    std::printf("Logout Success!\n");
+    //}
 
     std::printf(
         "================================================================\n"
