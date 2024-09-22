@@ -30,6 +30,10 @@ namespace HalalCloud
     private:
 
         HCC_RPC_SESSION m_Session = nullptr;
+        nlohmann::json m_CurrentToken;
+
+        void ApplyAccessToken(
+            nlohmann::json const& Token);
 
     public:
 
@@ -39,12 +43,19 @@ namespace HalalCloud
 
         HCC_RPC_SESSION NativeHandle();
 
+        nlohmann::json CurrentToken();
+
         nlohmann::json Request(
             std::string_view MethodFullName,
             nlohmann::json const& Request);
 
-        std::string Authenticate(
+        void Authenticate(
             std::function<void(std::string_view)> Callback);
+
+        void Impersonate(
+            std::string_view RefreshToken);
+
+        void Logout();
     };
 }
 

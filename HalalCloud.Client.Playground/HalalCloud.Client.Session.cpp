@@ -23,6 +23,22 @@
         Value));
 }
 
+void HalalCloud::Session::ApplyAccessToken(
+    nlohmann::json const& Token)
+{
+    std::string AccessToken = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Token, "access_token"));
+    HRESULT hr = ::HccRpcSetAccessToken(
+        this->m_Session,
+        AccessToken.c_str());
+    if (FAILED(hr))
+    {
+        HalalCloud::ThrowExceptionWithHResult(
+            "HccRpcSetAccessToken",
+            hr);
+    }
+}
+
 HalalCloud::Session::Session()
 {
     HRESULT hr = ::HccRpcCreateSession(&this->m_Session);
@@ -42,6 +58,11 @@ HalalCloud::Session::~Session()
 HCC_RPC_SESSION HalalCloud::Session::NativeHandle()
 {
     return this->m_Session;
+}
+
+nlohmann::json HalalCloud::Session::CurrentToken()
+{
+    return this->m_CurrentToken;
 }
 
 nlohmann::json HalalCloud::Session::Request(
@@ -72,7 +93,7 @@ nlohmann::json HalalCloud::Session::Request(
     return nlohmann::json::parse(ResponseJson);
 }
 
-std::string HalalCloud::Session::Authenticate(
+void HalalCloud::Session::Authenticate(
     std::function<void(std::string_view)> Callback)
 {
     nlohmann::json Request;
@@ -93,7 +114,6 @@ std::string HalalCloud::Session::Authenticate(
             Mile::Json::GetSubKey(Response, "callback"));
     }
 
-    std::string Token;
     while (true)
     {
         nlohmann::json Response = this->Request(
@@ -102,14 +122,37 @@ std::string HalalCloud::Session::Authenticate(
         if (6 == Mile::Json::ToInt64(
             Mile::Json::GetSubKey(Response, "status")))
         {
-            Token = Mile::Json::GetSubKey(
+            nlohmann::json Token = Mile::Json::GetSubKey(
                 Mile::Json::GetSubKey(Response, "login"),
-                "token").dump(2);
+                "token");
+            this->ApplyAccessToken(Token);
+            this->m_CurrentToken = Token;
             break;
         }
 
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
+}
 
-    return Token;
+void HalalCloud::Session::Impersonate(
+    std::string_view RefreshToken)
+{
+    nlohmann::json Request;
+    Request["refresh_token"] = RefreshToken;
+    nlohmann::json Response = this->Request(
+        "/v6.services.pub.PubUser/Refresh",
+        Request);
+    this->ApplyAccessToken(Response);
+    this->m_CurrentToken = Response;
+}
+
+void HalalCloud::Session::Logout()
+{
+    if (!this->m_CurrentToken.empty())
+    {
+        this->Request(
+            "/v6.services.pub.PubUser/Logoff",
+            this->m_CurrentToken);
+        this->m_CurrentToken = std::string();
+    }
 }

@@ -26,7 +26,7 @@ int main()
 {
     HalalCloud::Session Session;
 
-    std::string Token = Session.Authenticate([](
+    Session.Authenticate([](
         std::string_view AuthenticationUri)
     {
         std::printf(
@@ -50,34 +50,21 @@ int main()
 
     std::printf(
         "Token = \"%s\"\n",
-        Token.c_str());
+        Session.CurrentToken().dump(2).c_str());
+
+    Session.Impersonate(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Session.CurrentToken(), "refresh_token")));
+
+    std::printf("Refresh Success!\n");
+
+    std::printf(
+        "Token = \"%s\"\n",
+        Session.CurrentToken().dump(2).c_str());
 
     ///*hr = ::HccUploadFile(
     //            Session,
     //            "D:\\Updates\\9p.cap",
     //            "/9p.cap");*/
-
-    //{
-    //    HCC_TOKEN Information = { 0 };
-    //    hr = ::HccGetTokenInformation(Session, &Information);
-    //    if (SUCCEEDED(hr))
-    //    {
-    //        std::printf(
-    //            "AccessToken = \"%s\"\n"
-    //            "RefreshToken = \"%s\"\n",
-    //            Information.AccessToken,
-    //            Information.RefreshToken);
-    //        hr = ::HccImpersonate(
-    //            Session,
-    //            Information.RefreshToken);
-    //        if (SUCCEEDED(hr))
-    //        {
-    //            std::printf("Refresh Success!\n");
-    //        }
-
-    //        ::HccFreeToken(&Information);
-    //    }
-    //}
 
     //{
     //    HCC_USER Information = { 0 };
@@ -93,11 +80,9 @@ int main()
     //    }
     //}
 
-    //hr = ::HccLogout(Session);
-    //if (SUCCEEDED(hr))
-    //{
-    //    std::printf("Logout Success!\n");
-    //}
+    Session.Logout();
+
+    std::printf("Logout Success!\n");
 
     std::printf(
         "================================================================\n"
