@@ -473,7 +473,7 @@ namespace HalalCloud.RpcClient
             metadata.Add("appversion", RpcClientApplicationVersion);
 
             string Authorization = string.Empty;
-            if (string.IsNullOrWhiteSpace(AccessToken))
+            if (!string.IsNullOrWhiteSpace(AccessToken))
             {
                 Authorization = "Bearer " + AccessToken;
             }
