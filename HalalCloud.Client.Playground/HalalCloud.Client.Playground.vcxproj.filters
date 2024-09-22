@@ -6,8 +6,10 @@
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Core.Native.cpp" />
+    <ClCompile Include="HalalCloud.Client.Session.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HalalCloud.Client.Core.Native.h" />
+    <ClInclude Include="HalalCloud.Client.Session.h" />
   </ItemGroup>
 </Project>
