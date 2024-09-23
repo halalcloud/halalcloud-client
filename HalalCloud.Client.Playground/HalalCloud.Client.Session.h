@@ -18,12 +18,30 @@
 
 #include <functional>
 #include <string_view>
+#include <vector>
 
 namespace HalalCloud
 {
     [[noreturn]] void ThrowExceptionWithHResult(
         _In_ LPCSTR Checkpoint,
         _In_ HRESULT Value);
+
+    struct FileInformation
+    {
+        std::int64_t CreationTime;
+        std::int64_t LastWriteTime;
+        std::int64_t FileSize;
+        union
+        {
+            struct
+            {
+                std::uint64_t IsDirectory : 1;
+                std::uint64_t IsHidden : 1;
+            } Fields;
+            std::uint64_t Value;
+        } FileAttributes;
+        std::string FileName;
+    };
 
     class Session : Mile::DisableCopyConstruction
     {
@@ -56,6 +74,14 @@ namespace HalalCloud
             std::string_view RefreshToken);
 
         void Logout();
+
+        nlohmann::json GetUserInformation();
+
+        nlohmann::json CreateFolder(
+            std::string_view Path);
+
+        std::vector<FileInformation> EnumerateFiles(
+            std::string_view Path);
     };
 }
 

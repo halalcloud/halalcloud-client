@@ -156,3 +156,66 @@ void HalalCloud::Session::Logout()
         this->m_CurrentToken = std::string();
     }
 }
+
+nlohmann::json HalalCloud::Session::GetUserInformation()
+{
+    return this->Request(
+        "/v6.services.pub.PubUser/Get",
+        nlohmann::json::object());
+}
+
+nlohmann::json HalalCloud::Session::CreateFolder(
+    std::string_view Path)
+{
+    nlohmann::json Request;
+    Request["path"] = Path;
+    return this->Request(
+        "/v6.services.pub.PubUserFile/Create",
+        Request);
+}
+
+std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
+    std::string_view Path)
+{
+    std::vector<HalalCloud::FileInformation> Result;
+    std::string NextToken;
+
+    nlohmann::json Request;
+    Request["parent"]["path"] = Path;
+
+    do
+    {
+        Request["list_info"]["token"] = NextToken;
+
+        nlohmann::json Response = this->Request(
+            "/v6.services.pub.PubUserFile/List",
+            Request);
+
+        NextToken = Mile::Json::ToString(Mile::Json::GetSubKey(
+            Mile::Json::GetSubKey(Response, "list_info"),
+            "token"));
+
+        for (nlohmann::json const& File
+            : Mile::Json::GetSubKey(Response, "files"))
+        {
+            HalalCloud::FileInformation Current;
+
+            Current.CreationTime = Mile::Json::ToInt64(
+                Mile::Json::GetSubKey(File, "create_ts"));
+            Current.LastWriteTime = Mile::Json::ToInt64(
+                Mile::Json::GetSubKey(File, "update_ts"));
+            Current.FileSize = Mile::Json::ToInt64(
+                Mile::Json::GetSubKey(File, "size"));
+            Current.FileAttributes.Fields.IsDirectory = Mile::Json::ToBoolean(
+                Mile::Json::GetSubKey(File, "dir"));
+            Current.FileAttributes.Fields.IsHidden = Mile::Json::ToBoolean(
+                Mile::Json::GetSubKey(File, "hidden"));
+            Current.FileName = Mile::Json::ToString(
+                Mile::Json::GetSubKey(File, "name"));
+
+            Result.push_back(Current);
+        }
+    } while (!NextToken.empty());
+
+    return Result;
+}

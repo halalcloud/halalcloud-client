@@ -22,6 +22,8 @@
 
 #include "HalalCloud.Client.Session.h"
 
+#include <time.h>
+
 int main()
 {
     HalalCloud::Session Session;
@@ -61,24 +63,35 @@ int main()
         "Token = \"%s\"\n",
         Session.CurrentToken().dump(2).c_str());
 
+    std::printf(
+        "UserInformation = %s\n",
+        Session.GetUserInformation().dump(2).c_str());
+
     ///*hr = ::HccUploadFile(
     //            Session,
     //            "D:\\Updates\\9p.cap",
     //            "/9p.cap");*/
 
-    //{
-    //    HCC_USER Information = { 0 };
-    //    hr = ::HccGetUserInformation(Session, &Information);
-    //    if (SUCCEEDED(hr))
-    //    {
-    //        std::printf(
-    //            "Identity = \"%s\"\n"
-    //            "Name = \"%s\"\n",
-    //            Information.Identity,
-    //            Information.Name);
-    //        ::HccFreeUser(&Information);
-    //    }
-    //}
+    Session.CreateFolder("/Test20240923");
+
+    std::vector<HalalCloud::FileInformation> Files =
+        Session.EnumerateFiles("/");
+    for(HalalCloud::FileInformation const& File : Files)
+    {
+        std::time_t Time = File.CreationTime / 1000;
+        std::tm TimeInfo = { 0 };
+        ::localtime_s(&TimeInfo, &Time);
+        std::printf(
+            "%04d/%02d/%02d %02d:%02d\t%s\t%lld\t%s\n",
+            TimeInfo.tm_year + 1900,
+            TimeInfo.tm_mon + 1,
+            TimeInfo.tm_mday,
+            TimeInfo.tm_hour,
+            TimeInfo.tm_min,
+            File.FileAttributes.Fields.IsDirectory ? "<DIR>" : "",
+            File.FileSize,
+            File.FileName.c_str());
+    }
 
     Session.Logout();
 
