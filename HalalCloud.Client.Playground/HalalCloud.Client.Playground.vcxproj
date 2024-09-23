@@ -22,22 +22,7 @@
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.Default.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.props" />
   <Import Project="..\HalalCloud.RpcClient\HalalCloud.RpcClient.props" />
-  <ItemDefinitionGroup>
-    <Link>
-      <AdditionalDependencies Condition="'$(Platform)'=='x64'">$(OutDir)net8.0-windows\win-x64\native\HalalCloud.Client.Core.Native.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(Platform)'=='ARM64'">$(OutDir)net8.0-windows\win-arm64\native\HalalCloud.Client.Core.Native.lib;%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemGroup Condition="'$(Platform)'=='x64'">
-    <ReferenceCopyLocalPaths Include="$(OutDir)net8.0-windows\win-x64\native\HalalCloud.Client.Core.Native.dll" />
-    <ReferenceCopyLocalPaths Include="$(OutDir)net8.0-windows\win-x64\native\HalalCloud.Client.Core.Native.pdb" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(Platform)'=='ARM64'">
-    <ReferenceCopyLocalPaths Include="$(OutDir)net8.0-windows\win-arm64\native\HalalCloud.Client.Core.Native.dll" />
-    <ReferenceCopyLocalPaths Include="$(OutDir)net8.0-windows\win-arm64\native\HalalCloud.Client.Core.Native.pdb" />
-  </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HalalCloud.Client.Core.Native.cpp" />
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
   </ItemGroup>
@@ -45,7 +30,6 @@
     <Manifest Include="HalalCloud.Client.Playground.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HalalCloud.Client.Core.Native.h" />
     <ClInclude Include="HalalCloud.Client.Session.h" />
   </ItemGroup>
   <ItemGroup>

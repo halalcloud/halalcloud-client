@@ -18,8 +18,6 @@
 
 #include <Mile.Json.h>
 
-#include "HalalCloud.Client.Core.Native.h"
-
 #include "HalalCloud.Client.Session.h"
 
 #include <time.h>
