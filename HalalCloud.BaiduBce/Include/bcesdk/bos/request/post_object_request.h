@@ -17,7 +17,12 @@
 #include "bcesdk/bos/model/object_meta_data.h"
 #include "bcesdk/bos/model/bucket_request.h"
 #include "bcesdk/bos/model/upload_request.h"
+#ifndef _WIN32
 #include "bcesdk/common/file_stream.h"
+#else
+#include "bcesdk/common/win_file_stream.h"
+#endif
+
 
 BEGIN_CPPSDK_NAMESPACE
 
