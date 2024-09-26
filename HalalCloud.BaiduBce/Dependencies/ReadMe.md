@@ -9,3 +9,7 @@ vcpkg install curl[core,schannel]:x64-windows-static jsoncpp:x64-windows-static
 vcpkg install curl[core,schannel]:x86-windows-static jsoncpp:x86-windows-static
 vcpkg install curl[core,schannel]:arm64-windows-static jsoncpp:arm64-windows-static
 ```
+
+## Note
+
+libuuid is extracted from BCE SDK for C++.
