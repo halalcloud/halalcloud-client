@@ -82,6 +82,10 @@ namespace HalalCloud
 
         std::vector<FileInformation> EnumerateFiles(
             std::string_view Path);
+
+        void UploadFile(
+            std::string_view SourceFilePath,
+            std::string_view TargetFilePath);
     };
 }
 

@@ -32,5 +32,6 @@ extern "C" int HccBcePutObject(
     baidu::bos::cppsdk::FileInputStream FileStream(FilePath);
     baidu::bos::cppsdk::PutObjectRequest Request(Bucket, Key, &FileStream);
     baidu::bos::cppsdk::PutObjectResponse Response;
-    return Client.put_object(Request, &Response);
+    Client.put_object(Request, &Response);
+    return Response.status_code();
 }

@@ -65,10 +65,9 @@ int main()
         "UserInformation = %s\n",
         Session.GetUserInformation().dump(2).c_str());
 
-    ///*hr = ::HccUploadFile(
-    //            Session,
-    //            "D:\\Updates\\9p.cap",
-    //            "/9p.cap");*/
+    Session.UploadFile(
+        "D:\\Updates\\9p.cap",
+        "/9p20240925.cap");
 
     Session.CreateFolder("/Test20240923");
 

@@ -22,6 +22,7 @@
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.Default.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.props" />
   <Import Project="..\HalalCloud.RpcClient\HalalCloud.RpcClient.props" />
+  <Import Project="..\HalalCloud.BaiduBce\HalalCloud.BaiduBce.props" />
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />

@@ -5,6 +5,7 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalalCloud.Client.Playground", "HalalCloud.Client.Playground\HalalCloud.Client.Playground.vcxproj", "{86D4AFAD-E229-4849-965B-3D1DE93CA98C}"
 	ProjectSection(ProjectDependencies) = postProject
+		{68A09EBE-493D-4525-9B19-007F2C32C435} = {68A09EBE-493D-4525-9B19-007F2C32C435}
 		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A} = {D5ECCC0A-B633-4BE3-9F74-31A8D744821A}
 	EndProjectSection
 EndProject

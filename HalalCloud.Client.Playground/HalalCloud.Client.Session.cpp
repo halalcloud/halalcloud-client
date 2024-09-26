@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <thread>
 
+#include <HalalCloud.BaiduBce.h>
+
 [[noreturn]] void HalalCloud::ThrowExceptionWithHResult(
     _In_ LPCSTR Checkpoint,
     _In_ HRESULT Value)
@@ -218,4 +220,44 @@ std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
     } while (!NextToken.empty());
 
     return Result;
+}
+
+void HalalCloud::Session::UploadFile(
+    std::string_view SourceFilePath,
+    std::string_view TargetFilePath)
+{
+    nlohmann::json Request;
+    Request["path"] = TargetFilePath;
+
+    nlohmann::json Response = this->Request(
+        "/v6.services.pub.PubUserFile/CreateUploadToken",
+        Request);
+
+    std::string Endpoint = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "endpoint"));
+    std::string AccessKey = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "access_key"));
+    std::string SecretKey = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "secret_key"));
+    std::string Token = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "token"));
+    std::string Bucket = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "bucket"));
+    std::string Key = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "key"));
+
+    int Error = ::HccBcePutObject(
+        SourceFilePath.data(),
+        Endpoint.c_str(),
+        AccessKey.c_str(),
+        SecretKey.c_str(),
+        Token.c_str(),
+        Bucket.c_str(),
+        Key.c_str());
+    if (0 != Error)
+    {
+        HalalCloud::ThrowExceptionWithHResult(
+            "HccBcePutObject",
+            Error);
+    }
 }
