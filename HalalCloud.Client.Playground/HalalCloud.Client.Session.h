@@ -43,6 +43,32 @@ namespace HalalCloud
         std::string FileName;
     };
 
+    namespace FileStorageType
+    {
+        enum
+        {
+            Unknown,
+            Ipfs,
+            BaiduObjectStorage
+        };
+    }
+
+    struct FileStorageNode
+    {
+        std::int64_t Offset;
+        std::int64_t Size;
+        std::string Identifier;
+    };
+
+    struct FileStorageInformation
+    {
+        std::string Identifier;
+        std::int64_t Size;
+        std::string Path;
+        std::uint32_t Type;
+        std::vector<FileStorageNode> Nodes;
+    };
+
     class Session : Mile::DisableCopyConstruction
     {
     private:
@@ -86,6 +112,9 @@ namespace HalalCloud
         void UploadFile(
             std::string_view SourceFilePath,
             std::string_view TargetFilePath);
+
+        FileStorageInformation GetFileStorageInformation(
+            std::string_view Path);
     };
 }
 

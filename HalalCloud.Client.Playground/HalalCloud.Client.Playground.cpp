@@ -90,6 +90,9 @@ int main()
             File.FileName.c_str());
     }
 
+    auto Yolo = Session.GetFileStorageInformation("/9p.cap");
+    Yolo = Yolo;
+
     Session.Logout();
 
     std::printf("Logout Success!\n");
