@@ -1,0 +1,591 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Source\auth\auth.cpp">
+      <Filter>Source\auth</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\model\object_meta_data.cpp">
+      <Filter>Source\bos\model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\model\upload_request.cpp">
+      <Filter>Source\bos\model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\model\acl_data.cpp">
+      <Filter>Source\bos\model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\model\copy_request.cpp">
+      <Filter>Source\bos\model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\request\object_request.cpp">
+      <Filter>Source\bos\request</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\request\post_object_request.cpp">
+      <Filter>Source\bos\request</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\request\complete_multipart_upload_request.cpp">
+      <Filter>Source\bos\request</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\get_bucket_acl_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\get_bucket_location_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\get_bucket_trash_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\get_object_acl_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\get_object_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\get_object_tagging_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\init_multi_upload_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\list_buckets_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\list_multipart_uploads_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\list_objects_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\list_parts_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\append_object_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\complete_multipart_upload_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\copy_object_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\response\copy_part_response.cpp">
+      <Filter>Source\bos\response</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\client_impl.cpp">
+      <Filter>Source\bos</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\bos\client.cpp">
+      <Filter>Source\bos</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\http\http_request.cpp">
+      <Filter>Source\http</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\http\http_response.cpp">
+      <Filter>Source\http</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\http\http_client.cpp">
+      <Filter>Source\http</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\model\json_response.cpp">
+      <Filter>Source\model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\model\bce_request.cpp">
+      <Filter>Source\model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\model\bce_response.cpp">
+      <Filter>Source\model</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\util\win_crypto_impl.cpp">
+      <Filter>Source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\util\windows_port.cpp">
+      <Filter>Source\util</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\util\util.cpp">
+      <Filter>Source\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{b35f67c8-bc5f-4786-917c-42994e707e68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk">
+      <UniqueIdentifier>{f5827aaa-b227-4d39-87d8-055ec8a75741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\auth">
+      <UniqueIdentifier>{5c488f8d-2be4-4a82-8479-0f7442456a36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\bos">
+      <UniqueIdentifier>{7b902acf-0efa-4616-ae1a-1b7babf14ad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\common">
+      <UniqueIdentifier>{37a159e1-7541-4a0d-82ac-b0a8560eb410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\http">
+      <UniqueIdentifier>{a7a5073a-e5eb-4ba8-8114-a2e68e7132cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\model">
+      <UniqueIdentifier>{65800d9e-262a-482c-9553-42617c667919}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\util">
+      <UniqueIdentifier>{a7f4224c-fd8b-46cf-8f4e-4542660e5c4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{77e18c2d-d885-4c80-840d-80afa7c60d46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\auth">
+      <UniqueIdentifier>{5b468c98-5acf-4340-a5a5-25369a21dda7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\bos">
+      <UniqueIdentifier>{a2b59fe3-e422-474b-a103-1b1a40e43cd3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\http">
+      <UniqueIdentifier>{d871a64c-207a-443f-ad4f-c9544b0ff5d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\model">
+      <UniqueIdentifier>{89566296-563a-40d5-a5e9-00f6f39cc92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\util">
+      <UniqueIdentifier>{dcdd2ab9-5324-42ba-a7f9-a9da021b1b50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\bos\model">
+      <UniqueIdentifier>{35054008-b81e-4932-a180-4cf7186555ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\bos\request">
+      <UniqueIdentifier>{01df5ae2-d910-4e45-b1b2-57552d32abf8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\bcesdk\bos\response">
+      <UniqueIdentifier>{e4a316d7-a75c-4d15-8ceb-5c00e3622832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\bos\model">
+      <UniqueIdentifier>{9e451826-19e2-4704-80b4-04d83a3da6b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\bos\request">
+      <UniqueIdentifier>{3d420e99-b4f0-4f30-bddc-1cc8a66c6e9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\bos\response">
+      <UniqueIdentifier>{e00edf78-0b37-43ad-9ce3-baf389dc5fb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{608bfffd-266f-4b7a-b8c9-dcd697bb13cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Include">
+      <UniqueIdentifier>{2391507b-93a5-4019-a0a0-759808ffdb43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Include\curl">
+      <UniqueIdentifier>{3a13c0cc-5f4a-4da3-afb8-bf9f2036b825}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Include\json">
+      <UniqueIdentifier>{8a8769ff-a4f8-48b4-be9d-5d61081d5d7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Lib">
+      <UniqueIdentifier>{4d0f3262-67b9-468c-bbd4-2db1055d272d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Lib\arm64">
+      <UniqueIdentifier>{fb041168-75fe-440a-97ec-13dc412bf666}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Lib\x64">
+      <UniqueIdentifier>{80b1ce2a-e2b8-4de2-81e8-6633521c3548}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Lib\x86">
+      <UniqueIdentifier>{9b46b348-835a-4966-a53d-78bc0d548293}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\Include\uuid">
+      <UniqueIdentifier>{0e3b3cb9-a27f-49c7-951f-1364f74baab9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\bcesdk\auth\auth.h">
+      <Filter>Include\bcesdk\auth</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\model\copy_request.h">
+      <Filter>Include\bcesdk\bos\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\model\object_meta_data.h">
+      <Filter>Include\bcesdk\bos\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\model\object_meta_request.h">
+      <Filter>Include\bcesdk\bos\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\model\object_request.h">
+      <Filter>Include\bcesdk\bos\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\model\service_request.h">
+      <Filter>Include\bcesdk\bos\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\model\upload_request.h">
+      <Filter>Include\bcesdk\bos\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\model\acl_data.h">
+      <Filter>Include\bcesdk\bos\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\model\bucket_request.h">
+      <Filter>Include\bcesdk\bos\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\copy_object_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\copy_part_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\delete_bucket_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\delete_bucket_trash_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\delete_object_acl_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\delete_object_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\get_bucket_acl_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\get_bucket_location_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\get_bucket_trash_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\get_object_acl_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\get_object_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\get_object_tagging_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\head_bucket_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\head_object_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\init_multi_upload_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\list_buckets_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\list_multipart_uploads_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\list_objects_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\list_parts_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\post_object_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\put_bucket_acl_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\put_bucket_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\put_bucket_trash_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\put_object_acl_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\put_object_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\put_object_tagging_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\restore_object_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\upload_part_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\abort_multipart_upload_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\append_object_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\complete_multipart_upload_request.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\request\control_notify.h">
+      <Filter>Include\bcesdk\bos\request</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\copy_part_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\delete_bucket_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\delete_bucket_trash_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\delete_object_acl_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\delete_object_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\get_bucket_acl_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\get_bucket_location_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\get_bucket_trash_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\get_object_acl_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\get_object_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\get_object_tagging_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\head_bucket_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\head_object_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\init_multi_upload_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\list_buckets_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\list_multipart_uploads_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\list_objects_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\list_parts_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\post_object_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\put_bucket_acl_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\put_bucket_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\put_bucket_trash_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\put_object_acl_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\put_object_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\put_object_tagging_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\restore_object_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\upload_part_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\abort_multipart_upload_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\append_object_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\complete_multipart_upload_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\response\copy_object_response.h">
+      <Filter>Include\bcesdk\bos\response</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\client.h">
+      <Filter>Include\bcesdk\bos</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\client_impl.h">
+      <Filter>Include\bcesdk\bos</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\bos\client_options.h">
+      <Filter>Include\bcesdk\bos</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\common\memory_stream.h">
+      <Filter>Include\bcesdk\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\common\stream.h">
+      <Filter>Include\bcesdk\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\common\win_file_stream.h">
+      <Filter>Include\bcesdk\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\common\common.h">
+      <Filter>Include\bcesdk\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\common\file_stream.h">
+      <Filter>Include\bcesdk\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\http\unix_curl_global.h">
+      <Filter>Include\bcesdk\http</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\http\win_curl_global.h">
+      <Filter>Include\bcesdk\http</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\http\http_client.h">
+      <Filter>Include\bcesdk\http</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\http\http_request.h">
+      <Filter>Include\bcesdk\http</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\http\http_response.h">
+      <Filter>Include\bcesdk\http</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\http\http_service_data.h">
+      <Filter>Include\bcesdk\http</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\model\json_response.h">
+      <Filter>Include\bcesdk\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\model\bce_request.h">
+      <Filter>Include\bcesdk\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\model\bce_response.h">
+      <Filter>Include\bcesdk\model</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\util\util.h">
+      <Filter>Include\bcesdk\util</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\util\windows_port.h">
+      <Filter>Include\bcesdk\util</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\util\crypto_util.h">
+      <Filter>Include\bcesdk\util</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\bcesdk\util\lock.h">
+      <Filter>Include\bcesdk\util</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\multi.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\options.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\stdcheaders.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\system.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\typecheck-gcc.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\urlapi.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\websockets.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\curl.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\curlver.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\easy.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\header.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\curl\mprintf.h">
+      <Filter>Dependencies\Include\curl</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\reader.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\value.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\version.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\writer.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\allocator.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\assertions.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\config.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\forwards.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\json.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\json\json_features.h">
+      <Filter>Dependencies\Include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\zconf.h">
+      <Filter>Dependencies\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\zlib.h">
+      <Filter>Dependencies\Include</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\Include\uuid\uuid.h">
+      <Filter>Dependencies\Include\uuid</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dependencies\Lib\arm64\libcurl.lib">
+      <Filter>Dependencies\Lib\arm64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\arm64\zlib.lib">
+      <Filter>Dependencies\Lib\arm64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\arm64\jsoncpp.lib">
+      <Filter>Dependencies\Lib\arm64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x64\libcurl.lib">
+      <Filter>Dependencies\Lib\x64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x64\zlib.lib">
+      <Filter>Dependencies\Lib\x64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x64\jsoncpp.lib">
+      <Filter>Dependencies\Lib\x64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x86\libcurl.lib">
+      <Filter>Dependencies\Lib\x86</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x86\zlib.lib">
+      <Filter>Dependencies\Lib\x86</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x86\jsoncpp.lib">
+      <Filter>Dependencies\Lib\x86</Filter>
+    </None>
+    <None Include="Dependencies\ReadMe.md">
+      <Filter>Dependencies</Filter>
+    </None>
+    <None Include="Dependencies\.gitignore">
+      <Filter>Dependencies</Filter>
+    </None>
+    <None Include="Source\util\openssl_crypto_impl.cpp">
+      <Filter>Source\util</Filter>
+    </None>
+    <None Include="HalalCloud.BaiduBce.props" />
+  </ItemGroup>
+</Project>
