@@ -1,4 +1,4 @@
-#ifndef CURLINC_WEBSOCKETS_H
+﻿#ifndef CURLINC_WEBSOCKETS_H
 #define CURLINC_WEBSOCKETS_H
 /***************************************************************************
  *                                  _   _ ____  _

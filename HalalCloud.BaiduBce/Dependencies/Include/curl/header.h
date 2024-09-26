@@ -1,4 +1,4 @@
-#ifndef CURLINC_HEADER_H
+﻿#ifndef CURLINC_HEADER_H
 #define CURLINC_HEADER_H
 /***************************************************************************
  *                                  _   _ ____  _
