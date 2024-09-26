@@ -19,27 +19,6 @@ namespace HalalCloud.Client.Core
             return BitConverter.ToString(ByteArray).Replace("-", "");
         }
 
-        public static string ComputeSignature(
-            string ApplicationId,
-            string ApplicationVersion,
-            string ApplicationSecret,
-            string Authorization,
-            string MethodName,
-            long TimeStamp)
-        {
-            StringBuilder Source = new StringBuilder();
-            Source.Append(MethodName);
-            Source.Append(TimeStamp.ToString());
-            Source.Append(ApplicationId);
-            Source.Append(ApplicationVersion);
-            if (!string.IsNullOrWhiteSpace(Authorization))
-            {
-                Source.Append(Authorization);
-            }
-            Source.Append(ApplicationSecret);
-            return ConvertByteArrayToHexString(ComputeMD5(Source.ToString()));
-        }
-
         public static string ToHashString(
             byte[] Hash)
         {
