@@ -103,6 +103,7 @@
     <ClCompile Include="Source\util\util.cpp">
       <Filter>Source\util</Filter>
     </ClCompile>
+    <ClCompile Include="HalalCloud.BaiduBce.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -545,6 +546,7 @@
     <ClInclude Include="Dependencies\Include\zlib.h">
       <Filter>Dependencies\Include</Filter>
     </ClInclude>
+    <ClInclude Include="HalalCloud.BaiduBce.h" />
     <ClInclude Include="Dependencies\Include\uuid\uuid.h">
       <Filter>Dependencies\Include\uuid</Filter>
     </ClInclude>

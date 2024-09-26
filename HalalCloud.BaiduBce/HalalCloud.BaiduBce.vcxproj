@@ -5,7 +5,7 @@
     <RootNamespace>HalalCloud.BaiduBce</RootNamespace>
     <MileProjectType>DynamicLibrary</MileProjectType>
     <MileProjectEnableVCLTLSupport>true</MileProjectEnableVCLTLSupport>
-    <MileProjectUseProjectProperties>false</MileProjectUseProjectProperties>
+    <MileProjectUseProjectProperties>true</MileProjectUseProjectProperties>
     <MileProjectCompanyName>Halal Cloud</MileProjectCompanyName>
     <MileProjectFileDescription>HalalCloud.BaiduBce</MileProjectFileDescription>
     <MileProjectInternalName>HalalCloud.BaiduBce</MileProjectInternalName>
@@ -34,11 +34,13 @@
       <GuardSignedReturns Condition="'$(Platform)' == 'ARM64' Or '$(Platform)' == 'ARM64EC'">false</GuardSignedReturns>
     </ClCompile>
     <Link>
+      <ModuleDefinitionFile>HalalCloud.BaiduBce.def</ModuleDefinitionFile>
       <AdditionalDependencies>jsoncpp.lib;libcurl.lib;zlib.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <CETCompat Condition="'$(Platform)' == 'Win32' Or '$(Platform)' == 'x64'">false</CETCompat>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HalalCloud.BaiduBce.cpp" />
     <ClCompile Include="Source\auth\auth.cpp" />
     <ClCompile Include="Source\bos\client.cpp" />
     <ClCompile Include="Source\bos\client_impl.cpp" />
@@ -100,6 +102,7 @@
     <ClInclude Include="Dependencies\Include\uuid\uuid.h" />
     <ClInclude Include="Dependencies\Include\zconf.h" />
     <ClInclude Include="Dependencies\Include\zlib.h" />
+    <ClInclude Include="HalalCloud.BaiduBce.h" />
     <ClInclude Include="Include\bcesdk\auth\auth.h" />
     <ClInclude Include="Include\bcesdk\bos\client.h" />
     <ClInclude Include="Include\bcesdk\bos\client_impl.h" />
@@ -206,6 +209,7 @@
     <None Include="Dependencies\Lib\x86\zlib.lib" />
     <None Include="Dependencies\.gitignore" />
     <None Include="Dependencies\ReadMe.md" />
+    <None Include="HalalCloud.BaiduBce.def" />
     <None Include="Source\util\openssl_crypto_impl.cpp" />
     <None Include="HalalCloud.BaiduBce.props" />
   </ItemGroup>
