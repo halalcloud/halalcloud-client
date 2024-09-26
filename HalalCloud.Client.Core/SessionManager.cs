@@ -1,8 +1,4 @@
-﻿using BaiduBce.Auth;
-using BaiduBce.Services.Bos.Model;
-using BaiduBce.Services.Bos;
-using BaiduBce;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Grpc.Net.Client;
 using V6.Services.Pub;
@@ -152,53 +148,6 @@ namespace HalalCloud.Client.Core
             V6.Services.Pub.File Request = new V6.Services.Pub.File();
             Request.Path = Path;
             return Client.Create(Request);
-        }
-
-        public void UploadFile(
-            string SourceFilePath,
-            string TargetFilePath)
-        {
-            PubUserFileClient RpcClient = new PubUserFileClient(RpcInvoker);
-            V6.Services.Pub.File RpcRequest = new V6.Services.Pub.File();
-            RpcRequest.Path = TargetFilePath;
-            UploadToken RpcResponse = RpcClient.CreateUploadToken(RpcRequest);
-
-            BceClientConfiguration UploadConfiguration =
-                new BceClientConfiguration();
-            UploadConfiguration.Credentials =
-                new DefaultBceSessionCredentials(
-                    RpcResponse.AccessKey,
-                    RpcResponse.SecretKey,
-                    RpcResponse.Token);
-            UploadConfiguration.Endpoint = RpcResponse.Endpoint;
-            BosClient UploadClient = new BosClient(UploadConfiguration);
-
-            //InitiateMultipartUploadRequest InitiateRequest =
-            //    new InitiateMultipartUploadRequest();
-            //InitiateRequest.BucketName = RpcResponse.Bucket;
-            //InitiateRequest.Key = RpcResponse.Key;
-            //InitiateMultipartUploadResponse InitiateResponse =
-            //    UploadClient.InitiateMultipartUpload(InitiateRequest);
-
-            //ListMultipartUploadsRequest ListRequest =
-            //    new ListMultipartUploadsRequest();
-            //ListRequest.BucketName = RpcResponse.Bucket;
-            //ListMultipartUploadsResponse ListResponse =
-            //    UploadClient.ListMultipartUploads(ListRequest);
-
-            //foreach (MultipartUploadSummary Upload in ListResponse.Uploads)
-            //{
-            //    Console.WriteLine(
-            //        "Key = {0}, UploadId = {1}",
-            //        Upload.Key,
-            //        Upload.UploadId);
-            //}
-
-            FileInfo UploadFile = new FileInfo(SourceFilePath);
-            PutObjectResponse UploadResponse = UploadClient.PutObject(
-                RpcResponse.Bucket,
-                RpcResponse.Key,
-                UploadFile);
         }
 
         public List<FileInformation> EnumerateFiles(
