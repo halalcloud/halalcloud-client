@@ -589,5 +589,33 @@
       <Filter>Source\util</Filter>
     </None>
     <None Include="HalalCloud.BaiduBce.props" />
+    <None Include="HalalCloud.BaiduBce.def" />
+    <None Include="Dependencies\Lib\arm64\jsoncppd.lib">
+      <Filter>Dependencies\Lib\arm64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\arm64\libcurld.lib">
+      <Filter>Dependencies\Lib\arm64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\arm64\zlibd.lib">
+      <Filter>Dependencies\Lib\arm64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x64\zlibd.lib">
+      <Filter>Dependencies\Lib\x64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x64\jsoncppd.lib">
+      <Filter>Dependencies\Lib\x64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x64\libcurld.lib">
+      <Filter>Dependencies\Lib\x64</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x86\zlibd.lib">
+      <Filter>Dependencies\Lib\x86</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x86\jsoncppd.lib">
+      <Filter>Dependencies\Lib\x86</Filter>
+    </None>
+    <None Include="Dependencies\Lib\x86\libcurld.lib">
+      <Filter>Dependencies\Lib\x86</Filter>
+    </None>
   </ItemGroup>
 </Project>

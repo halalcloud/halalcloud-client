@@ -35,7 +35,9 @@
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>HalalCloud.BaiduBce.def</ModuleDefinitionFile>
-      <AdditionalDependencies>jsoncpp.lib;libcurl.lib;zlib.lib;crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(UseDebugLibraries)' == 'true'">jsoncppd.lib;libcurld.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(UseDebugLibraries)' != 'true'">jsoncpp.lib;libcurl.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <CETCompat Condition="'$(Platform)' == 'Win32' Or '$(Platform)' == 'x64'">false</CETCompat>
     </Link>
   </ItemDefinitionGroup>
@@ -212,6 +214,15 @@
     <None Include="HalalCloud.BaiduBce.def" />
     <None Include="Source\util\openssl_crypto_impl.cpp" />
     <None Include="HalalCloud.BaiduBce.props" />
+    <None Include="Dependencies\Lib\arm64\jsoncppd.lib" />
+    <None Include="Dependencies\Lib\arm64\libcurld.lib" />
+    <None Include="Dependencies\Lib\arm64\zlibd.lib" />
+    <None Include="Dependencies\Lib\x64\jsoncppd.lib" />
+    <None Include="Dependencies\Lib\x64\libcurld.lib" />
+    <None Include="Dependencies\Lib\x64\zlibd.lib" />
+    <None Include="Dependencies\Lib\x86\jsoncppd.lib" />
+    <None Include="Dependencies\Lib\x86\libcurld.lib" />
+    <None Include="Dependencies\Lib\x86\zlibd.lib" />
   </ItemGroup>
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.targets" />
 </Project>
