@@ -41,6 +41,27 @@ void HalalCloud::Session::ApplyAccessToken(
     }
 }
 
+HalalCloud::FileInformation HalalCloud::Session::ToFileInformation(
+    nlohmann::json const& Object)
+{
+    HalalCloud::FileInformation Result;
+
+    Result.CreationTime = Mile::Json::ToInt64(
+        Mile::Json::GetSubKey(Object, "create_ts"));
+    Result.LastWriteTime = Mile::Json::ToInt64(
+        Mile::Json::GetSubKey(Object, "update_ts"));
+    Result.FileSize = Mile::Json::ToInt64(
+        Mile::Json::GetSubKey(Object, "size"));
+    Result.FileAttributes.Fields.IsDirectory = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Object, "dir"));
+    Result.FileAttributes.Fields.IsHidden = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Object, "hidden"));
+    Result.FileName = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "name"));
+
+    return Result;
+}
+
 HalalCloud::Session::Session()
 {
     HRESULT hr = ::HccRpcCreateSession(&this->m_Session);
@@ -176,6 +197,19 @@ nlohmann::json HalalCloud::Session::CreateFolder(
         Request);
 }
 
+HalalCloud::FileInformation HalalCloud::Session::GetFileInformation(
+    std::string_view Path)
+{
+    nlohmann::json Request;
+    Request["path"] = Path;
+
+    nlohmann::json Response = this->Request(
+        "/v6.services.pub.PubUserFile/Get",
+        Request);
+
+    return this->ToFileInformation(Response);
+}
+
 std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
     std::string_view Path)
 {
@@ -200,22 +234,7 @@ std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
         for (nlohmann::json const& File
             : Mile::Json::GetSubKey(Response, "files"))
         {
-            HalalCloud::FileInformation Current;
-
-            Current.CreationTime = Mile::Json::ToInt64(
-                Mile::Json::GetSubKey(File, "create_ts"));
-            Current.LastWriteTime = Mile::Json::ToInt64(
-                Mile::Json::GetSubKey(File, "update_ts"));
-            Current.FileSize = Mile::Json::ToInt64(
-                Mile::Json::GetSubKey(File, "size"));
-            Current.FileAttributes.Fields.IsDirectory = Mile::Json::ToBoolean(
-                Mile::Json::GetSubKey(File, "dir"));
-            Current.FileAttributes.Fields.IsHidden = Mile::Json::ToBoolean(
-                Mile::Json::GetSubKey(File, "hidden"));
-            Current.FileName = Mile::Json::ToString(
-                Mile::Json::GetSubKey(File, "name"));
-
-            Result.push_back(Current);
+            Result.push_back(this->ToFileInformation(File));
         }
     } while (!NextToken.empty());
 

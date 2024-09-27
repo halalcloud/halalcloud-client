@@ -79,6 +79,9 @@ namespace HalalCloud
         void ApplyAccessToken(
             nlohmann::json const& Token);
 
+        FileInformation ToFileInformation(
+            nlohmann::json const& Object);
+
     public:
 
         Session();
@@ -104,6 +107,9 @@ namespace HalalCloud
         nlohmann::json GetUserInformation();
 
         nlohmann::json CreateFolder(
+            std::string_view Path);
+
+        FileInformation GetFileInformation(
             std::string_view Path);
 
         std::vector<FileInformation> EnumerateFiles(
