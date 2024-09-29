@@ -22,6 +22,125 @@
 
 #include <time.h>
 
+#include <fuse.h>
+
+int HccFuseGetAttributesCallback(
+    const char* path,
+    FUSE_STAT* buf)
+{
+    std::printf(
+        "path: %s\n",
+        path);
+
+    if (!buf)
+    {
+        return -EINVAL;
+    }
+    std::memset(buf, 0, sizeof(FUSE_STAT));
+
+    fuse_context* Context = ::fuse_get_context();
+    if (!Context)
+    {
+        return -EINVAL;
+    }
+
+    HalalCloud::Session* Session =
+        static_cast<HalalCloud::Session*>(Context->private_data);
+    if (!Session)
+    {
+        return -EINVAL;
+    }
+
+    try
+    {
+        HalalCloud::FileInformation File = Session->GetFileInformation(path);
+
+        buf->st_mode = S_IREAD | S_IWRITE;
+        buf->st_mode |=
+            File.FileAttributes.Fields.IsDirectory ? S_IFDIR : S_IFREG;
+        if (!File.FileAttributes.Fields.IsDirectory)
+        {
+            buf->st_size = File.FileSize;
+        }
+        buf->st_atim.tv_sec = File.LastWriteTime / 1000;
+        buf->st_mtim.tv_sec = File.LastWriteTime / 1000;
+        buf->st_ctim.tv_sec = File.LastWriteTime / 1000;
+        buf->st_birthtim.tv_sec = File.CreationTime / 1000;
+    }
+    catch (...)
+    {
+        return -EINVAL;
+    }
+
+    return 0;
+}
+
+int HccFuseReadDirectoryCallback(
+    const char* path,
+    void* buf,
+    fuse_fill_dir_t filler,
+    FUSE_OFF_T off,
+    fuse_file_info* fi)
+{
+    UNREFERENCED_PARAMETER(off);
+    UNREFERENCED_PARAMETER(fi);
+
+    std::printf(
+        "path: %s\n",
+        path);
+
+    fuse_context* Context = ::fuse_get_context();
+    if (!Context)
+    {
+        return -EINVAL;
+    }
+
+    HalalCloud::Session* Session =
+        static_cast<HalalCloud::Session*>(Context->private_data);
+    if (!Session)
+    {
+        return -EINVAL;
+    }
+
+    std::vector<HalalCloud::FileInformation> Files =
+        Session->EnumerateFiles(path);
+    for (HalalCloud::FileInformation const& File : Files)
+    {
+        FUSE_STAT stbuf = { 0 };
+        stbuf.st_mode = S_IREAD | S_IWRITE;
+        stbuf.st_mode |=
+            File.FileAttributes.Fields.IsDirectory ? S_IFDIR : S_IFREG;
+        if (!File.FileAttributes.Fields.IsDirectory)
+        {
+            stbuf.st_size = File.FileSize;
+        }
+        stbuf.st_atim.tv_sec = File.LastWriteTime / 1000;
+        stbuf.st_mtim.tv_sec = File.LastWriteTime / 1000;
+        stbuf.st_ctim.tv_sec = File.LastWriteTime / 1000;
+        stbuf.st_birthtim.tv_sec = File.CreationTime / 1000;
+        if (filler(buf, File.FileName.c_str(), &stbuf, 0))
+        {
+            break;
+        }
+    }
+
+    return 0;
+}
+
+void* HccFuseInitializeCallback(
+    fuse_conn_info* conn)
+{
+    conn;
+
+    fuse_context* Context = ::fuse_get_context();
+    if (Context)
+    {
+        return Context->private_data;
+    }
+
+    return nullptr;
+}
+
 int main()
 {
     HalalCloud::Session Session;
@@ -52,7 +171,7 @@ int main()
         "Token = \"%s\"\n",
         Session.CurrentToken().dump(2).c_str());
 
-    Session.Impersonate(Mile::Json::ToString(
+    /*Session.Impersonate(Mile::Json::ToString(
         Mile::Json::GetSubKey(Session.CurrentToken(), "refresh_token")));
 
     std::printf("Refresh Success!\n");
@@ -88,10 +207,36 @@ int main()
             File.FileAttributes.Fields.IsDirectory ? "<DIR>" : "",
             File.FileSize,
             File.FileName.c_str());
-    }
+    }*/
 
-    auto Yolo = Session.GetFileStorageInformation("/9p.cap");
-    Yolo = Yolo;
+    /*std::vector<std::string> Arguments = Mile::SplitCommandLineString(
+        Mile::ToString(CP_UTF8, ::GetCommandLineW()));
+
+    int argc = static_cast<int>(Arguments.size());*/
+    std::vector<char*> argv;
+    /*for (int i = 0; i < argc; ++i)
+    {
+        argv.push_back(Arguments[i].data());
+    }*/
+    argv.push_back(const_cast<char*>("hcc"));
+    argv.push_back(const_cast<char*>("z"));
+
+    argv.push_back(nullptr);
+
+    fuse_operations operations = { 0 };
+    operations.getattr = ::HccFuseGetAttributesCallback;
+    operations.readdir = ::HccFuseReadDirectoryCallback;
+    operations.init = ::HccFuseInitializeCallback;
+
+    auto x = ::fuse_main(
+        static_cast<int>(argv.size() - 1),
+        argv.data(),
+        &operations,
+        &Session);
+    x = x;
+
+    /*auto Yolo = Session.GetFileStorageInformation("/9p.cap");
+    Yolo = Yolo;*/
 
     Session.Logout();
 
