@@ -24,14 +24,88 @@
 
 #include <fuse.h>
 
+int HccFuseOpenCallback(
+    const char* path,
+    fuse_file_info* fi)
+{
+    UNREFERENCED_PARAMETER(fi);
+
+    fuse_context* Context = ::fuse_get_context();
+    if (!Context)
+    {
+        return -EINVAL;
+    }
+
+    HalalCloud::Session* Session =
+        static_cast<HalalCloud::Session*>(Context->private_data);
+    if (!Session)
+    {
+        return -EINVAL;
+    }
+
+    try
+    {
+        Session->GetFileStorageInformation(path);
+    }
+    catch (...)
+    {
+        return -EINVAL;
+    }
+
+    return 0;
+}
+
+int HccFuseReadCallback(
+    const char* path,
+    char* buf,
+    size_t size,
+    FUSE_OFF_T offset,
+    fuse_file_info* fi)
+{
+    UNREFERENCED_PARAMETER(offset);
+    UNREFERENCED_PARAMETER(fi);
+
+    fuse_context* Context = ::fuse_get_context();
+    if (!Context)
+    {
+        return -EINVAL;
+    }
+
+    HalalCloud::Session* Session =
+        static_cast<HalalCloud::Session*>(Context->private_data);
+    if (!Session)
+    {
+        return -EINVAL;
+    }
+
+    try
+    {
+        HalalCloud::FileStorageInformation Information =
+            Session->GetFileStorageInformation(path);
+        for (HalalCloud::FileStorageNode const& Node : Information.Nodes)
+        {
+            if (offset < Node.Offset || offset > Node.Offset + Node.Size)
+            {
+                continue;
+            }
+
+            std::memset(buf, 0, size);
+            std::memcpy(buf, Node.Identifier.c_str(), Node.Identifier.size());
+            break;
+        }
+    }
+    catch (...)
+    {
+        return -EINVAL;
+    }
+
+    return (int)size;
+}
+
 int HccFuseGetAttributesCallback(
     const char* path,
     FUSE_STAT* buf)
 {
-    std::printf(
-        "path: %s\n",
-        path);
-
     if (!buf)
     {
         return -EINVAL;
@@ -84,10 +158,6 @@ int HccFuseReadDirectoryCallback(
 {
     UNREFERENCED_PARAMETER(off);
     UNREFERENCED_PARAMETER(fi);
-
-    std::printf(
-        "path: %s\n",
-        path);
 
     fuse_context* Context = ::fuse_get_context();
     if (!Context)
@@ -224,6 +294,8 @@ int main()
     argv.push_back(nullptr);
 
     fuse_operations operations = { 0 };
+    operations.open = ::HccFuseOpenCallback;
+    operations.read = ::HccFuseReadCallback;
     operations.getattr = ::HccFuseGetAttributesCallback;
     operations.readdir = ::HccFuseReadDirectoryCallback;
     operations.init = ::HccFuseInitializeCallback;
