@@ -21,7 +21,6 @@
   <Import Project="..\Mile.Project.Windows\Mile.Project.Platform.ARM64.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.Default.props" />
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.props" />
-  <Import Project="..\HalalCloud.Client.Dokany\HalalCloud.Client.Dokany.props" />
   <Import Project="..\HalalCloud.RpcClient\HalalCloud.RpcClient.props" />
   <Import Project="..\HalalCloud.BaiduBce\HalalCloud.BaiduBce.props" />
   <ItemGroup>
