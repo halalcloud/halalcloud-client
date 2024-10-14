@@ -41,6 +41,9 @@
     <PackageReference Include="Mile.Json">
       <Version>1.0.659</Version>
     </PackageReference>
+    <PackageReference Include="Mile.Dokany">
+      <Version>1.0.434</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="..\Mile.Project.Windows\Mile.Project.Cpp.targets" />
 </Project>
