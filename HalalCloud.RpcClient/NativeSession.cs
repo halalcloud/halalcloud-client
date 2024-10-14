@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Grpc.Core;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace HalalCloud.RpcClient
@@ -6,11 +7,13 @@ namespace HalalCloud.RpcClient
     public class NativeSession
     {
         [UnmanagedCallersOnly(
-           CallConvs = [typeof(CallConvStdcall)],
+           CallConvs = [typeof(CallConvCdecl)],
            EntryPoint = "HccRpcCreateSession")]
         public static unsafe int CreateSession(
            IntPtr* Instance)
         {
+            StatusCode Result = StatusCode.OK;
+
             try
             {
                 if (Instance == null)
@@ -19,55 +22,55 @@ namespace HalalCloud.RpcClient
                 }
 
                 *Instance = new Session().ToIntPtr();
-
-                return 0;
             }
-            catch (Exception e)
+            catch
             {
-                return e.HResult;
+                Result = StatusCode.Internal;
             }
+
+            return Convert.ToInt32(Result);
         }
 
         [UnmanagedCallersOnly(
-            CallConvs = [typeof(CallConvStdcall)],
+            CallConvs = [typeof(CallConvCdecl)],
             EntryPoint = "HccRpcCloseSession")]
-        public static unsafe int CloseSession(
+        public static unsafe void CloseSession(
             IntPtr Instance)
         {
             try
             {
                 Instance.ToGcHandle().Free();
-
-                return 0;
             }
-            catch (Exception e)
+            catch
             {
-                return e.HResult;
+
             }
         }
 
         [UnmanagedCallersOnly(
-            CallConvs = [typeof(CallConvStdcall)],
+            CallConvs = [typeof(CallConvCdecl)],
             EntryPoint = "HccRpcSetAccessToken")]
         public static unsafe int SetAccessToken(
             IntPtr Instance,
             IntPtr AccessToken)
         {
+            StatusCode Result = StatusCode.OK;
+
             try
             {
                 Instance.ToObject<Session>().AccessToken =
                     AccessToken.ToUtf8String();
-
-                return 0;
             }
-            catch (Exception e)
+            catch
             {
-                return e.HResult;
+                Result = StatusCode.Internal;
             }
+
+            return Convert.ToInt32(Result);
         }
 
         [UnmanagedCallersOnly(
-            CallConvs = [typeof(CallConvStdcall)],
+            CallConvs = [typeof(CallConvCdecl)],
             EntryPoint = "HccRpcRequest")]
         public static unsafe int Request(
             IntPtr Instance,
@@ -75,6 +78,8 @@ namespace HalalCloud.RpcClient
             IntPtr RequestJson,
             IntPtr* ResponseJson)
         {
+            StatusCode Result = StatusCode.OK;
+
             try
             {
                 string Response = Instance.ToObject<Session>().Request(
@@ -85,30 +90,32 @@ namespace HalalCloud.RpcClient
                 {
                     *ResponseJson = Marshal.StringToCoTaskMemUTF8(Response);
                 }
-
-                return 0;
             }
-            catch (Exception e)
+            catch (RpcException e)
             {
-                return e.HResult;
+                Result = e.StatusCode;
             }
+            catch
+            {
+                Result = StatusCode.Internal;
+            }
+
+            return Convert.ToInt32(Result);
         }
 
         [UnmanagedCallersOnly(
-            CallConvs = [typeof(CallConvStdcall)],
+            CallConvs = [typeof(CallConvCdecl)],
             EntryPoint = "HccRpcFreeMemory")]
-        public static unsafe int FreeMemory(
+        public static unsafe void FreeMemory(
             IntPtr Block)
         {
             try
             {
                 Marshal.FreeCoTaskMem(Block);
-
-                return 0;
             }
-            catch (Exception e)
+            catch
             {
-                return e.HResult;
+
             }
         }
     }
