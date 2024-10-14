@@ -200,7 +200,7 @@ int HccFuseReadDirectoryCallback(
 void* HccFuseInitializeCallback(
     fuse_conn_info* conn)
 {
-    conn;
+    UNREFERENCED_PARAMETER(conn);
 
     fuse_context* Context = ::fuse_get_context();
     if (Context)
@@ -279,33 +279,44 @@ int main()
             File.FileName.c_str());
     }*/
 
-    /*std::vector<std::string> Arguments = Mile::SplitCommandLineString(
-        Mile::ToString(CP_UTF8, ::GetCommandLineW()));
+    std::string MountPoint = "z:";
 
-    int argc = static_cast<int>(Arguments.size());*/
-    std::vector<char*> argv;
-    /*for (int i = 0; i < argc; ++i)
+    fuse_operations Operations = { 0 };
+    Operations.open = ::HccFuseOpenCallback;
+    Operations.read = ::HccFuseReadCallback;
+    Operations.getattr = ::HccFuseGetAttributesCallback;
+    Operations.readdir = ::HccFuseReadDirectoryCallback;
+    Operations.init = ::HccFuseInitializeCallback;
+
+    fuse_chan* Channel = ::fuse_mount(MountPoint.c_str(), nullptr);
+    if (Channel)
     {
-        argv.push_back(Arguments[i].data());
-    }*/
-    argv.push_back(const_cast<char*>("hcc"));
-    argv.push_back(const_cast<char*>("z"));
+        fuse* Instance = ::fuse_new(
+            Channel,
+            nullptr,
+            &Operations,
+            sizeof(Operations),
+            &Session);
+        if (Instance)
+        {
+            int Result = ::fuse_loop_mt(Instance);
+            if (-1 == Result)
+            {
+                std::printf("fuse_loop_mt failed!\n");
+            }
 
-    argv.push_back(nullptr);
-
-    fuse_operations operations = { 0 };
-    operations.open = ::HccFuseOpenCallback;
-    operations.read = ::HccFuseReadCallback;
-    operations.getattr = ::HccFuseGetAttributesCallback;
-    operations.readdir = ::HccFuseReadDirectoryCallback;
-    operations.init = ::HccFuseInitializeCallback;
-
-    auto x = ::fuse_main(
-        static_cast<int>(argv.size() - 1),
-        argv.data(),
-        &operations,
-        &Session);
-    x = x;
+            ::fuse_unmount(MountPoint.c_str(), Channel);
+            ::fuse_destroy(Instance);
+        }
+        else
+        {
+            std::printf("fuse_new failed!\n");
+        }
+    }
+    else
+    {
+        std::printf("fuse_mount failed!\n");
+    }
 
     /*auto Yolo = Session.GetFileStorageInformation("/9p.cap");
     Yolo = Yolo;*/
