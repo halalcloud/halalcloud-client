@@ -300,7 +300,7 @@ int main()
         if (Instance)
         {
             int Result = ::fuse_loop_mt(Instance);
-            if (-1 == Result)
+            if (0 != Result)
             {
                 std::printf("fuse_loop_mt failed!\n");
             }
