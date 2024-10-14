@@ -30,14 +30,14 @@ void HalalCloud::Session::ApplyAccessToken(
 {
     std::string AccessToken = Mile::Json::ToString(
         Mile::Json::GetSubKey(Token, "access_token"));
-    HRESULT hr = ::HccRpcSetAccessToken(
+    HCC_RPC_STATUS Status = ::HccRpcSetAccessToken(
         this->m_Session,
         AccessToken.c_str());
-    if (FAILED(hr))
+    if (HCC_RPC_STATUS_OK != Status)
     {
         HalalCloud::ThrowException(
             "HccRpcSetAccessToken",
-            hr);
+            Status);
     }
 }
 
@@ -64,12 +64,12 @@ HalalCloud::FileInformation HalalCloud::Session::ToFileInformation(
 
 HalalCloud::Session::Session()
 {
-    HRESULT hr = ::HccRpcCreateSession(&this->m_Session);
-    if (FAILED(hr))
+    HCC_RPC_STATUS Status = ::HccRpcCreateSession(&this->m_Session);
+    if (HCC_RPC_STATUS_OK != Status)
     {
         HalalCloud::ThrowException(
             "HccRpcCreateSession",
-            hr);
+            Status);
     }
 }
 
@@ -96,16 +96,16 @@ nlohmann::json HalalCloud::Session::Request(
 
     LPSTR ResponseJson = nullptr;
 
-    HRESULT hr = ::HccRpcRequest(
+    HCC_RPC_STATUS Status = ::HccRpcRequest(
         this->m_Session,
         MethodFullName.data(),
         Request.dump().c_str(),
         &ResponseJson);
-    if (FAILED(hr))
+    if (HCC_RPC_STATUS_OK != Status)
     {
         HalalCloud::ThrowException(
             "HccRpcRequest",
-            hr);
+            Status);
     }
 
     auto ResponseJsonCleanupHandler = Mile::ScopeExitTaskHandler([&]()
