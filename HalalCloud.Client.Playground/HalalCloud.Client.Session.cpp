@@ -15,14 +15,14 @@
 
 #include <HalalCloud.BaiduBce.h>
 
-[[noreturn]] void HalalCloud::ThrowExceptionWithHResult(
-    _In_ LPCSTR Checkpoint,
-    _In_ HRESULT Value)
+[[noreturn]] void HalalCloud::ThrowException(
+    std::string_view Checkpoint,
+    std::int32_t const& Code)
 {
     throw std::runtime_error(Mile::FormatString(
-        "[HalalCloud.Client] %s Failed. (0x%08X)",
-        Checkpoint,
-        Value));
+        "[HalalCloud.Client] %s Failed. (Code = %d)",
+        Checkpoint.data(),
+        Code));
 }
 
 void HalalCloud::Session::ApplyAccessToken(
@@ -35,7 +35,7 @@ void HalalCloud::Session::ApplyAccessToken(
         AccessToken.c_str());
     if (FAILED(hr))
     {
-        HalalCloud::ThrowExceptionWithHResult(
+        HalalCloud::ThrowException(
             "HccRpcSetAccessToken",
             hr);
     }
@@ -67,7 +67,7 @@ HalalCloud::Session::Session()
     HRESULT hr = ::HccRpcCreateSession(&this->m_Session);
     if (FAILED(hr))
     {
-        HalalCloud::ThrowExceptionWithHResult(
+        HalalCloud::ThrowException(
             "HccRpcCreateSession",
             hr);
     }
@@ -103,7 +103,7 @@ nlohmann::json HalalCloud::Session::Request(
         &ResponseJson);
     if (FAILED(hr))
     {
-        HalalCloud::ThrowExceptionWithHResult(
+        HalalCloud::ThrowException(
             "HccRpcRequest",
             hr);
     }
@@ -275,7 +275,7 @@ void HalalCloud::Session::UploadFile(
         Key.c_str());
     if (0 != Error)
     {
-        HalalCloud::ThrowExceptionWithHResult(
+        HalalCloud::ThrowException(
             "HccBcePutObject",
             Error);
     }

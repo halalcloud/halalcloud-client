@@ -22,9 +22,9 @@
 
 namespace HalalCloud
 {
-    [[noreturn]] void ThrowExceptionWithHResult(
-        _In_ LPCSTR Checkpoint,
-        _In_ HRESULT Value);
+    [[noreturn]] void ThrowException(
+        std::string_view Checkpoint,
+        std::int32_t const& Code);
 
     struct FileInformation
     {
