@@ -281,6 +281,10 @@ int main()
 
     std::string MountPoint = "z:";
 
+    fuse_args Arguments = FUSE_ARGS_INIT(0, nullptr);
+    ::fuse_opt_add_arg(&Arguments, "HalalCloud");
+    ::fuse_opt_add_arg(&Arguments, "-ovolname=HalalCloud");
+
     fuse_operations Operations = { 0 };
     Operations.open = ::HccFuseOpenCallback;
     Operations.read = ::HccFuseReadCallback;
@@ -288,12 +292,12 @@ int main()
     Operations.readdir = ::HccFuseReadDirectoryCallback;
     Operations.init = ::HccFuseInitializeCallback;
 
-    fuse_chan* Channel = ::fuse_mount(MountPoint.c_str(), nullptr);
+    fuse_chan* Channel = ::fuse_mount(MountPoint.c_str(), &Arguments);
     if (Channel)
     {
         fuse* Instance = ::fuse_new(
             Channel,
-            nullptr,
+            &Arguments,
             &Operations,
             sizeof(Operations),
             &Session);
