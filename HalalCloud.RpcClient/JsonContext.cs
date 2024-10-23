@@ -24,6 +24,7 @@ namespace HalalCloud.RpcClient
     [JsonSerializable(typeof(DavConfig))]
     [JsonSerializable(typeof(DisconnectRequest))]
     [JsonSerializable(typeof(DisconnectResponse))]
+    [JsonSerializable(typeof(DiskStatisticsAndQuota))]
     [JsonSerializable(typeof(DocFilePreview))]
     [JsonSerializable(typeof(DownloadAndPreviewInfo))]
     [JsonSerializable(typeof(FastLookup))]
@@ -50,6 +51,7 @@ namespace HalalCloud.RpcClient
     [JsonSerializable(typeof(OfflineTaskDeleteResponse))]
     [JsonSerializable(typeof(OfflineTaskListRequest))]
     [JsonSerializable(typeof(OfflineTaskListResponse))]
+    [JsonSerializable(typeof(OfflineTaskStatisticsAndQuota))]
     [JsonSerializable(typeof(OrderByInfo))]
     [JsonSerializable(typeof(ParseFileSliceResponse))]
     [JsonSerializable(typeof(ReceiveRequest))]
@@ -83,9 +85,11 @@ namespace HalalCloud.RpcClient
     [JsonSerializable(typeof(TaskParseRequest))]
     [JsonSerializable(typeof(TaskParseResponse))]
     [JsonSerializable(typeof(Token))]
+    [JsonSerializable(typeof(TrafficStatisticsAndQuota))]
     [JsonSerializable(typeof(UploadToken))]
     [JsonSerializable(typeof(User))]
     [JsonSerializable(typeof(UserNameValidateResponse))]
+    [JsonSerializable(typeof(UserStatisticsAndQuota))]
     [JsonSerializable(typeof(UserTask))]
     [JsonSerializable(typeof(UserValidateInfo))]
     internal partial class JsonContext : JsonSerializerContext
@@ -258,6 +262,8 @@ namespace HalalCloud.RpcClient
             CreateMarshaller<User>();
         public static Marshaller<string> UserNameValidateResponseMarshaller =
             CreateMarshaller<UserNameValidateResponse>();
+        public static Marshaller<string> UserStatisticsAndQuotaMarshaller =
+            CreateMarshaller<UserStatisticsAndQuota>();
         public static Marshaller<string> UserTaskMarshaller =
             CreateMarshaller<UserTask>();
         public static Marshaller<string> UserValidateInfoMarshaller =

@@ -289,6 +289,12 @@ namespace HalalCloud.RpcClient
                     JsonContext.UserNameValidateResponseMarshaller),
                 new Method<string, string>(
                     MethodType.Unary,
+                    "v6.services.pub.PubUser",
+                    "GetStatisticsAndQuota",
+                    JsonContext.UserMarshaller,
+                    JsonContext.UserStatisticsAndQuotaMarshaller),
+                new Method<string, string>(
+                    MethodType.Unary,
                     "v6.services.pub.PubUserFile",
                     "Create",
                     JsonContext.FileMarshaller,
@@ -339,6 +345,12 @@ namespace HalalCloud.RpcClient
                     MethodType.Unary,
                     "v6.services.pub.PubUserFile",
                     "Recover",
+                    JsonContext.BatchOperationRequestMarshaller,
+                    JsonContext.BatchOperationResponseMarshaller),
+                new Method<string, string>(
+                    MethodType.Unary,
+                    "v6.services.pub.PubUserFile",
+                    "BatchRename",
                     JsonContext.BatchOperationRequestMarshaller,
                     JsonContext.BatchOperationResponseMarshaller),
                 new Method<string, string>(
