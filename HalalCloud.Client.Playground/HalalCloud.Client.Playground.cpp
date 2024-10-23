@@ -102,6 +102,53 @@ int HccFuseReadCallback(
     return (int)size;
 }
 
+int HccFuseStatFsCallback(
+    const char* path,
+    struct statvfs* buf)
+{
+    UNREFERENCED_PARAMETER(path);
+
+    fuse_context* Context = ::fuse_get_context();
+    if (!Context)
+    {
+        return -EINVAL;
+    }
+
+    HalalCloud::Session* Session =
+        static_cast<HalalCloud::Session*>(Context->private_data);
+    if (!Session)
+    {
+        return -EINVAL;
+    }
+
+    try
+    {
+        nlohmann::json Response = Session->Request(
+            "/v6.services.pub.PubUser/GetStatisticsAndQuota",
+            nlohmann::json::object());
+
+        std::printf(
+            "Response = %s\n",
+            Response.dump(2).c_str());
+
+        std::memset(buf, 0, sizeof(statvfs));
+        buf->f_bsize = 512;
+        buf->f_blocks = Mile::Json::ToUInt64(Mile::Json::GetSubKey(
+            Mile::Json::GetSubKey(Response, "disk_statistics_quota"),
+            "bytes_quota")) / buf->f_bsize;
+        buf->f_bfree = Mile::Json::ToUInt64(Mile::Json::GetSubKey(
+            Mile::Json::GetSubKey(Response, "disk_statistics_quota"),
+            "bytes_used")) / buf->f_bsize;
+        buf->f_bavail = buf->f_blocks - buf->f_bfree;
+    }
+    catch (...)
+    {
+        return -EINVAL;
+    }
+
+    return 0;
+}
+
 int HccFuseGetAttributesCallback(
     const char* path,
     FUSE_STAT* buf)
@@ -288,6 +335,7 @@ int main()
     fuse_operations Operations = { 0 };
     Operations.open = ::HccFuseOpenCallback;
     Operations.read = ::HccFuseReadCallback;
+    Operations.statfs = ::HccFuseStatFsCallback;
     Operations.getattr = ::HccFuseGetAttributesCallback;
     Operations.readdir = ::HccFuseReadDirectoryCallback;
     Operations.init = ::HccFuseInitializeCallback;
