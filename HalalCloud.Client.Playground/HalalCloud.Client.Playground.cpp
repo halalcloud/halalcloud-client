@@ -260,6 +260,10 @@ void* HccFuseInitializeCallback(
 
 int main()
 {
+    std::printf(
+        "ApplicationDataRootPath = \"%s\"\n",
+        HalalCloud::GetApplicationDataRootPath().generic_string().data());
+
     HalalCloud::Session Session;
 
     Session.Authenticate([](

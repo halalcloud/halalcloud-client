@@ -8,10 +8,18 @@
  * MAINTAINER: MouriNaruto (Kenji.Mouri@outlook.com)
  */
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "HalalCloud.Client.Session.h"
 
 #include <stdexcept>
 #include <thread>
+
+#ifdef _WIN32
+#include <ShlObj.h>
+#endif
 
 #include <HalalCloud.BaiduBce.h>
 
@@ -23,6 +31,81 @@
         "[HalalCloud.Client] %s Failed. (Code = %d)",
         Checkpoint.data(),
         Code));
+}
+
+std::filesystem::path HalalCloud::GetApplicationDataRootPath()
+{
+    static std::filesystem::path CachedResult = ([]() -> std::filesystem::path
+    {
+#ifdef _WIN32
+        std::filesystem::path Data = std::filesystem::path();
+        {
+            LPWSTR RawPath = nullptr;
+            // KF_FLAG_FORCE_APP_DATA_REDIRECTION, when engaged, causes
+            // SHGetKnownFolderPath to return the new AppModel paths
+            // (Packages/xxx/RoamingState, etc.) for standard path requests.
+            // Using this flag allows us to avoid
+            // Windows.Storage.ApplicationData completely.
+            if (SUCCEEDED(::SHGetKnownFolderPath(
+                FOLDERID_LocalAppData,
+                KF_FLAG_FORCE_APP_DATA_REDIRECTION,
+                nullptr,
+                &RawPath)))
+            {
+                Data = std::filesystem::path(RawPath);
+                ::CoTaskMemFree(RawPath);
+            }
+            else
+            {
+                Data = std::filesystem::path(
+                    std::getenv("USERPROFILE"));
+                if (Data.empty() ||
+                    !Data.is_absolute() ||
+                    !std::filesystem::exists(Data))
+                {
+                    Data = std::filesystem::path(
+                        std::getenv("SYSTEMDRIVE"));
+                    if (Data.empty() ||
+                        !Data.is_absolute() ||
+                        !std::filesystem::exists(Data))
+                    {
+                        Data = std::filesystem::path("C:");
+                        if (Data.empty() ||
+                            !Data.is_absolute() ||
+                            !std::filesystem::exists(Data))
+                        {
+                            Data = std::filesystem::path("X:");
+                        }
+                    }
+                }
+                Data /= ".local";
+                Data /= "share";
+            }
+        }
+#else
+        std::filesystem::path Data = std::filesystem::path(
+            std::getenv("XDG_DATA_HOME"));
+        if (Data.empty() ||
+            !Data.is_absolute() ||
+            !std::filesystem::exists(Data))
+        {
+            Data = std::filesystem::path(
+                std::getenv("HOME"));
+            if (Data.empty() ||
+                !Data.is_absolute() ||
+                !std::filesystem::exists(Data))
+            {
+                Data = std::filesystem::path("/");
+            }
+            Data /= ".local";
+            Data /= "share";
+        }
+#endif
+        Data /= "HalalCloud";
+        return Data;
+    }());
+
+    return CachedResult;
 }
 
 void HalalCloud::Session::ApplyAccessToken(

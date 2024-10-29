@@ -16,6 +16,7 @@
 
 #include <Mile.Json.h>
 
+#include <filesystem>
 #include <functional>
 #include <string_view>
 #include <vector>
@@ -25,6 +26,8 @@ namespace HalalCloud
     [[noreturn]] void ThrowException(
         std::string_view Checkpoint,
         std::int32_t const& Code);
+
+    std::filesystem::path GetApplicationDataRootPath();
 
     struct FileInformation
     {
