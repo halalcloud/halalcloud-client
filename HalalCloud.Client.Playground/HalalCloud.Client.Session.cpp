@@ -23,6 +23,8 @@
 
 #include <HalalCloud.BaiduBce.h>
 
+#include <fstream>
+
 [[noreturn]] void HalalCloud::ThrowException(
     std::string_view Checkpoint,
     std::int32_t const& Code)
@@ -124,6 +126,39 @@ std::filesystem::path HalalCloud::GetUserCloudCachePath(
         std::filesystem::create_directories(Result);
     }
     return Result;
+}
+
+std::vector<std::uint8_t> HalalCloud::ReadAllBytesFromFile(
+    std::string_view FilePath)
+{
+    std::vector<std::uint8_t> Result;
+
+    std::ifstream FileStream(FilePath.data(), std::ios::binary);
+    if (FileStream.is_open())
+    {
+        FileStream.seekg(0, std::ios::end);
+        std::streampos FileSize = FileStream.tellg();
+        FileStream.seekg(0, std::ios::beg);
+        Result.resize(static_cast<std::size_t>(FileSize));
+        FileStream.read(
+            reinterpret_cast<char*>(Result.data()),
+            FileSize);
+    }
+
+    return Result;
+}
+
+void HalalCloud::WriteAllBytesToFile(
+    std::string_view FilePath,
+    std::vector<std::uint8_t> const& Bytes)
+{
+    std::ofstream FileStream(FilePath.data(), std::ios::binary);
+    if (FileStream.is_open())
+    {
+        FileStream.write(
+            reinterpret_cast<char const*>(Bytes.data()),
+            Bytes.size());
+    }
 }
 
 void HalalCloud::Session::ApplyAccessToken(
