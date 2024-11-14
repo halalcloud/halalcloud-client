@@ -20,10 +20,9 @@
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1426" Project="Mile.Project.Platform.ARM64.props" />
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1426" Project="Mile.Project.Cpp.Default.props" />
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1426" Project="Mile.Project.Cpp.props" />
+  <Import Project="..\HalalCloud.Dependencies\HalalCloud.Dependencies.props" />
   <PropertyGroup>
     <IncludePath>$(MSBuildThisFileDirectory)Include\;$(IncludePath)</IncludePath>
-    <IncludePath>$(MSBuildThisFileDirectory)Dependencies\Include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(MSBuildThisFileDirectory)Dependencies\Lib\$(PlatformShortName)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -35,9 +34,6 @@
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>HalalCloud.BaiduBce.def</ModuleDefinitionFile>
-      <AdditionalDependencies Condition="'$(UseDebugLibraries)' == 'true'">jsoncppd.lib;libcurld.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(UseDebugLibraries)' != 'true'">jsoncpp.lib;libcurl.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <CETCompat Condition="'$(Platform)' == 'Win32' Or '$(Platform)' == 'x64'">false</CETCompat>
     </Link>
   </ItemDefinitionGroup>
