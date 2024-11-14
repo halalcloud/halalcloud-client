@@ -105,6 +105,10 @@ std::filesystem::path HalalCloud::GetApplicationDataRootPath()
         return Data;
     }());
 
+    if (!std::filesystem::exists(CachedResult))
+    {
+        std::filesystem::create_directories(CachedResult);
+    }
     return CachedResult;
 }
 

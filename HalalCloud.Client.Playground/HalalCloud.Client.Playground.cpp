@@ -262,7 +262,7 @@ int main()
 {
     std::printf(
         "ApplicationDataRootPath = \"%s\"\n",
-        HalalCloud::GetApplicationDataRootPath().generic_string().data());
+        HalalCloud::GetApplicationDataRootPath().string().data());
 
     HalalCloud::Session Session;
 
