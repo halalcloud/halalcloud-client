@@ -29,6 +29,9 @@ namespace HalalCloud
 
     std::filesystem::path GetApplicationDataRootPath();
 
+    std::filesystem::path GetUserCloudCachePath(
+        std::string_view UserIdentity);
+
     struct FileInformation
     {
         std::int64_t CreationTime;
