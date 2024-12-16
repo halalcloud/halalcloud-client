@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <IncludePath>$(MSBuildThisFileDirectory)Dependencies\Include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(MSBuildThisFileDirectory)Dependencies\Lib\$(PlatformShortName)\;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(MSBuildThisFileDirectory)Include\;$(IncludePath)</IncludePath>
+    <LibraryPath>$(MSBuildThisFileDirectory)Lib\$(PlatformShortName)\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies Condition="'$(UseDebugLibraries)' == 'true'">jsoncppd.lib;libcurld.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(UseDebugLibraries)' != 'true'">jsoncpp.lib;libcurl.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(UseDebugLibraries)' == 'true'">jsoncppd.lib;cprd.lib;libcurld.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(UseDebugLibraries)' != 'true'">jsoncpp.lib;cpr.lib;libcurl.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
