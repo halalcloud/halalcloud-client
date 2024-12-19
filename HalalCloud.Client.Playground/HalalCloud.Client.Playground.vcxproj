@@ -23,6 +23,7 @@
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1426" Project="Mile.Project.Cpp.props" />
   <Import Project="..\HalalCloud.RpcClient\HalalCloud.RpcClient.props" />
   <Import Project="..\HalalCloud.BaiduBce\HalalCloud.BaiduBce.props" />
+  <Import Project="..\HalalCloud.Dependencies\HalalCloud.Dependencies.props" />
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
