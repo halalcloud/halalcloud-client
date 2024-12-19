@@ -259,6 +259,7 @@ void HalalCloud::Session::Authenticate(
     {
         Request = nlohmann::json();
         Request["return_type"] = 2;
+        Request["state"] = "HalalCloud.Client.Session.Authenticate";
 
         nlohmann::json Response = this->Request(
             "/v6.services.pub.PubUser/CreateAuthToken",
