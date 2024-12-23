@@ -10,9 +10,10 @@ using V6.Services.Pub.Common;
 namespace HalalCloud.RpcClient
 {
     [JsonSourceGenerationOptions(
-         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-         PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
-         UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip)]
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
+        UnmappedMemberHandling = JsonUnmappedMemberHandling.Skip,
+        PreferredObjectCreationHandling = JsonObjectCreationHandling.Populate)]
     [JsonSerializable(typeof(BatchOperationRequest))]
     [JsonSerializable(typeof(BatchOperationResponse))]
     [JsonSerializable(typeof(ChangePasswordRequest))]
