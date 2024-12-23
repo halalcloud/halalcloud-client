@@ -82,6 +82,13 @@ namespace HalalCloud
         std::vector<FileStorageNode> Nodes;
     };
 
+    struct BlockStorageInformation
+    {
+        std::string Identifier;
+        std::string DownloadLink;
+        std::uint8_t EncryptionByte;
+    };
+
     class Session : Mile::DisableCopyConstruction
     {
     private:
@@ -134,6 +141,9 @@ namespace HalalCloud
 
         FileStorageInformation GetFileStorageInformation(
             std::string_view Path);
+
+		std::vector<BlockStorageInformation> GetBlockStorageInformation(
+			std::vector<std::string> const& Identifiers);
     };
 }
 

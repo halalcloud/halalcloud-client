@@ -498,3 +498,65 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
 
     return Result;
 }
+
+std::vector<HalalCloud::BlockStorageInformation> HalalCloud::Session::GetBlockStorageInformation(
+    std::vector<std::string> const& Identifiers)
+{
+    std::vector<HalalCloud::BlockStorageInformation> Result;
+    {
+        std::size_t Proceeded = 0;
+        nlohmann::json RequestIdentifiers = nlohmann::json::array();
+        for (std::string const& Identifier : Identifiers)
+        {
+            RequestIdentifiers.push_back(Identifier);
+            ++Proceeded;
+            if (0 == Proceeded % 200)
+            {
+                nlohmann::json Request;
+                Request["version"] = 1;
+                Request["identity"] = RequestIdentifiers;
+                nlohmann::json Response = this->Request(
+                    "/v6.services.pub.PubUserFile/GetSliceDownloadAddress",
+                    Request);
+                for (nlohmann::json const& Address
+                    : Mile::Json::GetSubKey(Response, "addresses"))
+                {
+                    HalalCloud::BlockStorageInformation Current;
+                    Current.Identifier = Mile::Json::ToString(
+                        Mile::Json::GetSubKey(Address, "identity"));
+                    Current.DownloadLink = Mile::Json::ToString(
+                        Mile::Json::GetSubKey(Address, "download_address"));
+                    Current.EncryptionByte = static_cast<std::uint8_t>(
+                        Mile::Json::ToUInt64(
+                            Mile::Json::GetSubKey(Address, "encrypt")));
+                    Result.push_back(Current);
+                }
+                RequestIdentifiers.clear();
+            }
+        }
+        if (!RequestIdentifiers.empty())
+        {
+            nlohmann::json Request;
+            Request["version"] = 1;
+            Request["identity"] = RequestIdentifiers;
+            nlohmann::json Response = this->Request(
+                "/v6.services.pub.PubUserFile/GetSliceDownloadAddress",
+                Request);
+            for (nlohmann::json const& Address
+                : Mile::Json::GetSubKey(Response, "addresses"))
+            {
+                HalalCloud::BlockStorageInformation Current;
+                Current.Identifier = Mile::Json::ToString(
+                    Mile::Json::GetSubKey(Address, "identity"));
+                Current.DownloadLink = Mile::Json::ToString(
+                    Mile::Json::GetSubKey(Address, "download_address"));
+                Current.EncryptionByte = static_cast<std::uint8_t>(
+                    Mile::Json::ToUInt64(
+                        Mile::Json::GetSubKey(Address, "encrypt")));
+                Result.push_back(Current);
+            }
+            RequestIdentifiers.clear();
+        }
+    }
+    return Result;
+}
