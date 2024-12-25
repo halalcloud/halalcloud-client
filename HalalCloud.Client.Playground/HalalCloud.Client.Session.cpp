@@ -198,6 +198,20 @@ HalalCloud::FileInformation HalalCloud::Session::ToFileInformation(
     return Result;
 }
 
+HalalCloud::BlockStorageInformation HalalCloud::Session::ToBlockStorageInformation(
+    nlohmann::json const& Object)
+{
+    HalalCloud::BlockStorageInformation Result;
+    Result.Identifier = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "identity"));
+    Result.DownloadLink = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "download_address"));
+    Result.EncryptionByte = static_cast<std::uint8_t>(
+        Mile::Json::ToUInt64(
+            Mile::Json::GetSubKey(Object, "encrypt")));
+    return Result;
+}
+
 HalalCloud::Session::Session()
 {
     HCC_RPC_STATUS Status = ::HccRpcCreateSession(&this->m_Session);
@@ -521,15 +535,7 @@ std::vector<HalalCloud::BlockStorageInformation> HalalCloud::Session::GetBlockSt
                 for (nlohmann::json const& Address
                     : Mile::Json::GetSubKey(Response, "addresses"))
                 {
-                    HalalCloud::BlockStorageInformation Current;
-                    Current.Identifier = Mile::Json::ToString(
-                        Mile::Json::GetSubKey(Address, "identity"));
-                    Current.DownloadLink = Mile::Json::ToString(
-                        Mile::Json::GetSubKey(Address, "download_address"));
-                    Current.EncryptionByte = static_cast<std::uint8_t>(
-                        Mile::Json::ToUInt64(
-                            Mile::Json::GetSubKey(Address, "encrypt")));
-                    Result.push_back(Current);
+                    Result.push_back(this->ToBlockStorageInformation(Address));
                 }
                 RequestIdentifiers.clear();
             }
@@ -545,15 +551,7 @@ std::vector<HalalCloud::BlockStorageInformation> HalalCloud::Session::GetBlockSt
             for (nlohmann::json const& Address
                 : Mile::Json::GetSubKey(Response, "addresses"))
             {
-                HalalCloud::BlockStorageInformation Current;
-                Current.Identifier = Mile::Json::ToString(
-                    Mile::Json::GetSubKey(Address, "identity"));
-                Current.DownloadLink = Mile::Json::ToString(
-                    Mile::Json::GetSubKey(Address, "download_address"));
-                Current.EncryptionByte = static_cast<std::uint8_t>(
-                    Mile::Json::ToUInt64(
-                        Mile::Json::GetSubKey(Address, "encrypt")));
-                Result.push_back(Current);
+                Result.push_back(this->ToBlockStorageInformation(Address));
             }
             RequestIdentifiers.clear();
         }

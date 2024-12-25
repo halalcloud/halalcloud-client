@@ -102,6 +102,9 @@ namespace HalalCloud
         FileInformation ToFileInformation(
             nlohmann::json const& Object);
 
+        BlockStorageInformation ToBlockStorageInformation(
+            nlohmann::json const& Object);
+
     public:
 
         Session();
