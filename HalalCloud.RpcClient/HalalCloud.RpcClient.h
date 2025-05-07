@@ -11,34 +11,10 @@
 #ifndef HALALCLOUD_RPCCLIENT
 #define HALALCLOUD_RPCCLIENT
 
-#include <stdint.h>
+#define MILE_MOBILITY_ENABLE_MINIMUM_SAL
+#include <Mile.Mobility.Portable.Types.h>
 
-#ifndef _In_
-#define _In_
-#endif // !_In_
-
-#ifndef _Out_
-#define _Out_
-#endif // !_Out_
-
-#ifndef _Out_opt_
-#define _Out_opt_
-#endif // !_Out_opt_
-
-#ifndef EXTERN_C
-#ifdef __cplusplus
-#define EXTERN_C extern "C"
-#else
-#define EXTERN_C extern
-#endif
-#endif // !EXTERN_C
-
-#ifndef DECLARE_HANDLE
-#define DECLARE_HANDLE(name) \
-    struct name##__{int unused;}; typedef struct name##__ *name
-#endif // !DECLARE_HANDLE
-
-typedef int32_t HCC_RPC_STATUS;
+typedef MO_INT32 HCC_RPC_STATUS;
 
 // Not an error; returned on success.
 #define HCC_RPC_STATUS_OK ((HCC_RPC_STATUS)0)
@@ -114,26 +90,26 @@ typedef int32_t HCC_RPC_STATUS;
 // The request does not have valid authentication credentials for the operation.
 #define HCC_RPC_STATUS_UNAUTHENTICATED ((HCC_RPC_STATUS)16)
 
-DECLARE_HANDLE(HCC_RPC_SESSION);
+MO_DECLARE_HANDLE(HCC_RPC_SESSION);
 typedef HCC_RPC_SESSION *PHCC_RPC_SESSION;
 
 EXTERN_C HCC_RPC_STATUS HccRpcCreateSession(
     _Out_ PHCC_RPC_SESSION Instance);
 
-EXTERN_C void HccRpcCloseSession(
+EXTERN_C VOID HccRpcCloseSession(
     _In_ HCC_RPC_SESSION Instance);
 
 EXTERN_C HCC_RPC_STATUS HccRpcSetAccessToken(
     _In_ HCC_RPC_SESSION Instance,
-    _In_ const char* AccessToken);
+    _In_ MO_CONSTANT_STRING AccessToken);
 
 EXTERN_C HCC_RPC_STATUS HccRpcRequest(
     _In_ HCC_RPC_SESSION Instance,
-    _In_ const char* MethodFullName,
-    _In_ const char* RequestJson,
-    _Out_opt_ char** ResponseJson);
+    _In_ MO_CONSTANT_STRING MethodFullName,
+    _In_ MO_CONSTANT_STRING RequestJson,
+    _Out_opt_ PMO_STRING ResponseJson);
 
-EXTERN_C void HccRpcFreeMemory(
-    _In_ void* Block);
+EXTERN_C VOID HccRpcFreeMemory(
+    _In_ MO_POINTER Block);
 
 #endif // !HALALCLOUD_RPCCLIENT
