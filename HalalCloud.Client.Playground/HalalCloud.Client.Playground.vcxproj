@@ -39,7 +39,7 @@
       <Version>1.0.645</Version>
     </PackageReference>
     <PackageReference Include="Mile.Json">
-      <Version>1.0.659</Version>
+      <Version>1.0.1057</Version>
     </PackageReference>
     <PackageReference Include="Mile.Dokany">
       <Version>1.0.434</Version>
