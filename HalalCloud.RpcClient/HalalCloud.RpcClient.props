@@ -29,7 +29,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <PackageReference Include="Mile.Mobility">
-      <Version>1.0.172</Version>
+      <Version>1.0.206</Version>
     </PackageReference>
   </ItemGroup>
 </Project>
