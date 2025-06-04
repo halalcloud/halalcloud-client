@@ -558,3 +558,26 @@ std::vector<HalalCloud::BlockStorageInformation> HalalCloud::Session::GetBlockSt
     }
     return Result;
 }
+
+void HalalCloud::Session::DownloadFile(
+    std::string_view SourceFilePath,
+    std::string_view TargetFilePath)
+{
+    TargetFilePath;
+
+    std::vector<std::string> Identifiers;
+
+    HalalCloud::FileStorageInformation Information =
+        this->GetFileStorageInformation(SourceFilePath);
+    for (HalalCloud::FileStorageNode const& Node : Information.Nodes)
+    {
+        Identifiers.push_back(Node.Identifier);
+    }
+
+    std::vector<HalalCloud::BlockStorageInformation> Blocks =
+        this->GetBlockStorageInformation(Identifiers);
+    for (HalalCloud::BlockStorageInformation const& Block : Blocks)
+    {
+        std::printf("Downloading %s...\n", Block.DownloadLink.c_str());
+    }
+}

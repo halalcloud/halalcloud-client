@@ -292,6 +292,8 @@ int main()
         "Token = \"%s\"\n",
         Session.CurrentToken().dump(2).c_str());
 
+    Session.DownloadFile("/9p.cap", "D:\\9p.cap");
+
     /*Session.Impersonate(Mile::Json::ToString(
         Mile::Json::GetSubKey(Session.CurrentToken(), "refresh_token")));
 

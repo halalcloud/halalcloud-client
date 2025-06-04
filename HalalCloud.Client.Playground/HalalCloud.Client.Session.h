@@ -147,6 +147,10 @@ namespace HalalCloud
 
 		std::vector<BlockStorageInformation> GetBlockStorageInformation(
 			std::vector<std::string> const& Identifiers);
+
+        void DownloadFile(
+            std::string_view SourceFilePath,
+            std::string_view TargetFilePath);
     };
 }
 
