@@ -5,7 +5,6 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalalCloud.Client.Playground", "HalalCloud.Client.Playground\HalalCloud.Client.Playground.vcxproj", "{86D4AFAD-E229-4849-965B-3D1DE93CA98C}"
 	ProjectSection(ProjectDependencies) = postProject
-		{68A09EBE-493D-4525-9B19-007F2C32C435} = {68A09EBE-493D-4525-9B19-007F2C32C435}
 		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A} = {D5ECCC0A-B633-4BE3-9F74-31A8D744821A}
 	EndProjectSection
 EndProject
@@ -16,8 +15,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalalCloud.Client.Core.UnitTest", "HalalCloud.Client.Core.UnitTest\HalalCloud.Client.Core.UnitTest.csproj", "{D24A8CF0-8A1C-4ECB-A7EE-F401E9779E61}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HalalCloud.RpcClient", "HalalCloud.RpcClient\HalalCloud.RpcClient.csproj", "{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HalalCloud.BaiduBce", "HalalCloud.BaiduBce\HalalCloud.BaiduBce.vcxproj", "{68A09EBE-493D-4525-9B19-007F2C32C435}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -81,18 +78,6 @@ Global
 		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Release|x64.ActiveCfg = Release|x64
 		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Release|x64.Build.0 = Release|x64
 		{D5ECCC0A-B633-4BE3-9F74-31A8D744821A}.Release|x86.ActiveCfg = Release|x86
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Debug|ARM64.ActiveCfg = Debug|ARM64
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Debug|ARM64.Build.0 = Debug|ARM64
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Debug|x64.ActiveCfg = Debug|x64
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Debug|x64.Build.0 = Debug|x64
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Debug|x86.ActiveCfg = Debug|Win32
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Debug|x86.Build.0 = Debug|Win32
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Release|ARM64.ActiveCfg = Release|ARM64
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Release|ARM64.Build.0 = Release|ARM64
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Release|x64.ActiveCfg = Release|x64
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Release|x64.Build.0 = Release|x64
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Release|x86.ActiveCfg = Release|Win32
-		{68A09EBE-493D-4525-9B19-007F2C32C435}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

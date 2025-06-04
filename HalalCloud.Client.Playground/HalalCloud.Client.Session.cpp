@@ -21,8 +21,6 @@
 #include <ShlObj.h>
 #endif
 
-#include <HalalCloud.BaiduBce.h>
-
 #include <fstream>
 
 [[noreturn]] void HalalCloud::ThrowException(
@@ -396,7 +394,10 @@ void HalalCloud::Session::UploadFile(
     std::string_view SourceFilePath,
     std::string_view TargetFilePath)
 {
-    nlohmann::json Request;
+    SourceFilePath;
+    TargetFilePath;
+
+    /*nlohmann::json Request;
     Request["path"] = TargetFilePath;
 
     nlohmann::json Response = this->Request(
@@ -429,7 +430,7 @@ void HalalCloud::Session::UploadFile(
         HalalCloud::ThrowException(
             "HccBcePutObject",
             Error);
-    }
+    }*/
 }
 
 HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformation(
