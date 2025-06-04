@@ -2,13 +2,12 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <IncludePath>$(MSBuildThisFileDirectory)Include\;$(IncludePath)</IncludePath>
-    <LibraryPath>$(MSBuildThisFileDirectory)Lib\$(PlatformShortName)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(UseDebugLibraries)' == 'true'">$(MSBuildThisFileDirectory)Lib\$(PlatformShortName)\Debug\;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(UseDebugLibraries)' != 'true'">$(MSBuildThisFileDirectory)Lib\$(PlatformShortName)\Release\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies Condition="'$(UseDebugLibraries)' == 'true'">jsoncppd.lib;cprd.lib;libcurld.lib;zlibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(UseDebugLibraries)' != 'true'">jsoncpp.lib;cpr.lib;libcurl.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcurl.lib;mbedcrypto.lib;mbedtls.lib;mbedx509.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 </Project>
