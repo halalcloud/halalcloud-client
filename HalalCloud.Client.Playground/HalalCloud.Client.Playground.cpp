@@ -258,6 +258,103 @@ void* HccFuseInitializeCallback(
     return nullptr;
 }
 
+#include <mbedtls/md.h>
+
+std::vector<std::uint8_t> ComputeSha256(
+    std::vector<uint8_t> const& Data)
+{
+    std::vector<std::uint8_t> Result;
+
+    mbedtls_md_context_t Context;
+    ::mbedtls_md_init(&Context);
+
+    do
+    {
+        const mbedtls_md_info_t* Algorithm =
+            ::mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
+        if (!Algorithm)
+        {
+            break;
+        }
+
+        if (0 != ::mbedtls_md_setup(&Context, Algorithm, 0))
+        {
+            break;
+        }
+        
+        if (0 != ::mbedtls_md_starts(&Context))
+        {
+            break;
+        }
+
+        if (0 != ::mbedtls_md_update(&Context, Data.data(), Data.size()))
+        {
+            break;
+        }
+
+        Result.resize(::mbedtls_md_get_size(Algorithm));
+
+        if (0 != ::mbedtls_md_finish(&Context, Result.data()))
+        {
+            Result.clear();
+            break;
+        }
+
+    } while (false);
+
+    ::mbedtls_md_free(&Context);
+
+    return Result;
+}
+
+std::vector<std::uint8_t> ComputeHmacSha256(
+    std::vector<uint8_t> const& Key,
+    std::vector<uint8_t> const& Data)
+{
+    std::vector<std::uint8_t> Result;
+
+    mbedtls_md_context_t Context;
+    ::mbedtls_md_init(&Context);
+
+    do
+    {
+        const mbedtls_md_info_t* Algorithm =
+            ::mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
+        if (!Algorithm)
+        {
+            break;
+        }
+
+        if (0 != ::mbedtls_md_setup(&Context, Algorithm, 1))
+        {
+            break;
+        }
+
+        if (0 != mbedtls_md_hmac_starts(&Context, Key.data(), Key.size()))
+        {
+            break;
+        }
+
+        if (0 != mbedtls_md_hmac_update(&Context, Data.data(), Data.size()))
+        {
+            break;
+        }
+
+        Result.resize(::mbedtls_md_get_size(Algorithm));
+
+        if (0 != ::mbedtls_md_hmac_finish(&Context, Result.data()))
+        {
+            Result.clear();
+            break;
+        }
+
+    } while (false);
+
+    ::mbedtls_md_free(&Context);
+
+    return Result;
+}
+
 int main()
 {
     std::printf(

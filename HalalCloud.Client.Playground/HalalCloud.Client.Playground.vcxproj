@@ -23,6 +23,11 @@
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1622" Project="Mile.Project.Cpp.props" />
   <Import Project="..\HalalCloud.RpcClient\HalalCloud.RpcClient.props" />
   <Import Project="..\HalalCloud.Dependencies\HalalCloud.Dependencies.props" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <GuardEHContMetadata Condition="'$(Platform)' == 'ARM64' Or '$(Platform)' == 'ARM64EC' Or '$(Platform)' == 'x64'"></GuardEHContMetadata>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
