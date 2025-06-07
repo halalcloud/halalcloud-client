@@ -355,6 +355,20 @@ std::vector<std::uint8_t> ComputeHmacSha256(
     return Result;
 }
 
+std::string BytesToHexString(
+    std::vector<uint8_t> const& Bytes)
+{
+    static const char* HexChars = "0123456789abcdef";
+    std::string Result;
+    Result.reserve(Bytes.size() * 2);
+    for (uint8_t const& Byte : Bytes)
+    {
+        Result.push_back(HexChars[Byte >> 4]);
+        Result.push_back(HexChars[Byte & 0xF]);
+    }
+    return Result;
+}
+
 int main()
 {
     std::printf(
