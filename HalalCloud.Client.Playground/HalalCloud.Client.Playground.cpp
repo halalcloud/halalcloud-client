@@ -263,8 +263,22 @@ void* HccFuseInitializeCallback(
 #include <mbedtls/entropy.h>
 #include <mbedtls/md.h>
 
-std::vector<std::uint8_t> ComputeSha256(
-    std::vector<uint8_t> const& Data)
+std::string BytesToHexString(
+    std::vector<uint8_t> const& Bytes)
+{
+    static const char* HexChars = "0123456789abcdef";
+    std::string Result;
+    Result.reserve(Bytes.size() * 2);
+    for (uint8_t const& Byte : Bytes)
+    {
+        Result.push_back(HexChars[Byte >> 4]);
+        Result.push_back(HexChars[Byte & 0xF]);
+    }
+    return Result;
+}
+
+std::string ComputeSha256(
+    std::string const& Data)
 {
     std::vector<std::uint8_t> Result;
 
@@ -290,7 +304,10 @@ std::vector<std::uint8_t> ComputeSha256(
             break;
         }
 
-        if (0 != ::mbedtls_md_update(&Context, Data.data(), Data.size()))
+        if (0 != ::mbedtls_md_update(
+            &Context,
+            reinterpret_cast<const unsigned char*>(Data.c_str()),
+            Data.size() * sizeof(char)))
         {
             break;
         }
@@ -307,12 +324,12 @@ std::vector<std::uint8_t> ComputeSha256(
 
     ::mbedtls_md_free(&Context);
 
-    return Result;
+    return ::BytesToHexString(Result);
 }
 
 std::vector<std::uint8_t> ComputeHmacSha256(
-    std::vector<uint8_t> const& Key,
-    std::vector<uint8_t> const& Data)
+    std::vector<std::uint8_t> const& Key,
+    std::string const& Data)
 {
     std::vector<std::uint8_t> Result;
 
@@ -333,12 +350,18 @@ std::vector<std::uint8_t> ComputeHmacSha256(
             break;
         }
 
-        if (0 != mbedtls_md_hmac_starts(&Context, Key.data(), Key.size()))
+        if (0 != mbedtls_md_hmac_starts(
+            &Context,
+            Key.data(),
+            Key.size()))
         {
             break;
         }
 
-        if (0 != mbedtls_md_hmac_update(&Context, Data.data(), Data.size()))
+        if (0 != mbedtls_md_hmac_update(
+            &Context,
+            reinterpret_cast<const unsigned char*>(Data.c_str()),
+            Data.size() * sizeof(char)))
         {
             break;
         }
@@ -355,20 +378,6 @@ std::vector<std::uint8_t> ComputeHmacSha256(
 
     ::mbedtls_md_free(&Context);
 
-    return Result;
-}
-
-std::string BytesToHexString(
-    std::vector<uint8_t> const& Bytes)
-{
-    static const char* HexChars = "0123456789abcdef";
-    std::string Result;
-    Result.reserve(Bytes.size() * 2);
-    for (uint8_t const& Byte : Bytes)
-    {
-        Result.push_back(HexChars[Byte >> 4]);
-        Result.push_back(HexChars[Byte & 0xF]);
-    }
     return Result;
 }
 
