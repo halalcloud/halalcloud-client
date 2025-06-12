@@ -426,6 +426,27 @@ std::string GenerateNonce()
         Guid.Data4[7]);
 }
 
+std::string GenerateIso8601UtcTimestamp()
+{
+    std::time_t Now = std::time(nullptr);
+    std::tm UtcTime = { 0 };
+
+#ifdef _MSC_VER
+    ::gmtime_s(&UtcTime, &Now);
+#else
+    ::gmtime_r(&Now, &UtcTime);
+#endif
+
+    return Mile::FormatString(
+        "%04d-%02d-%02dT%02d:%02d:%02dZ",
+        UtcTime.tm_year + 1900,
+        UtcTime.tm_mon + 1,
+        UtcTime.tm_mday,
+        UtcTime.tm_hour,
+        UtcTime.tm_min,
+        UtcTime.tm_sec);
+}
+
 int main()
 {
     std::printf(
