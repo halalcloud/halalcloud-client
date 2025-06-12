@@ -476,12 +476,6 @@ std::string ToIso8601UtcTimestamp(
         UtcTime.tm_sec);
 }
 
-std::string GenerateIso8601UtcTimestamp(
-    std::time_t PosixTime)
-{
-    return ::ToIso8601UtcTimestamp(::ToUtcTime(PosixTime));
-}
-
 std::string GenerateCanonicalRequest(
     std::string_view HttpRequestMethod,
     std::string_view CanonicalUri,
