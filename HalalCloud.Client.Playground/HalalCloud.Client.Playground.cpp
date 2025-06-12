@@ -559,9 +559,7 @@ std::string MakeUrlEscapeUpperCase(
 CURLUcode HccRpcProcessUrl(
     std::string const& Host,
     std::string const& ApiPath,
-    std::map<std::string, std::string> const& ApiQueries,
-    std::string& FullUrl,
-    std::string& FullQuery)
+    std::string& FullUrl)
 {
     CURLU* UrlHandle = ::curl_url();
     if (!UrlHandle)
@@ -596,26 +594,6 @@ CURLUcode HccRpcProcessUrl(
         return Result;
     }
 
-    if (!ApiQueries.empty())
-    {
-        for (auto const& ApiQuery : ApiQueries)
-        {
-            std::string Current;
-            Current.append(ApiQuery.first);
-            Current.push_back('=');
-            Current.append(ApiQuery.second);
-            Result = ::curl_url_set(
-                UrlHandle,
-                CURLUPART_QUERY,
-                Current.c_str(),
-                CURLU_URLENCODE | CURLU_APPENDQUERY);
-            if (CURLUE_OK != Result)
-            {
-                return Result;
-            }
-        }
-    }
-
     {
         char* RawFullUrl = nullptr;
         Result = ::curl_url_get(UrlHandle, CURLUPART_URL, &RawFullUrl, 0);
@@ -630,27 +608,12 @@ CURLUcode HccRpcProcessUrl(
         }
     }
 
-    {
-        char* RawFullQuery = nullptr;
-        Result = ::curl_url_get(UrlHandle, CURLUPART_QUERY, &RawFullQuery, 0);
-        if (CURLUE_OK != Result)
-        {
-            return Result;
-        }
-        else
-        {
-            FullQuery = ::MakeUrlEscapeUpperCase(RawFullQuery);
-            ::curl_free(RawFullQuery);
-        }
-    }
-
     return Result;
 }
 
 CURLcode HccRpcPost(
     std::string const& AccessToken,
     std::string const& ApiPath,
-    std::map<std::string, std::string> const& ApiQueries,
     nlohmann::json const& Content)
 {
     const char RequestSuffix[] = "hl6_request";
@@ -681,13 +644,10 @@ CURLcode HccRpcPost(
         ::ToIso8601UtcTimestamp(RequestUtcTime));
 
     std::string FullUrl;
-    std::string FullQuery;
     if (CURLUE_OK != ::HccRpcProcessUrl(
         RequestHeaders["host"],
         ApiPath,
-        ApiQueries,
-        FullUrl,
-        FullQuery))
+        FullUrl))
     {
         return CURLE_FAILED_INIT;
     }
@@ -707,7 +667,7 @@ CURLcode HccRpcPost(
     CanonicalRequest.push_back('\n');
     CanonicalRequest.append(ApiPath);
     CanonicalRequest.push_back('\n');
-    CanonicalRequest.append(FullQuery);
+    CanonicalRequest.append(""); // All POST requests don't need query string.
     CanonicalRequest.push_back('\n');
     for (auto const& RequestHeaderItem : RequestHeaders)
     {
