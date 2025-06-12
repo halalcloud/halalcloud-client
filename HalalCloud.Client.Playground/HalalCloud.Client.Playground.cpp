@@ -258,6 +258,8 @@ void* HccFuseInitializeCallback(
     return nullptr;
 }
 
+#include <mbedtls/ctr_drbg.h>
+#include <mbedtls/entropy.h>
 #include <mbedtls/md.h>
 
 std::vector<std::uint8_t> ComputeSha256(
@@ -367,6 +369,61 @@ std::string BytesToHexString(
         Result.push_back(HexChars[Byte & 0xF]);
     }
     return Result;
+}
+
+std::string GenerateNonce()
+{
+    GUID Guid = { 0 };
+
+    mbedtls_entropy_context EntropyContext;
+    ::mbedtls_entropy_init(&EntropyContext);
+
+    mbedtls_ctr_drbg_context CtrDrbgContext;
+    ::mbedtls_ctr_drbg_init(&CtrDrbgContext);
+    ::mbedtls_ctr_drbg_set_prediction_resistance(
+        &CtrDrbgContext,
+        MBEDTLS_CTR_DRBG_PR_ON);
+
+    do
+    {
+        if (0 != ::mbedtls_ctr_drbg_seed(
+            &CtrDrbgContext,
+            ::mbedtls_entropy_func,
+            &EntropyContext,
+            nullptr,
+            0))
+        {
+            break;
+        }
+
+        
+        if (0 != ::mbedtls_ctr_drbg_random(
+            &CtrDrbgContext,
+            reinterpret_cast<unsigned char*>(&Guid),
+            sizeof(Guid)))
+        {
+            break;
+        }
+
+    } while (false);
+
+    ::mbedtls_ctr_drbg_free(&CtrDrbgContext);
+
+    ::mbedtls_entropy_free(&EntropyContext);
+    
+    return Mile::FormatString(
+        "%08x-%04hx-%04hx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",
+        Guid.Data1,
+        Guid.Data2,
+        Guid.Data3,
+        Guid.Data4[0],
+        Guid.Data4[1],
+        Guid.Data4[2],
+        Guid.Data4[3],
+        Guid.Data4[4],
+        Guid.Data4[5],
+        Guid.Data4[6],
+        Guid.Data4[7]);
 }
 
 int main()
