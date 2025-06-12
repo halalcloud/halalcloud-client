@@ -486,76 +486,6 @@ std::string ToIso8601UtcTimestamp(
         UtcTime.tm_sec);
 }
 
-std::string GenerateCanonicalRequest(
-    std::string_view HttpRequestMethod,
-    std::string_view CanonicalUri,
-    std::string_view CanonicalQueryString,
-    std::string_view CanonicalHeaders,
-    std::string_view SignedHeaders,
-    std::vector<uint8_t> const& HashedRequestPayload)
-{
-    std::string Result;
-    Result.append(HttpRequestMethod);
-    Result.append("\n");
-    Result.append(CanonicalUri);
-    Result.append("\n");
-    Result.append(CanonicalQueryString);
-    Result.append("\n");
-    Result.append(CanonicalHeaders);
-    Result.append("\n");
-    Result.append(SignedHeaders);
-    Result.append("\n");
-    Result.append(::BytesToHexString(HashedRequestPayload));
-    return Result;
-}
-
-std::string GenerateCredentialScope(
-    std::string_view DateString,
-    std::string_view AccessToken)
-{
-    std::string Result;
-    Result.append(DateString);
-    Result.append("/");
-    Result.append(AccessToken);
-    Result.append("/");
-    Result.append("hl6_request");
-    return Result;
-}
-
-std::string GenerateStringToSign(
-    std::string_view RequestDateTime,
-    std::string_view CredentialScope,
-    std::vector<uint8_t> const& HashedCanonicalRequest)
-{
-    std::string Result;
-    Result.append("HL6-HMAC-SHA256");
-    Result.append("\n");
-    Result.append(RequestDateTime);
-    Result.append("\n");
-    Result.append(CredentialScope);
-    Result.append("\n");
-    Result.append(::BytesToHexString(HashedCanonicalRequest));
-    return Result;
-}
-
-std::string MakeUrlEscapeUpperCase(
-    std::string const& Input)
-{
-    std::string Result = Input;
-
-    for (size_t i = 0; i < Result.length(); ++i)
-    {
-        if (Result[i] == '%' && i + 2 < Result.length())
-        {
-            Result[i + 1] = static_cast<char>(std::toupper(Result[i + 1]));
-            Result[i + 2] = static_cast<char>(std::toupper(Result[i + 2]));
-            i += 2;
-        }
-    }
-
-    return Result;
-}
-
 CURLUcode HccRpcProcessUrl(
     std::string const& Host,
     std::string const& ApiPath,
@@ -603,7 +533,7 @@ CURLUcode HccRpcProcessUrl(
         }
         else
         {
-            FullUrl = ::MakeUrlEscapeUpperCase(RawFullUrl);
+            FullUrl = RawFullUrl;
             ::curl_free(RawFullUrl);
         }
     }
