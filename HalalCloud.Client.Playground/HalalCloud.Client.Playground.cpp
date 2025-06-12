@@ -486,10 +486,28 @@ std::string ToIso8601UtcTimestamp(
         UtcTime.tm_sec);
 }
 
+std::size_t HccRpcCurlWriteCallback(
+    char* data,
+    std::size_t size,
+    std::size_t nmemb,
+    void* clientp)
+{
+    std::size_t realsize = size * nmemb;
+
+    std::string* OutputString = reinterpret_cast<std::string*>(clientp);
+    if (OutputString)
+    {
+        OutputString->append(std::string(data, realsize));
+    }
+
+    return realsize;
+}
+
 CURLcode HccRpcPost(
     std::string const& AccessToken,
     std::string const& ApiPath,
-    nlohmann::json const& Content)
+    std::string const& RequestJson,
+    std::string& ResponseJson)
 {
     const char RequestSuffix[] = "hl6_request";
     const char SignaturePrefix[] = "HL6";
@@ -523,8 +541,6 @@ CURLcode HccRpcPost(
     FullUrl.append(RequestHeaders["host"]);
     FullUrl.append(ApiPath);
 
-    std::string RequestContent = Content.dump();
-
     std::string SignedHeaders;
     for (auto const& RequestHeaderItem : RequestHeaders)
     {
@@ -550,7 +566,7 @@ CURLcode HccRpcPost(
     CanonicalRequest.push_back('\n');
     CanonicalRequest.append(SignedHeaders);
     CanonicalRequest.push_back('\n');
-    CanonicalRequest.append(::ComputeSha256(RequestContent));
+    CanonicalRequest.append(::ComputeSha256(RequestJson));
 
     std::string CredentialScope;
     CredentialScope.append(UtcDateString);
@@ -662,7 +678,7 @@ CURLcode HccRpcPost(
     Result = ::curl_easy_setopt(
         CurlHandle,
         CURLOPT_POSTFIELDS,
-        RequestContent.c_str());
+        RequestJson.c_str());
     if (CURLE_OK != Result)
     {
         return Result;
@@ -671,29 +687,38 @@ CURLcode HccRpcPost(
     Result = ::curl_easy_setopt(
         CurlHandle,
         CURLOPT_POSTFIELDSIZE,
-        RequestContent.size());
+        RequestJson.size());
     if (CURLE_OK != Result)
     {
         return Result;
     }
 
-    curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYHOST, 0L);
+    Result = ::curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
+
+    Result = ::curl_easy_setopt(
+        CurlHandle,
+        CURLOPT_WRITEFUNCTION,
+        ::HccRpcCurlWriteCallback);
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
+
+    Result = ::curl_easy_setopt(CurlHandle, CURLOPT_WRITEDATA, &ResponseJson);
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
 
     Result = ::curl_easy_perform(CurlHandle);
     if (CURLE_OK != Result)
     {
         return Result;
     }
-
-//    
-//    // 配置curl选项
-
-
-
-//    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-//    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
 
     return Result;
 }
