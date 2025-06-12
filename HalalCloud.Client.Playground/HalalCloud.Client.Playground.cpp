@@ -426,16 +426,27 @@ std::string GenerateNonce()
         Guid.Data4[7]);
 }
 
-std::string GenerateIso8601UtcTimestamp(
-    std::time_t PosixTime)
+std::time_t GetCurrentPosixTime()
+{
+    return std::time(nullptr);
+}
+
+std::tm ToUtcTime(
+    std::time_t const& PosixTime)
 {
     std::tm UtcTime = { 0 };
-
 #ifdef _MSC_VER
     ::gmtime_s(&UtcTime, &PosixTime);
 #else
     ::gmtime_r(&PosixTime, &UtcTime);
 #endif
+    return UtcTime;
+}
+
+std::string GenerateIso8601UtcTimestamp(
+    std::time_t PosixTime)
+{
+    std::tm UtcTime = ::ToUtcTime(PosixTime);
 
     return Mile::FormatString(
         "%04d-%02d-%02dT%02d:%02d:%02dZ",
