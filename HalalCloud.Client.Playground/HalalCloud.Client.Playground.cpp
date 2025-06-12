@@ -647,6 +647,226 @@ CURLUcode HccRpcProcessUrl(
     return Result;
 }
 
+CURLcode HccRpcPost(
+    std::string const& AccessToken,
+    std::string const& ApiPath,
+    std::map<std::string, std::string> const& ApiQueries,
+    nlohmann::json const& Content)
+{
+    const char RequestSuffix[] = "hl6_request";
+    const char SignaturePrefix[] = "HL6";
+    const char DefaultSignatureAlgorithm[] = "HL6-HMAC-SHA256";
+
+    const char SecretId[] = "APPK_5f02f0889301fd7be1ac972c11bf3e7d";
+    const char SecretKey[] = "AppSecretForTest_KSMWNDBAJ2hs__AS";
+
+    std::time_t RequestPosixTime = 0x00000000684aafa4;//::GetCurrentPosixTime();
+
+    std::tm RequestUtcTime = ::ToUtcTime(RequestPosixTime);
+
+    std::string UtcDateString = ::ToIso8601UtcDate(RequestUtcTime);
+
+    std::map<std::string, std::string> RequestHeaders;
+    RequestHeaders.emplace(
+        "host",
+        "openapi.2dland.cn");
+    RequestHeaders.emplace(
+        "content-type",
+        "application/json; charset=utf-8");
+    RequestHeaders.emplace(
+        "x-hl-nonce",
+        "d4554aa7-6e51-4b27-676d-785e8cef4f56");//::GenerateNonce());
+    RequestHeaders.emplace(
+        "x-hl-timestamp",
+        ::ToIso8601UtcTimestamp(RequestUtcTime));
+
+    std::string FullUrl;
+    std::string FullQuery;
+    if (CURLUE_OK != ::HccRpcProcessUrl(
+        RequestHeaders["host"],
+        ApiPath,
+        ApiQueries,
+        FullUrl,
+        FullQuery))
+    {
+        return CURLE_FAILED_INIT;
+    }
+
+    std::string RequestContent = Content.dump();
+
+    std::string SignedHeaders;
+    for (auto const& RequestHeaderItem : RequestHeaders)
+    {
+        SignedHeaders.append(RequestHeaderItem.first);
+        SignedHeaders.push_back(';');
+    }
+    SignedHeaders.pop_back();
+
+    std::string CanonicalRequest;
+    CanonicalRequest.append("POST");
+    CanonicalRequest.push_back('\n');
+    CanonicalRequest.append(ApiPath);
+    CanonicalRequest.push_back('\n');
+    CanonicalRequest.append(FullQuery);
+    CanonicalRequest.push_back('\n');
+    for (auto const& RequestHeaderItem : RequestHeaders)
+    {
+        CanonicalRequest.append(RequestHeaderItem.first);
+        CanonicalRequest.push_back(':');
+        CanonicalRequest.append(RequestHeaderItem.second);
+        CanonicalRequest.push_back('\n');
+    }
+    CanonicalRequest.push_back('\n');
+    CanonicalRequest.append(SignedHeaders);
+    CanonicalRequest.push_back('\n');
+    CanonicalRequest.append(::ComputeSha256(RequestContent));
+
+    std::string CredentialScope;
+    CredentialScope.append(UtcDateString);
+    CredentialScope.push_back('/');
+    CredentialScope.append(AccessToken);
+    CredentialScope.push_back('/');
+    CredentialScope.append(RequestSuffix);
+
+    std::string StringToSign;
+    StringToSign.append(DefaultSignatureAlgorithm);
+    StringToSign.push_back('\n');
+    StringToSign.append(RequestHeaders["x-hl-timestamp"]);
+    StringToSign.push_back('\n');
+    StringToSign.append(CredentialScope);
+    StringToSign.push_back('\n');
+    StringToSign.append(::ComputeSha256(CanonicalRequest));
+
+    std::string Signature;
+    Signature.append(SignaturePrefix);
+    Signature.append(SecretKey);
+    std::vector<std::uint8_t> InitialSignatureKey;
+    for (auto const& Character : Signature)
+    {
+        InitialSignatureKey.push_back(Character);
+    }
+    Signature = ::BytesToHexString(
+        ::ComputeHmacSha256(
+            ::ComputeHmacSha256(
+                ::ComputeHmacSha256(
+                    ::ComputeHmacSha256(
+                        InitialSignatureKey,
+                        UtcDateString),
+                    AccessToken),
+                RequestSuffix),
+            StringToSign));
+
+    std::string Authorization;
+    Authorization.append(DefaultSignatureAlgorithm);
+    Authorization.push_back(' ');
+    Authorization.append("Credential=");
+    Authorization.append(SecretId);
+    Authorization.push_back('/');
+    Authorization.append(CredentialScope);
+    Authorization.push_back(',');
+    Authorization.append("SignedHeaders=");
+    Authorization.append(SignedHeaders);
+    Authorization.push_back(',');
+    Authorization.append("Signature=");
+    Authorization.append(Signature);
+
+    RequestHeaders.emplace("authorization", Authorization);
+    RequestHeaders.erase("host");
+
+    CURL* CurlHandle = ::curl_easy_init();
+    if (!CurlHandle)
+    {
+        return CURLE_FAILED_INIT;
+    }
+    auto CurlHandleCleanupHandler = Mile::ScopeExitTaskHandler([&]()
+    {
+        if (CurlHandle)
+        {
+            ::curl_easy_cleanup(CurlHandle);
+        }
+    });
+
+    CURLcode Result = CURLE_OK;
+
+    curl_slist* CurlRequestHeaders = nullptr;
+    for (auto const& RequestHeaderItem : RequestHeaders)
+    {
+        std::string Current;
+        Current.append(RequestHeaderItem.first);
+        Current.push_back(':');
+        Current.append(RequestHeaderItem.second);
+        CurlRequestHeaders = ::curl_slist_append(
+            CurlRequestHeaders,
+            Current.c_str());
+    }
+    auto CurlRequestHeadersCleanupHandler = Mile::ScopeExitTaskHandler([&]()
+    {
+        if (CurlRequestHeaders)
+        {
+            ::curl_slist_free_all(CurlRequestHeaders);
+        }
+    });
+
+    Result = ::curl_easy_setopt(CurlHandle, CURLOPT_URL, FullUrl.c_str());
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
+
+    Result = ::curl_easy_setopt(CurlHandle, CURLOPT_POST, 1L);
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
+
+    Result = ::curl_easy_setopt(
+        CurlHandle,
+        CURLOPT_HTTPHEADER,
+        CurlRequestHeaders);
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
+
+    Result = ::curl_easy_setopt(
+        CurlHandle,
+        CURLOPT_POSTFIELDS,
+        RequestContent.c_str());
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
+
+    Result = ::curl_easy_setopt(
+        CurlHandle,
+        CURLOPT_POSTFIELDSIZE,
+        RequestContent.size());
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
+
+    curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYHOST, 0L);
+
+    Result = ::curl_easy_perform(CurlHandle);
+    if (CURLE_OK != Result)
+    {
+        return Result;
+    }
+
+//    
+//    // 配置curl选项
+
+
+
+//    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+//    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+
+    return Result;
+}
+
 int main()
 {
     std::printf(
