@@ -443,11 +443,29 @@ std::tm ToUtcTime(
     return UtcTime;
 }
 
-std::string GenerateIso8601UtcTimestamp(
-    std::time_t PosixTime)
+std::string ToIso8601UtcDate(
+    std::tm const& UtcTime)
 {
-    std::tm UtcTime = ::ToUtcTime(PosixTime);
+    return Mile::FormatString(
+        "%04d-%02d-%02d",
+        UtcTime.tm_year + 1900,
+        UtcTime.tm_mon + 1,
+        UtcTime.tm_mday);
+}
 
+std::string ToIso8601UtcTime(
+    std::tm const& UtcTime)
+{
+    return Mile::FormatString(
+        "%02d:%02d:%02d",
+        UtcTime.tm_hour,
+        UtcTime.tm_min,
+        UtcTime.tm_sec);
+}
+
+std::string ToIso8601UtcTimestamp(
+    std::tm const& UtcTime)
+{
     return Mile::FormatString(
         "%04d-%02d-%02dT%02d:%02d:%02dZ",
         UtcTime.tm_year + 1900,
@@ -456,6 +474,12 @@ std::string GenerateIso8601UtcTimestamp(
         UtcTime.tm_hour,
         UtcTime.tm_min,
         UtcTime.tm_sec);
+}
+
+std::string GenerateIso8601UtcTimestamp(
+    std::time_t PosixTime)
+{
+    return ::ToIso8601UtcTimestamp(::ToUtcTime(PosixTime));
 }
 
 std::string GenerateCanonicalRequest(
