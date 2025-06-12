@@ -258,6 +258,7 @@ void* HccFuseInitializeCallback(
     return nullptr;
 }
 
+#include <curl/curl.h>
 #include <mbedtls/ctr_drbg.h>
 #include <mbedtls/entropy.h>
 #include <mbedtls/md.h>
@@ -525,6 +526,115 @@ std::string GenerateStringToSign(
     Result.append(CredentialScope);
     Result.append("\n");
     Result.append(::BytesToHexString(HashedCanonicalRequest));
+    return Result;
+}
+
+std::string MakeUrlEscapeUpperCase(
+    std::string const& Input)
+{
+    std::string Result = Input;
+
+    for (size_t i = 0; i < Result.length(); ++i)
+    {
+        if (Result[i] == '%' && i + 2 < Result.length())
+        {
+            Result[i + 1] = static_cast<char>(std::toupper(Result[i + 1]));
+            Result[i + 2] = static_cast<char>(std::toupper(Result[i + 2]));
+            i += 2;
+        }
+    }
+
+    return Result;
+}
+
+CURLUcode HccRpcProcessUrl(
+    std::string const& Host,
+    std::string const& ApiPath,
+    std::map<std::string, std::string> const& ApiQueries,
+    std::string& FullUrl,
+    std::string& FullQuery)
+{
+    CURLU* UrlHandle = ::curl_url();
+    if (!UrlHandle)
+    {
+        return CURLUE_OUT_OF_MEMORY;
+    }
+    auto UrlHandleCleanupHandler = Mile::ScopeExitTaskHandler([&]()
+    {
+        if (UrlHandle)
+        {
+            ::curl_url_cleanup(UrlHandle);
+        }
+    });
+
+    CURLUcode Result = CURLUE_OK;
+
+    Result = ::curl_url_set(UrlHandle, CURLUPART_SCHEME, "https", 0);
+    if (CURLUE_OK != Result)
+    {
+        return Result;
+    }
+
+    Result = ::curl_url_set(UrlHandle, CURLUPART_HOST, Host.c_str(), 0);
+    if (CURLUE_OK != Result)
+    {
+        return Result;
+    }
+
+    Result = ::curl_url_set(UrlHandle, CURLUPART_PATH, ApiPath.c_str(), 0);
+    if (CURLUE_OK != Result)
+    {
+        return Result;
+    }
+
+    if (!ApiQueries.empty())
+    {
+        for (auto const& ApiQuery : ApiQueries)
+        {
+            std::string Current;
+            Current.append(ApiQuery.first);
+            Current.push_back('=');
+            Current.append(ApiQuery.second);
+            Result = ::curl_url_set(
+                UrlHandle,
+                CURLUPART_QUERY,
+                Current.c_str(),
+                CURLU_URLENCODE | CURLU_APPENDQUERY);
+            if (CURLUE_OK != Result)
+            {
+                return Result;
+            }
+        }
+    }
+
+    {
+        char* RawFullUrl = nullptr;
+        Result = ::curl_url_get(UrlHandle, CURLUPART_URL, &RawFullUrl, 0);
+        if (CURLUE_OK != Result)
+        {
+            return Result;
+        }
+        else
+        {
+            FullUrl = ::MakeUrlEscapeUpperCase(RawFullUrl);
+            ::curl_free(RawFullUrl);
+        }
+    }
+
+    {
+        char* RawFullQuery = nullptr;
+        Result = ::curl_url_get(UrlHandle, CURLUPART_QUERY, &RawFullQuery, 0);
+        if (CURLUE_OK != Result)
+        {
+            return Result;
+        }
+        else
+        {
+            FullQuery = ::MakeUrlEscapeUpperCase(RawFullQuery);
+            ::curl_free(RawFullQuery);
+        }
+    }
+
     return Result;
 }
 
