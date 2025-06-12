@@ -486,61 +486,6 @@ std::string ToIso8601UtcTimestamp(
         UtcTime.tm_sec);
 }
 
-CURLUcode HccRpcProcessUrl(
-    std::string const& Host,
-    std::string const& ApiPath,
-    std::string& FullUrl)
-{
-    CURLU* UrlHandle = ::curl_url();
-    if (!UrlHandle)
-    {
-        return CURLUE_OUT_OF_MEMORY;
-    }
-    auto UrlHandleCleanupHandler = Mile::ScopeExitTaskHandler([&]()
-    {
-        if (UrlHandle)
-        {
-            ::curl_url_cleanup(UrlHandle);
-        }
-    });
-
-    CURLUcode Result = CURLUE_OK;
-
-    Result = ::curl_url_set(UrlHandle, CURLUPART_SCHEME, "https", 0);
-    if (CURLUE_OK != Result)
-    {
-        return Result;
-    }
-
-    Result = ::curl_url_set(UrlHandle, CURLUPART_HOST, Host.c_str(), 0);
-    if (CURLUE_OK != Result)
-    {
-        return Result;
-    }
-
-    Result = ::curl_url_set(UrlHandle, CURLUPART_PATH, ApiPath.c_str(), 0);
-    if (CURLUE_OK != Result)
-    {
-        return Result;
-    }
-
-    {
-        char* RawFullUrl = nullptr;
-        Result = ::curl_url_get(UrlHandle, CURLUPART_URL, &RawFullUrl, 0);
-        if (CURLUE_OK != Result)
-        {
-            return Result;
-        }
-        else
-        {
-            FullUrl = RawFullUrl;
-            ::curl_free(RawFullUrl);
-        }
-    }
-
-    return Result;
-}
-
 CURLcode HccRpcPost(
     std::string const& AccessToken,
     std::string const& ApiPath,
@@ -574,13 +519,9 @@ CURLcode HccRpcPost(
         ::ToIso8601UtcTimestamp(RequestUtcTime));
 
     std::string FullUrl;
-    if (CURLUE_OK != ::HccRpcProcessUrl(
-        RequestHeaders["host"],
-        ApiPath,
-        FullUrl))
-    {
-        return CURLE_FAILED_INIT;
-    }
+    FullUrl.append("https://");
+    FullUrl.append(RequestHeaders["host"]);
+    FullUrl.append(ApiPath);
 
     std::string RequestContent = Content.dump();
 
