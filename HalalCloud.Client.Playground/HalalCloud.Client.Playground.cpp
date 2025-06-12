@@ -516,7 +516,7 @@ CURLcode HccRpcPost(
     const char SecretId[] = "APPK_5f02f0889301fd7be1ac972c11bf3e7d";
     const char SecretKey[] = "AppSecretForTest_KSMWNDBAJ2hs__AS";
 
-    std::time_t RequestPosixTime = 0x00000000684aafa4;//::GetCurrentPosixTime();
+    std::time_t RequestPosixTime = ::GetCurrentPosixTime();
 
     std::tm RequestUtcTime = ::ToUtcTime(RequestPosixTime);
 
@@ -531,7 +531,7 @@ CURLcode HccRpcPost(
         "application/json; charset=utf-8");
     RequestHeaders.emplace(
         "x-hl-nonce",
-        "d4554aa7-6e51-4b27-676d-785e8cef4f56");//::GenerateNonce());
+        ::GenerateNonce());
     RequestHeaders.emplace(
         "x-hl-timestamp",
         ::ToIso8601UtcTimestamp(RequestUtcTime));
