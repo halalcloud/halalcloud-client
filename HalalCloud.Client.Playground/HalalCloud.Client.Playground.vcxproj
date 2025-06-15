@@ -25,10 +25,12 @@
   <Import Project="..\HalalCloud.Dependencies\HalalCloud.Dependencies.props" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <GuardEHContMetadata Condition="'$(Platform)' == 'ARM64' Or '$(Platform)' == 'ARM64EC' Or '$(Platform)' == 'x64'"></GuardEHContMetadata>
+      <GuardEHContMetadata Condition="'$(Platform)' == 'ARM64' Or '$(Platform)' == 'ARM64EC' Or '$(Platform)' == 'x64'">
+      </GuardEHContMetadata>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="HalalCloud.Client.Core.cpp" />
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
   </ItemGroup>
@@ -36,6 +38,7 @@
     <Manifest Include="HalalCloud.Client.Playground.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HalalCloud.Client.Core.h" />
     <ClInclude Include="HalalCloud.Client.Session.h" />
   </ItemGroup>
   <ItemGroup>
