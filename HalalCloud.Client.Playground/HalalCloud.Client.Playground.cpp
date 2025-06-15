@@ -503,7 +503,7 @@ std::size_t HccRpcCurlWriteCallback(
     return realsize;
 }
 
-CURLcode HccRpcPost(
+HCC_RPC_STATUS HccRpcPost(
     std::string const& AccessToken,
     std::string const& ApiPath,
     std::string const& RequestJson,
@@ -633,8 +633,6 @@ CURLcode HccRpcPost(
         }
     });
 
-    CURLcode Result = CURLE_OK;
-
     curl_slist* CurlRequestHeaders = nullptr;
     for (auto const& RequestHeaderItem : RequestHeaders)
     {
@@ -654,73 +652,133 @@ CURLcode HccRpcPost(
         }
     });
 
-    Result = ::curl_easy_setopt(CurlHandle, CURLOPT_URL, FullUrl.c_str());
-    if (CURLE_OK != Result)
+    if (CURLE_OK != ::curl_easy_setopt(
+        CurlHandle,
+        CURLOPT_URL,
+        FullUrl.c_str()))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    Result = ::curl_easy_setopt(CurlHandle, CURLOPT_POST, 1L);
-    if (CURLE_OK != Result)
+    if (CURLE_OK != ::curl_easy_setopt(CurlHandle, CURLOPT_POST, 1L))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    Result = ::curl_easy_setopt(
+    if (CURLE_OK != ::curl_easy_setopt(
         CurlHandle,
         CURLOPT_HTTPHEADER,
-        CurlRequestHeaders);
-    if (CURLE_OK != Result)
+        CurlRequestHeaders))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    Result = ::curl_easy_setopt(
+    if (CURLE_OK != ::curl_easy_setopt(
         CurlHandle,
         CURLOPT_POSTFIELDS,
-        RequestJson.c_str());
-    if (CURLE_OK != Result)
+        RequestJson.c_str()))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    Result = ::curl_easy_setopt(
+    if (CURLE_OK != ::curl_easy_setopt(
         CurlHandle,
         CURLOPT_POSTFIELDSIZE,
-        RequestJson.size());
-    if (CURLE_OK != Result)
+        RequestJson.size()))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    Result = ::curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L);
-    if (CURLE_OK != Result)
+    if (CURLE_OK != ::curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    Result = ::curl_easy_setopt(
+    if (CURLE_OK != ::curl_easy_setopt(
         CurlHandle,
         CURLOPT_WRITEFUNCTION,
-        ::HccRpcCurlWriteCallback);
-    if (CURLE_OK != Result)
+        ::HccRpcCurlWriteCallback))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    Result = ::curl_easy_setopt(CurlHandle, CURLOPT_WRITEDATA, &ResponseJson);
-    if (CURLE_OK != Result)
+    if (CURLE_OK != ::curl_easy_setopt(
+        CurlHandle,
+        CURLOPT_WRITEDATA,
+        &ResponseJson))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    Result = ::curl_easy_perform(CurlHandle);
-    if (CURLE_OK != Result)
+    if (CURLE_OK != ::curl_easy_perform(CurlHandle))
     {
-        return Result;
+        return HCC_RPC_STATUS_INTERNAL;
     }
 
-    return Result;
+    long ResponseCode = 0;
+    if (CURLE_OK != ::curl_easy_getinfo(
+        CurlHandle,
+        CURLINFO_RESPONSE_CODE,
+        &ResponseCode))
+    {
+        return HCC_RPC_STATUS_INTERNAL;
+    }
+
+    HCC_RPC_STATUS Status = HCC_RPC_STATUS_INTERNAL;
+    switch (ResponseCode)
+    {
+    case 200:
+        Status = HCC_RPC_STATUS_OK;
+        break;
+    case 499:
+        Status = HCC_RPC_STATUS_CANCELLED;
+        break;
+    case 500:
+        // Candidate: HCC_RPC_STATUS_INTERNAL
+        // Candidate: HCC_RPC_STATUS_DATA_LOSS
+        // I think we should use HCC_RPC_STATUS_UNKNOWN because maybe we will
+        // receive other HTTP status codes which is more suitable to use
+        // HCC_RPC_STATUS_INTERNAL.
+        Status = HCC_RPC_STATUS_UNKNOWN;
+        break;
+    case 400:
+        // Candidate: HCC_RPC_STATUS_FAILED_PRECONDITION
+        // Candidate: HCC_RPC_STATUS_OUT_OF_RANGE
+        // Due to these candidates is caused by invalid arguments in the most
+        // cases, use HCC_RPC_STATUS_INVALID_ARGUMENT should be suitable.
+        Status = HCC_RPC_STATUS_INVALID_ARGUMENT;
+        break;
+    case 504:
+        Status = HCC_RPC_STATUS_DEADLINE_EXCEEDED;
+        break;
+    case 404:
+        Status = HCC_RPC_STATUS_NOT_FOUND;
+        break;
+    case 409:
+        // Candidate: HCC_RPC_STATUS_ABORTED
+        // Maybe HTTP 409 more like HCC_RPC_STATUS_ALREADY_EXISTS.
+        Status = HCC_RPC_STATUS_ALREADY_EXISTS;
+        break;
+    case 403:
+        Status = HCC_RPC_STATUS_PERMISSION_DENIED;
+        break;
+    case 429:
+        Status = HCC_RPC_STATUS_RESOURCE_EXHAUSTED;
+        break;
+    case 401:
+        Status = HCC_RPC_STATUS_UNAUTHENTICATED;
+        break;
+    case 501:
+        Status = HCC_RPC_STATUS_UNIMPLEMENTED;
+        break;
+    case 503:
+        Status = HCC_RPC_STATUS_UNAVAILABLE;
+        break;
+    default:
+        break;
+    }
+
+    return Status;
 }
 
 int main()
