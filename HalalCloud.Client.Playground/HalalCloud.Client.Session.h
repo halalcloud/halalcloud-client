@@ -12,7 +12,6 @@
 #define HALALCLOUD_CLIENT_SESSION
 
 #include <Mile.Helpers.CppBase.h>
-#include <HalalCloud.RpcClient.h>
 
 #include <Mile.Json.h>
 
@@ -93,7 +92,6 @@ namespace HalalCloud
     {
     private:
 
-        HCC_RPC_SESSION m_Session = nullptr;
         nlohmann::json m_CurrentToken;
 
         void ApplyAccessToken(
@@ -106,12 +104,6 @@ namespace HalalCloud
             nlohmann::json const& Object);
 
     public:
-
-        Session();
-
-        ~Session();
-
-        HCC_RPC_SESSION NativeHandle();
 
         nlohmann::json CurrentToken();
 

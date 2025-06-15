@@ -23,6 +23,8 @@
 
 #include <fstream>
 
+#include "HalalCloud.Client.Core.h"
+
 [[noreturn]] void HalalCloud::ThrowException(
     std::string_view Checkpoint,
     std::int32_t const& Code)
@@ -164,7 +166,7 @@ void HalalCloud::Session::ApplyAccessToken(
 {
     std::string AccessToken = Mile::Json::ToString(
         Mile::Json::GetSubKey(Token, "access_token"));
-    HCC_RPC_STATUS Status = ::HccRpcSetAccessToken(
+    /*HCC_RPC_STATUS Status = ::HccRpcSetAccessToken(
         this->m_Session,
         AccessToken.c_str());
     if (HCC_RPC_STATUS_OK != Status)
@@ -172,7 +174,7 @@ void HalalCloud::Session::ApplyAccessToken(
         HalalCloud::ThrowException(
             "HccRpcSetAccessToken",
             Status);
-    }
+    }*/
 }
 
 HalalCloud::FileInformation HalalCloud::Session::ToFileInformation(
@@ -210,27 +212,6 @@ HalalCloud::BlockStorageInformation HalalCloud::Session::ToBlockStorageInformati
     return Result;
 }
 
-HalalCloud::Session::Session()
-{
-    HCC_RPC_STATUS Status = ::HccRpcCreateSession(&this->m_Session);
-    if (HCC_RPC_STATUS_OK != Status)
-    {
-        HalalCloud::ThrowException(
-            "HccRpcCreateSession",
-            Status);
-    }
-}
-
-HalalCloud::Session::~Session()
-{
-    ::HccRpcCloseSession(this->m_Session);
-}
-
-HCC_RPC_SESSION HalalCloud::Session::NativeHandle()
-{
-    return this->m_Session;
-}
-
 nlohmann::json HalalCloud::Session::CurrentToken()
 {
     return this->m_CurrentToken;
@@ -240,7 +221,10 @@ nlohmann::json HalalCloud::Session::Request(
     std::string_view MethodFullName,
     nlohmann::json const& Request)
 {
-    nlohmann::json Response;
+    MethodFullName;
+    Request;
+    return nlohmann::json::object();
+    /*nlohmann::json Response;
 
     LPSTR ResponseJson = nullptr;
 
@@ -261,7 +245,7 @@ nlohmann::json HalalCloud::Session::Request(
         ::HccRpcFreeMemory(ResponseJson);
     });
 
-    return nlohmann::json::parse(ResponseJson);
+    return nlohmann::json::parse(ResponseJson);*/
 }
 
 void HalalCloud::Session::Authenticate(
