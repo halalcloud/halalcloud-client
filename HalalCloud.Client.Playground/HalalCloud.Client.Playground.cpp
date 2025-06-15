@@ -503,7 +503,7 @@ std::size_t HccRpcCurlWriteCallback(
     return realsize;
 }
 
-HCC_RPC_STATUS HccRpcPost(
+HCC_RPC_STATUS HccRpcPostRequest(
     std::string const& AccessToken,
     std::string const& ApiPath,
     std::string const& RequestJson,
@@ -787,7 +787,7 @@ nlohmann::json HccRpcPostRequestWrapper(
     nlohmann::json const& Request)
 {
     std::string ResponseJson;
-    HCC_RPC_STATUS Status = ::HccRpcPost(
+    HCC_RPC_STATUS Status = ::HccRpcPostRequest(
         AccessToken,
         ApiPath,
         Request.dump().c_str(),
@@ -795,7 +795,7 @@ nlohmann::json HccRpcPostRequestWrapper(
     if (HCC_RPC_STATUS_OK != Status)
     {
         HalalCloud::ThrowException(
-            "HccRpcPost",
+            "HccRpcPostRequest",
             Status);
     }
     return nlohmann::json::parse(ResponseJson);
