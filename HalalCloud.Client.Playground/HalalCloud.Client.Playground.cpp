@@ -781,6 +781,26 @@ HCC_RPC_STATUS HccRpcPost(
     return Status;
 }
 
+nlohmann::json HccRpcPostRequestWrapper(
+    std::string const& AccessToken,
+    std::string const& ApiPath,
+    nlohmann::json const& Request)
+{
+    std::string ResponseJson;
+    HCC_RPC_STATUS Status = ::HccRpcPost(
+        AccessToken,
+        ApiPath,
+        Request.dump().c_str(),
+        ResponseJson);
+    if (HCC_RPC_STATUS_OK != Status)
+    {
+        HalalCloud::ThrowException(
+            "HccRpcPost",
+            Status);
+    }
+    return nlohmann::json::parse(ResponseJson);
+}
+
 int main()
 {
     std::printf(
