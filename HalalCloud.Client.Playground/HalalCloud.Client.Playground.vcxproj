@@ -21,7 +21,6 @@
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1622" Project="Mile.Project.Platform.ARM64.props" />
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1622" Project="Mile.Project.Cpp.Default.props" />
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1622" Project="Mile.Project.Cpp.props" />
-  <Import Project="..\HalalCloud.RpcClient\HalalCloud.RpcClient.props" />
   <Import Project="..\HalalCloud.Dependencies\HalalCloud.Dependencies.props" />
   <ItemDefinitionGroup>
     <ClCompile>
@@ -50,6 +49,9 @@
     </PackageReference>
     <PackageReference Include="Mile.Dokany">
       <Version>1.0.434</Version>
+    </PackageReference>
+    <PackageReference Include="Mile.Mobility">
+      <Version>1.0.206</Version>
     </PackageReference>
   </ItemGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1622" Project="Mile.Project.Cpp.targets" />

@@ -1,3 +1,0 @@
-[submodule "HalalCloud.Protocol"]
-	path = HalalCloud.RpcClient/Protocol
-	url = https://github.com/city404/v6-public-rpc-proto
