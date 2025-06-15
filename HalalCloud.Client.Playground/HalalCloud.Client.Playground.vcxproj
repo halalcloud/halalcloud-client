@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Mile.Windows.Helpers">
-      <Version>1.0.645</Version>
+      <Version>1.0.952</Version>
     </PackageReference>
     <PackageReference Include="Mile.Json">
       <Version>1.0.1057</Version>
