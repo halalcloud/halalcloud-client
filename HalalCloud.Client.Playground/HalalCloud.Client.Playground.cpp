@@ -258,55 +258,8 @@ void* HccFuseInitializeCallback(
     return nullptr;
 }
 
-//nlohmann::json HccRpcPostRequestWrapper(
-//    std::string const& AccessToken,
-//    std::string const& ApiPath,
-//    nlohmann::json const& Request)
-//{
-//    std::string ResponseJson;
-//    HCC_RPC_STATUS Status = ::HccRpcPostRequest(
-//        AccessToken,
-//        ApiPath,
-//        Request.dump().c_str(),
-//        ResponseJson);
-//    if (HCC_RPC_STATUS_OK != Status)
-//    {
-//        HalalCloud::ThrowException(
-//            "HccRpcPostRequest",
-//            Status);
-//    }
-//    return nlohmann::json::parse(ResponseJson);
-//}
-
-//void MakeRequest()
-//{
-//    std::string ResponseJson;
-//
-//    /*::HccRpcPost(
-//        "*",
-//        "/v6/debug/sign",
-//        nlohmann::json::object().dump(),
-//        ResponseJson);*/
-//
-//    nlohmann::json Request;
-//    Request["return_type"] = 2;
-//    Request["state"] = "HalalCloud.Client.Session.Authenticate";
-//
-//    /*std::printf(
-//        "%s\n",
-//        ::HccRpcPostRequestWrapper(
-//            "*",
-//            "/v6/user/create_auth_token",
-//            Request).dump().c_str());*/
-//
-//    std::getchar();
-//}
-
 int main()
 {
-    //::Test();
-    //::MakeRequest();
-
     std::printf(
         "ApplicationDataRootPath = \"%s\"\n",
         HalalCloud::GetApplicationDataRootPath().string().data());

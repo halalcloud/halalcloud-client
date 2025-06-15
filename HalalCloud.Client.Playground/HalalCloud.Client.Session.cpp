@@ -161,22 +161,6 @@ void HalalCloud::WriteAllBytesToFile(
     }
 }
 
-void HalalCloud::Session::ApplyAccessToken(
-    nlohmann::json const& Token)
-{
-    std::string AccessToken = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Token, "access_token"));
-    /*HCC_RPC_STATUS Status = ::HccRpcSetAccessToken(
-        this->m_Session,
-        AccessToken.c_str());
-    if (HCC_RPC_STATUS_OK != Status)
-    {
-        HalalCloud::ThrowException(
-            "HccRpcSetAccessToken",
-            Status);
-    }*/
-}
-
 HalalCloud::FileInformation HalalCloud::Session::ToFileInformation(
     nlohmann::json const& Object)
 {
@@ -221,31 +205,26 @@ nlohmann::json HalalCloud::Session::Request(
     std::string_view MethodFullName,
     nlohmann::json const& Request)
 {
-    MethodFullName;
-    Request;
-    return nlohmann::json::object();
-    /*nlohmann::json Response;
+    std::string AccessToken = "*";
+    if (!this->m_CurrentToken.empty())
+    {
+        AccessToken = Mile::Json::ToString(
+            Mile::Json::GetSubKey(this->m_CurrentToken, "access_token"));
+    }
 
-    LPSTR ResponseJson = nullptr;
-
-    HCC_RPC_STATUS Status = ::HccRpcRequest(
-        this->m_Session,
+    std::string ResponseJson;
+    HCC_RPC_STATUS Status = ::HccRpcPostRequest(
+        AccessToken,
         MethodFullName.data(),
         Request.dump().c_str(),
-        &ResponseJson);
+        ResponseJson);
     if (HCC_RPC_STATUS_OK != Status)
     {
         HalalCloud::ThrowException(
-            "HccRpcRequest",
+            "HccRpcPostRequest",
             Status);
     }
-
-    auto ResponseJsonCleanupHandler = Mile::ScopeExitTaskHandler([&]()
-    {
-        ::HccRpcFreeMemory(ResponseJson);
-    });
-
-    return nlohmann::json::parse(ResponseJson);*/
+    return nlohmann::json::parse(ResponseJson);
 }
 
 void HalalCloud::Session::Authenticate(
@@ -258,7 +237,7 @@ void HalalCloud::Session::Authenticate(
         Request["state"] = "HalalCloud.Client.Session.Authenticate";
 
         nlohmann::json Response = this->Request(
-            "/v6.services.pub.PubUser/CreateAuthToken",
+            "/v6/user/create_auth_token",
             Request);
 
         Callback(Mile::Json::ToString(
@@ -273,7 +252,7 @@ void HalalCloud::Session::Authenticate(
     while (true)
     {
         nlohmann::json Response = this->Request(
-            "/v6.services.pub.PubUser/VerifyAuthToken",
+            "/v6/user/verify_auth_token",
             Request);
         if (6 == Mile::Json::ToInt64(
             Mile::Json::GetSubKey(Response, "status")))
@@ -281,7 +260,6 @@ void HalalCloud::Session::Authenticate(
             nlohmann::json Token = Mile::Json::GetSubKey(
                 Mile::Json::GetSubKey(Response, "login"),
                 "token");
-            this->ApplyAccessToken(Token);
             this->m_CurrentToken = Token;
             break;
         }
@@ -296,9 +274,8 @@ void HalalCloud::Session::Impersonate(
     nlohmann::json Request;
     Request["refresh_token"] = RefreshToken;
     nlohmann::json Response = this->Request(
-        "/v6.services.pub.PubUser/Refresh",
+        "/v6/user/refresh",
         Request);
-    this->ApplyAccessToken(Response);
     this->m_CurrentToken = Response;
 }
 
@@ -307,7 +284,7 @@ void HalalCloud::Session::Logout()
     if (!this->m_CurrentToken.empty())
     {
         this->Request(
-            "/v6.services.pub.PubUser/Logoff",
+            "/v6/user/logoff",
             this->m_CurrentToken);
         this->m_CurrentToken = std::string();
     }
@@ -316,7 +293,7 @@ void HalalCloud::Session::Logout()
 nlohmann::json HalalCloud::Session::GetUserInformation()
 {
     return this->Request(
-        "/v6.services.pub.PubUser/Get",
+        "/v6/user/get",
         nlohmann::json::object());
 }
 

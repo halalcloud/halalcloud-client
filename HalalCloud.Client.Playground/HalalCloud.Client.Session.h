@@ -94,9 +94,6 @@ namespace HalalCloud
 
         nlohmann::json m_CurrentToken;
 
-        void ApplyAccessToken(
-            nlohmann::json const& Token);
-
         FileInformation ToFileInformation(
             nlohmann::json const& Object);
 
