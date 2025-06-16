@@ -99,4 +99,94 @@ HCC_RPC_STATUS HccRpcPostRequest(
     std::string const& RequestJson,
     std::string& ResponseJson);
 
+/**
+ * @brief The type of multibase encoding.
+ */
+typedef enum _HCC_MULTIBASE_ENCODING
+{
+    /**
+     * @brief No base encoding
+     */
+    HCC_MULTIBASE_ENCODING_NONE,
+
+    /**
+     * @brief Unsupported base encoding
+     */
+    HCC_MULTIBASE_ENCODING_UNSUPPORTED,
+
+    /**
+     * @brief Hexadecimal (lowercase)
+     */
+    HCC_MULTIBASE_ENCODING_BASE16,
+
+    /**
+     * @brief Hexadecimal (uppercase)
+     */
+    HCC_MULTIBASE_ENCODING_BASE16_UPPER,
+
+    /**
+     * @brief RFC4648 case-insensitive - no padding (lowercase)
+     */
+    HCC_MULTIBASE_ENCODING_BASE32,
+
+    /**
+     * @brief RFC4648 case-insensitive - no padding (uppercase)
+     */
+    HCC_MULTIBASE_ENCODING_BASE32_UPPER,
+
+    /**
+     * @brief Base58 Bitcoin
+     */
+    HCC_MULTIBASE_ENCODING_BASE58_BTC,
+
+    /**
+     * @brief RFC4648 no padding
+     */
+    HCC_MULTIBASE_ENCODING_BASE64,
+
+    /**
+     * @brief RFC4648 no padding
+     */
+    HCC_MULTIBASE_ENCODING_BASE64_URL,
+
+    /**
+     * @brief RFC4648 with padding
+     */
+    HCC_MULTIBASE_ENCODING_BASE64_URL_PAD,
+
+} HCC_MULTIBASE_ENCODING, *PHCC_MULTIBASE_ENCODING;
+
+/**
+ * @brief Information about a CID.
+ */
+typedef struct _HCC_CID_INFORMATION
+{
+    /**
+     * @brief The multibase encoding of the CID.
+     */
+    HCC_MULTIBASE_ENCODING Encoding;
+
+    /**
+     * @brief The version of the CID.
+     */
+    MO_UINT64 Version;
+
+    /**
+     * @brief The content type of the CID..
+     */
+    MO_UINT64 ContentType;
+
+    /**
+     * @brief The hash type of the CID.
+     */
+    MO_UINT64 HashType;
+
+    /**
+     * @brief The hash value of the CID. Maximum length is 512 bits (64 bytes)
+     *        should be enough for CID permanent hash types.
+     */
+    MO_UINT8 HashValue[64];
+
+} HCC_CID_INFORMATION, *PHCC_CID_INFORMATION;
+
 #endif // !HALALCLOUD_CLIENT_CORE

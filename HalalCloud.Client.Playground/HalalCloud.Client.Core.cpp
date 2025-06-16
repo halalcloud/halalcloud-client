@@ -540,3 +540,93 @@ HCC_RPC_STATUS HccRpcPostRequest(
 
     return Status;
 }
+
+HCC_MULTIBASE_ENCODING ToMultibaseEncoding(
+    char const& CodePoint)
+{
+    switch (CodePoint)
+    {
+    case '\0':
+    case '1':
+    case 'Q':
+    case '/':
+        return HCC_MULTIBASE_ENCODING_NONE;
+    case 'f':
+        return HCC_MULTIBASE_ENCODING_BASE16;
+    case 'F':
+        return HCC_MULTIBASE_ENCODING_BASE16_UPPER;
+    case 'b':
+        return HCC_MULTIBASE_ENCODING_BASE32;
+    case 'B':
+        return HCC_MULTIBASE_ENCODING_BASE32_UPPER;
+    case 'z':
+        return HCC_MULTIBASE_ENCODING_BASE58_BTC;
+    case 'm':
+        return HCC_MULTIBASE_ENCODING_BASE64;
+    case 'u':
+        return HCC_MULTIBASE_ENCODING_BASE64_URL;
+    case 'U':
+        return HCC_MULTIBASE_ENCODING_BASE64_URL_PAD;
+    default:
+        return HCC_MULTIBASE_ENCODING_UNSUPPORTED;
+    }
+}
+
+/**
+ * @brief Parse an integer from a byte array with unsigned varint (VARiable
+ *        INTeger) format.
+ * @param BaseAddress The memory address to read. The caller must ensure that
+ *                    the memory address is valid with at least 1 byte of
+*                     readable memory.
+ * @param ProcessedBytes The number of bytes processed for parsing the byte
+ *                       array with unsigned varint format.
+ * @return The parsed integer from a byte array with unsigned varint format.
+ * @remark Read https://github.com/multiformats/unsigned-varint for more
+ *         information about unsigned varint format. For security, to avoid
+ *         memory attacks, we use a "practical max" of 9 bytes. Though there
+ *         is no theoretical limit, and future specs can grow this number if
+ *         it is truly necessary to have code or length values equal to or
+ *         larger than 2^63.
+ */
+MO_UINT64 ParseUnsignedVarint(
+    _In_ MO_CONSTANT_POINTER BaseAddress,
+    _Out_opt_ PMO_UINT8 ProcessedBytes)
+{
+    if (!BaseAddress)
+    {
+        return 0;
+    }
+
+    const MO_UINT8 MaximumBytes = 9;
+
+    CONST MO_UINT8* Base = reinterpret_cast<CONST MO_UINT8*>(BaseAddress);
+
+    MO_UINT64 Result = 0;
+    MO_UINT8 Processed = 0;
+
+    for (int i = 0; i < MaximumBytes; ++i)
+    {
+        Result |= static_cast<MO_UINT64>(Base[i] & 0x7F) << ((Processed++) * 7);
+        if (!(Base[i] & 0x80))
+        {
+            break;
+        }
+    }
+
+    if (ProcessedBytes)
+    {
+        *ProcessedBytes = Processed;
+    }
+
+    return Result;
+}
+
+void HccParseMultibase()
+{
+    std::string Cid; // Temporarily Input
+
+    HCC_CID_INFORMATION Information;
+
+    Information.Encoding = ::ToMultibaseEncoding(Cid[0]);
+
+}
