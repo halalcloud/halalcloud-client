@@ -32,6 +32,9 @@
     <ClCompile Include="HalalCloud.Client.Core.cpp" />
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
+    <ClCompile Include="TextUserInterfaceDemo.cpp">
+      <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="HalalCloud.Client.Playground.manifest" />

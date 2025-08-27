@@ -258,8 +258,12 @@ void* HccFuseInitializeCallback(
     return nullptr;
 }
 
+void TextUserInterfaceMain();
+
 int main()
 {
+    //::TextUserInterfaceMain();
+
     std::printf(
         "ApplicationDataRootPath = \"%s\"\n",
         HalalCloud::GetApplicationDataRootPath().string().data());
