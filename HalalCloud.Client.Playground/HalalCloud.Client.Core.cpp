@@ -143,7 +143,7 @@ std::vector<std::uint8_t> ComputeHmacSha256(
 
 std::string GenerateNonce()
 {
-    GUID Guid = { 0 };
+    GUID Guid = {};
 
     mbedtls_entropy_context EntropyContext;
     ::mbedtls_entropy_init(&EntropyContext);
@@ -204,7 +204,7 @@ std::time_t GetCurrentPosixTime()
 std::tm ToUtcTime(
     std::time_t const& PosixTime)
 {
-    std::tm UtcTime = { 0 };
+    std::tm UtcTime = {};
 #ifdef _MSC_VER
     ::gmtime_s(&UtcTime, &PosixTime);
 #else
@@ -625,7 +625,7 @@ void HccParseMultibase()
 {
     std::string Cid; // Temporarily Input
 
-    HCC_CID_INFORMATION Information;
+    HCC_CID_INFORMATION Information = {};
 
     Information.Encoding = ::ToMultibaseEncoding(Cid[0]);
 

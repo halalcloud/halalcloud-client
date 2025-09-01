@@ -223,7 +223,7 @@ int HccFuseReadDirectoryCallback(
         Session->EnumerateFiles(path);
     for (HalalCloud::FileInformation const& File : Files)
     {
-        FUSE_STAT stbuf = { 0 };
+        FUSE_STAT stbuf = {};
         stbuf.st_mode = S_IREAD | S_IWRITE;
         stbuf.st_mode |=
             File.FileAttributes.Fields.IsDirectory ? S_IFDIR : S_IFREG;
@@ -280,7 +280,7 @@ int main()
         std::wstring ConvertedReturnUrl =
             Mile::ToWideString(CP_UTF8, AuthenticationUri);
 
-        SHELLEXECUTEINFOW ExecInfo = { 0 };
+        SHELLEXECUTEINFOW ExecInfo = {};
         ExecInfo.cbSize = sizeof(SHELLEXECUTEINFOW);
         ExecInfo.lpVerb = L"open";
         ExecInfo.lpFile = ConvertedReturnUrl.c_str();
@@ -322,7 +322,7 @@ int main()
     for(HalalCloud::FileInformation const& File : Files)
     {
         std::time_t Time = File.CreationTime / 1000;
-        std::tm TimeInfo = { 0 };
+        std::tm TimeInfo = {};
         ::localtime_s(&TimeInfo, &Time);
         std::printf(
             "%04d/%02d/%02d %02d:%02d\t%s\t%lld\t%s\n",
@@ -342,7 +342,7 @@ int main()
     ::fuse_opt_add_arg(&Arguments, "HalalCloud");
     ::fuse_opt_add_arg(&Arguments, "-ovolname=HalalCloud");
 
-    fuse_operations Operations = { 0 };
+    fuse_operations Operations = {};
     Operations.open = ::HccFuseOpenCallback;
     Operations.read = ::HccFuseReadCallback;
     Operations.statfs = ::HccFuseStatFsCallback;
