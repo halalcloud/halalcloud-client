@@ -303,7 +303,7 @@ nlohmann::json HalalCloud::Session::CreateFolder(
     nlohmann::json Request;
     Request["path"] = Path;
     return this->Request(
-        "/v6.services.pub.PubUserFile/Create",
+        "/v6/userfile/create",
         Request);
 }
 
@@ -314,7 +314,7 @@ HalalCloud::FileInformation HalalCloud::Session::GetFileInformation(
     Request["path"] = Path;
 
     nlohmann::json Response = this->Request(
-        "/v6.services.pub.PubUserFile/Get",
+        "/v6/userfile/get",
         Request);
 
     return this->ToFileInformation(Response);
@@ -334,7 +334,7 @@ std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
         Request["list_info"]["token"] = NextToken;
 
         nlohmann::json Response = this->Request(
-            "/v6.services.pub.PubUserFile/List",
+            "/v6/userfile/list",
             Request);
 
         NextToken = Mile::Json::ToString(Mile::Json::GetSubKey(
@@ -362,7 +362,7 @@ void HalalCloud::Session::UploadFile(
     Request["path"] = TargetFilePath;
 
     nlohmann::json Response = this->Request(
-        "/v6.services.pub.PubUserFile/CreateUploadToken",
+        "/v6/userfile/create_upload_token",
         Request);
 
     std::string Endpoint = Mile::Json::ToString(
@@ -401,7 +401,7 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
     Request["path"] = Path;
 
     nlohmann::json Response = this->Request(
-        "/v6.services.pub.PubUserFile/ParseFileSlice",
+        "/v6/userfile/parse_file_slice",
         Request);
 
     std::vector<std::int64_t> Sizes;
@@ -492,7 +492,7 @@ std::vector<HalalCloud::BlockStorageInformation> HalalCloud::Session::GetBlockSt
                 Request["version"] = 1;
                 Request["identity"] = RequestIdentifiers;
                 nlohmann::json Response = this->Request(
-                    "/v6.services.pub.PubUserFile/GetSliceDownloadAddress",
+                    "/v6/userfile/get_slice_download_address",
                     Request);
                 for (nlohmann::json const& Address
                     : Mile::Json::GetSubKey(Response, "addresses"))
@@ -508,7 +508,7 @@ std::vector<HalalCloud::BlockStorageInformation> HalalCloud::Session::GetBlockSt
             Request["version"] = 1;
             Request["identity"] = RequestIdentifiers;
             nlohmann::json Response = this->Request(
-                "/v6.services.pub.PubUserFile/GetSliceDownloadAddress",
+                "/v6/userfile/get_slice_download_address",
                 Request);
             for (nlohmann::json const& Address
                 : Mile::Json::GetSubKey(Response, "addresses"))
