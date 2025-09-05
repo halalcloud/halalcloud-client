@@ -407,12 +407,12 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
     std::vector<std::int64_t> Sizes;
     for (nlohmann::json const& Size : Mile::Json::GetSubKey(Response, "sizes"))
     {
-        std::int64_t StartIndex = Mile::Json::ToInt64(
-            Mile::Json::GetSubKey(Size, "start_index"));
-        std::int64_t EndIndex = Mile::Json::ToInt64(
-            Mile::Json::GetSubKey(Size, "end_index"));
-        std::int64_t BlockSize = Mile::Json::ToInt64(
-            Mile::Json::GetSubKey(Size, "size"));
+        std::int64_t StartIndex = Mile::ToUInt64(Mile::Json::ToString(
+            Mile::Json::GetSubKey(Size, "start_index")));
+        std::int64_t EndIndex = Mile::ToUInt64(Mile::Json::ToString(
+            Mile::Json::GetSubKey(Size, "end_index")));
+        std::int64_t BlockSize = Mile::ToUInt64(Mile::Json::ToString(
+            Mile::Json::GetSubKey(Size, "size")));
         for (std::int64_t i = StartIndex; i < EndIndex + 1; ++i)
         {
             Sizes.push_back(BlockSize);
@@ -431,8 +431,8 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
         Nodes.push_back(Mile::Json::ToString(Node));
     }
 
-    std::int64_t ReportedFileSize = Mile::Json::ToInt64(
-        Mile::Json::GetSubKey(Response, "file_size"));
+    std::int64_t ReportedFileSize = Mile::ToUInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "file_size")));
     std::int64_t FileSize = 0;
     std::vector<std::int64_t> Offsets;
     for(std::int64_t const& Size : Sizes)
@@ -540,6 +540,28 @@ void HalalCloud::Session::DownloadFile(
         this->GetBlockStorageInformation(Identifiers);
     for (HalalCloud::BlockStorageInformation const& Block : Blocks)
     {
-        std::printf("Downloading %s...\n", Block.DownloadLink.c_str());
+        MO_UINT8 OutputHashBytes[32] = {};
+        if (::HccCidGetSha256(
+            Block.Identifier.c_str(),
+            &OutputHashBytes))
+        {
+            std::string HashString;
+            static const char* HexChars = "0123456789abcdef";
+            for (std::uint8_t const& Byte : OutputHashBytes)
+            {
+                HashString.push_back(HexChars[Byte >> 4]);
+                HashString.push_back(HexChars[Byte & 0xF]);
+            }
+            std::printf(
+                "[INFO] Block %s with SHA-256 %s.\n",
+                Block.Identifier.c_str(),
+                HashString.c_str());
+        }
+        else
+        {
+            std::printf("[ERROR] HccCidGetSha256 failed.\n");
+        }
+
+        //std::printf("Downloading %s...\n", Block.DownloadLink.c_str());
     }
 }
