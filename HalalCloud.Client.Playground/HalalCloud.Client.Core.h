@@ -99,39 +99,31 @@ HCC_RPC_STATUS HccRpcPostRequest(
     std::string const& RequestJson,
     std::string& ResponseJson);
 
-#include "HalalCloud.Specification.Multiformats.h"
-
 /**
- * @brief Information about a CID.
+ * @brief Get the SHA-256 hash value from a CID string used in Halal Cloud.
+ * @param CidString The input CID string, the caller must ensure that string is
+ *                  null-terminated and encoded in UTF-8.
+ * @param HashBytes The output buffer to receive the SHA-256 hash value, the
+ *                  caller must ensure that the buffer is at least 32 bytes.
+ * @return Returns MO_TRUE on success; otherwise, returns MO_FALSE.
+ * @remark This function only supports CIDs used in the current Halal Cloud
+ *         service implementation, which has the following properties:
+ *         - Multibase encoding: Base32
+ *         - CID version: CIDv1
+ *         - Multicodec type: InterPlanetary Linked Data Format - Raw binary
+ *         - Multihash type: SHA2-256
+ *         Also, it means that the CID string should be 59 characters long,
+ *         which contains:
+ *         - 1 character for multibase encoding
+ *         - 58 characters for the Base32-encoded content which contains:
+ *           - 1 byte for CID version
+ *           - 1 byte for multicodec type
+ *           - 1 byte for multihash type
+ *           - 1 byte for the length of the hash value
+ *           - 32 bytes for the SHA-256 hash value
  */
-typedef struct _HCC_CID_INFORMATION
-{
-    /**
-     * @brief The multibase encoding of the CID.
-     */
-    MULTIBASE_TYPE Encoding;
-
-    /**
-     * @brief The version of the CID.
-     */
-    MULTICODEC_TYPE Version;
-
-    /**
-     * @brief The content type of the CID.
-     */
-    MULTICODEC_TYPE ContentType;
-
-    /**
-     * @brief The hash type of the CID.
-     */
-    MULTIHASH_TYPE HashType;
-
-    /**
-     * @brief The hash value of the CID. Maximum length is 512 bits (64 bytes)
-     *        should be enough for CID permanent hash types.
-     */
-    MO_UINT8 HashValue[64];
-
-} HCC_CID_INFORMATION, *PHCC_CID_INFORMATION;
+MO_BOOL HccCidGetSha256(
+    _In_ MO_CONSTANT_STRING CidString,
+    _Out_ MO_POINTER HashBytes);
 
 #endif // !HALALCLOUD_CLIENT_CORE

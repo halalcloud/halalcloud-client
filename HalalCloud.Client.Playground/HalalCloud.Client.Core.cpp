@@ -15,6 +15,8 @@
 
 #include "HalalCloud.Client.Core.h"
 
+#include "HalalCloud.Specification.Multiformats.h"
+
 #include <curl/curl.h>
 #include <mbedtls/ctr_drbg.h>
 #include <mbedtls/entropy.h>
@@ -594,120 +596,37 @@ std::vector<std::uint8_t> DecodeBase32Rfc4648(
     return Result;
 }
 
-/**
- * @brief Parse an integer from a byte array with unsigned varint (VARiable
- *        INTeger) format.
- * @param BaseAddress The memory address to read. The caller must ensure that
- *                    the memory address is valid with at least 1 byte of
-*                     readable memory.
- * @param ProcessedBytes The number of bytes processed for parsing the byte
- *                       array with unsigned varint format.
- * @return The parsed integer from a byte array with unsigned varint format.
- * @remark Read https://github.com/multiformats/unsigned-varint for more
- *         information about unsigned varint format. For security, to avoid
- *         memory attacks, we use a "practical max" of 9 bytes. Though there
- *         is no theoretical limit, and future specs can grow this number if
- *         it is truly necessary to have code or length values equal to or
- *         larger than 2^63.
- */
-MO_UINT64 ParseUnsignedVarint(
-    _In_ MO_CONSTANT_POINTER BaseAddress,
-    _Out_opt_ PMO_UINT8 ProcessedBytes)
+MO_BOOL HccCidGetSha256(
+    _In_ MO_CONSTANT_STRING CidString,
+    _Out_ MO_POINTER HashBytes)
 {
-    if (!BaseAddress)
+    if (!CidString || !HashBytes)
     {
-        return 0;
+        return MO_FALSE;
     }
 
-    const MO_UINT8 MaximumBytes = 9;
-
-    CONST MO_UINT8* Base = reinterpret_cast<CONST MO_UINT8*>(BaseAddress);
-
-    MO_UINT64 Result = 0;
-    MO_UINT8 Processed = 0;
-
-    for (int i = 0; i < MaximumBytes; ++i)
+    std::string_view CidStringView(CidString);
+    if (CidStringView.empty() ||
+        59 != CidStringView.size() ||
+        'b' != CidStringView.front())
     {
-        Result |= static_cast<MO_UINT64>(Base[i] & 0x7F) << ((Processed++) * 7);
-        if (!(Base[i] & 0x80))
-        {
-            break;
-        }
+        return MO_FALSE;
     }
 
-    if (ProcessedBytes)
+    std::vector<std::uint8_t> Content = ::DecodeBase32Rfc4648(
+        CidStringView.substr(1));
+    if (36 != Content.size() ||
+        MULTICODEC_TYPE_CIDV1 != Content[0] ||
+        MULTICODEC_TYPE_IPLD_RAW != Content[1] ||
+        MULTIHASH_TYPE_SHA2_256 != Content[2] ||
+        32 != Content[3])
     {
-        *ProcessedBytes = Processed;
+        return MO_FALSE;
     }
 
-    return Result;
-}
+    // Copy the SHA-256 hash value to the output buffer. Let it crash if the
+    // caller cannot ensure that the output buffer is at least 32 bytes.
+    std::memcpy(HashBytes, Content.data() + 4, 32);
 
-bool HccParseCid(
-    _In_ MO_CONSTANT_STRING InputString,
-    _Out_ PHCC_CID_INFORMATION OutputInformation)
-{
-    if (!InputString || !OutputInformation)
-    {
-        return false;
-    }
-    std::memset(OutputInformation, 0, sizeof(HCC_CID_INFORMATION));
-
-    std::string_view Current(InputString);
-    if (Current.empty())
-    {
-        return false;
-    }
-
-    OutputInformation->Encoding = static_cast<MULTIBASE_TYPE>(Current.front());
-    if (MULTIBASE_TYPE_BASE32 != OutputInformation->Encoding)
-    {
-        // Current implementation only supports CIDv1 with Base32 encoding.
-        return false;
-    }
-    Current.remove_prefix(1);
-
-    std::vector<std::uint8_t> Content = ::DecodeBase32Rfc4648(Current);
-    std::span<std::uint8_t> ContentSpan(Content);
-
-    MO_UINT8 ProcessedBytes = 0;
-    OutputInformation->Version = static_cast<MULTICODEC_TYPE>(
-        ::ParseUnsignedVarint(
-            ContentSpan.data(),
-            &ProcessedBytes));
-    if (MULTICODEC_TYPE_CIDV1 != OutputInformation->Version)
-    {
-        // Current implementation only supports CIDv1.
-        return false;
-    }
-    ContentSpan = ContentSpan.subspan(ProcessedBytes);
-
-    OutputInformation->ContentType = static_cast<MULTICODEC_TYPE>(
-        ::ParseUnsignedVarint(
-            ContentSpan.data(),
-            &ProcessedBytes));
-    ContentSpan = ContentSpan.subspan(ProcessedBytes);
-
-    OutputInformation->HashType = static_cast<MULTIHASH_TYPE>(
-        ::ParseUnsignedVarint(
-            ContentSpan.data(),
-            &ProcessedBytes));
-    ContentSpan = ContentSpan.subspan(ProcessedBytes);
-
-    std::size_t HashLength = ::ParseUnsignedVarint(
-        ContentSpan.data(),
-        &ProcessedBytes);
-    ContentSpan = ContentSpan.subspan(ProcessedBytes);
-    if (ContentSpan.size() != HashLength ||
-        HashLength > sizeof(OutputInformation->HashValue))
-    {
-        return false;
-    }
-
-    std::memcpy(
-        OutputInformation->HashValue,
-        ContentSpan.data(),
-        HashLength);
-
-    return true;
+    return MO_TRUE;
 }
