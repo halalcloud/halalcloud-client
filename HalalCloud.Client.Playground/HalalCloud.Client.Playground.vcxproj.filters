@@ -12,5 +12,6 @@
   <ItemGroup>
     <ClInclude Include="HalalCloud.Client.Session.h" />
     <ClInclude Include="HalalCloud.Client.Core.h" />
+    <ClInclude Include="HalalCloud.Specification.Multiformats.h" />
   </ItemGroup>
 </Project>

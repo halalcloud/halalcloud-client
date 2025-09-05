@@ -42,6 +42,7 @@
   <ItemGroup>
     <ClInclude Include="HalalCloud.Client.Core.h" />
     <ClInclude Include="HalalCloud.Client.Session.h" />
+    <ClInclude Include="HalalCloud.Specification.Multiformats.h" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Mile.Windows.Helpers">
