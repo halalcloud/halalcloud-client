@@ -22,6 +22,8 @@
 
 #include <ctime>
 #include <map>
+#include <span>
+#include <string_view>
 
 std::string BytesToHexString(
     std::vector<uint8_t> const& Bytes)
@@ -541,35 +543,55 @@ HCC_RPC_STATUS HccRpcPostRequest(
     return Status;
 }
 
-HCC_MULTIBASE_ENCODING ToMultibaseEncoding(
-    char const& CodePoint)
+std::vector<std::uint8_t> DecodeBase32Rfc4648(
+    std::string_view Input)
 {
-    switch (CodePoint)
+    std::vector<std::uint8_t> Result;
+    std::size_t ReservedSize = ((Input.size() * 5) / 8) + 1;
+    Result.reserve(ReservedSize);
+
+    std::uint64_t Buffer = 0;
+    std::uint8_t BitsInBuffer = 0;
+
+    for (char const& Character : Input)
     {
-    case '\0':
-    case '1':
-    case 'Q':
-    case '/':
-        return HCC_MULTIBASE_ENCODING_NONE;
-    case 'f':
-        return HCC_MULTIBASE_ENCODING_BASE16;
-    case 'F':
-        return HCC_MULTIBASE_ENCODING_BASE16_UPPER;
-    case 'b':
-        return HCC_MULTIBASE_ENCODING_BASE32;
-    case 'B':
-        return HCC_MULTIBASE_ENCODING_BASE32_UPPER;
-    case 'z':
-        return HCC_MULTIBASE_ENCODING_BASE58_BTC;
-    case 'm':
-        return HCC_MULTIBASE_ENCODING_BASE64;
-    case 'u':
-        return HCC_MULTIBASE_ENCODING_BASE64_URL;
-    case 'U':
-        return HCC_MULTIBASE_ENCODING_BASE64_URL_PAD;
-    default:
-        return HCC_MULTIBASE_ENCODING_UNSUPPORTED;
+        if ('=' == Character)
+        {
+            // Stop processing when padding character is found.
+            break;
+        }
+
+        std::uint8_t Current = 0;
+        if (Character >= 'A' && Character <= 'Z')
+        {
+            Current = Character - 'A';
+        }
+        else if (Character >= 'a' && Character <= 'z')
+        {
+            Current = Character - 'a';
+        }
+        else if (Character >= '2' && Character <= '7')
+        {
+            Current = Character - '2' + 26;
+        }
+        else
+        {
+            // Invalid character found.
+            return {};
+        }
+
+        Buffer = (Buffer << 5) | Current;
+        BitsInBuffer += 5;
+
+        if (BitsInBuffer < 8)
+        {
+            continue;
+        }
+        BitsInBuffer -= 8;
+        Result.push_back(static_cast<std::uint8_t>(Buffer >> BitsInBuffer));
     }
+
+    return Result;
 }
 
 /**
@@ -621,12 +643,71 @@ MO_UINT64 ParseUnsignedVarint(
     return Result;
 }
 
-void HccParseMultibase()
+bool HccParseCid(
+    _In_ MO_CONSTANT_STRING InputString,
+    _Out_ PHCC_CID_INFORMATION OutputInformation)
 {
-    std::string Cid; // Temporarily Input
+    if (!InputString || !OutputInformation)
+    {
+        return false;
+    }
+    std::memset(OutputInformation, 0, sizeof(HCC_CID_INFORMATION));
 
-    HCC_CID_INFORMATION Information = {};
+    std::string_view Current(InputString);
+    if (Current.empty())
+    {
+        return false;
+    }
 
-    Information.Encoding = ::ToMultibaseEncoding(Cid[0]);
+    OutputInformation->Encoding = static_cast<MULTIBASE_TYPE>(Current.front());
+    if (MULTIBASE_TYPE_BASE32 != OutputInformation->Encoding)
+    {
+        // Current implementation only supports CIDv1 with Base32 encoding.
+        return false;
+    }
+    Current.remove_prefix(1);
 
+    std::vector<std::uint8_t> Content = ::DecodeBase32Rfc4648(Current);
+    std::span<std::uint8_t> ContentSpan(Content);
+
+    MO_UINT8 ProcessedBytes = 0;
+    OutputInformation->Version = static_cast<MULTICODEC_TYPE>(
+        ::ParseUnsignedVarint(
+            ContentSpan.data(),
+            &ProcessedBytes));
+    if (MULTICODEC_TYPE_CIDV1 != OutputInformation->Version)
+    {
+        // Current implementation only supports CIDv1.
+        return false;
+    }
+    ContentSpan = ContentSpan.subspan(ProcessedBytes);
+
+    OutputInformation->ContentType = static_cast<MULTICODEC_TYPE>(
+        ::ParseUnsignedVarint(
+            ContentSpan.data(),
+            &ProcessedBytes));
+    ContentSpan = ContentSpan.subspan(ProcessedBytes);
+
+    OutputInformation->HashType = static_cast<MULTIHASH_TYPE>(
+        ::ParseUnsignedVarint(
+            ContentSpan.data(),
+            &ProcessedBytes));
+    ContentSpan = ContentSpan.subspan(ProcessedBytes);
+
+    std::size_t HashLength = ::ParseUnsignedVarint(
+        ContentSpan.data(),
+        &ProcessedBytes);
+    ContentSpan = ContentSpan.subspan(ProcessedBytes);
+    if (ContentSpan.size() != HashLength ||
+        HashLength > sizeof(OutputInformation->HashValue))
+    {
+        return false;
+    }
+
+    std::memcpy(
+        OutputInformation->HashValue,
+        ContentSpan.data(),
+        HashLength);
+
+    return true;
 }

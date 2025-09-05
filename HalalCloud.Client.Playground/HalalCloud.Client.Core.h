@@ -99,62 +99,7 @@ HCC_RPC_STATUS HccRpcPostRequest(
     std::string const& RequestJson,
     std::string& ResponseJson);
 
-/**
- * @brief The type of multibase encoding.
- */
-typedef enum _HCC_MULTIBASE_ENCODING
-{
-    /**
-     * @brief No base encoding
-     */
-    HCC_MULTIBASE_ENCODING_NONE,
-
-    /**
-     * @brief Unsupported base encoding
-     */
-    HCC_MULTIBASE_ENCODING_UNSUPPORTED,
-
-    /**
-     * @brief Hexadecimal (lowercase)
-     */
-    HCC_MULTIBASE_ENCODING_BASE16,
-
-    /**
-     * @brief Hexadecimal (uppercase)
-     */
-    HCC_MULTIBASE_ENCODING_BASE16_UPPER,
-
-    /**
-     * @brief RFC4648 case-insensitive - no padding (lowercase)
-     */
-    HCC_MULTIBASE_ENCODING_BASE32,
-
-    /**
-     * @brief RFC4648 case-insensitive - no padding (uppercase)
-     */
-    HCC_MULTIBASE_ENCODING_BASE32_UPPER,
-
-    /**
-     * @brief Base58 Bitcoin
-     */
-    HCC_MULTIBASE_ENCODING_BASE58_BTC,
-
-    /**
-     * @brief RFC4648 no padding
-     */
-    HCC_MULTIBASE_ENCODING_BASE64,
-
-    /**
-     * @brief RFC4648 no padding
-     */
-    HCC_MULTIBASE_ENCODING_BASE64_URL,
-
-    /**
-     * @brief RFC4648 with padding
-     */
-    HCC_MULTIBASE_ENCODING_BASE64_URL_PAD,
-
-} HCC_MULTIBASE_ENCODING, *PHCC_MULTIBASE_ENCODING;
+#include "HalalCloud.Specification.Multiformats.h"
 
 /**
  * @brief Information about a CID.
@@ -164,22 +109,22 @@ typedef struct _HCC_CID_INFORMATION
     /**
      * @brief The multibase encoding of the CID.
      */
-    HCC_MULTIBASE_ENCODING Encoding;
+    MULTIBASE_TYPE Encoding;
 
     /**
      * @brief The version of the CID.
      */
-    MO_UINT64 Version;
+    MULTICODEC_TYPE Version;
 
     /**
-     * @brief The content type of the CID..
+     * @brief The content type of the CID.
      */
-    MO_UINT64 ContentType;
+    MULTICODEC_TYPE ContentType;
 
     /**
      * @brief The hash type of the CID.
      */
-    MO_UINT64 HashType;
+    MULTIHASH_TYPE HashType;
 
     /**
      * @brief The hash value of the CID. Maximum length is 512 bits (64 bytes)
