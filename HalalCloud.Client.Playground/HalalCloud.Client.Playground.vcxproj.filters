@@ -8,10 +8,12 @@
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
     <ClCompile Include="HalalCloud.Client.Core.cpp" />
     <ClCompile Include="TextUserInterfaceDemo.cpp" />
+    <ClCompile Include="HalalCloud.Portable.Helpers.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HalalCloud.Client.Session.h" />
     <ClInclude Include="HalalCloud.Client.Core.h" />
     <ClInclude Include="HalalCloud.Specification.Multiformats.h" />
+    <ClInclude Include="HalalCloud.Portable.Helpers.h" />
   </ItemGroup>
 </Project>

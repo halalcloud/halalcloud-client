@@ -32,6 +32,7 @@
     <ClCompile Include="HalalCloud.Client.Core.cpp" />
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
+    <ClCompile Include="HalalCloud.Portable.Helpers.cpp" />
     <ClCompile Include="TextUserInterfaceDemo.cpp">
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
@@ -42,6 +43,7 @@
   <ItemGroup>
     <ClInclude Include="HalalCloud.Client.Core.h" />
     <ClInclude Include="HalalCloud.Client.Session.h" />
+    <ClInclude Include="HalalCloud.Portable.Helpers.h" />
     <ClInclude Include="HalalCloud.Specification.Multiformats.h" />
   </ItemGroup>
   <ItemGroup>
