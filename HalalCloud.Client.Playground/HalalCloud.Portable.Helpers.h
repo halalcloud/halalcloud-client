@@ -14,6 +14,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <functional>
+#include <map>
 #include <mutex>
 #include <queue>
 #include <thread>
@@ -42,6 +43,53 @@ namespace HalalCloud
 
         void Enqueue(
             std::function<void()> const& Task);
+    };
+
+    namespace DownloadTaskStatus
+    {
+        enum
+        {
+            Waiting = 0,
+            Running = 1,
+            Ready = 2,
+            Failed = 3,
+        };
+    }
+
+    struct DownloadTask
+    {
+        std::atomic_uint8_t Status = DownloadTaskStatus::Waiting;
+        std::string Source;
+        std::string Hash;
+        std::string Target;
+    };
+
+    class DownloadManager
+    {
+    private:
+
+        std::mutex m_Mutex;
+        std::condition_variable m_Condition;
+        std::map<std::string, DownloadTask> m_Tasks;
+        ThreadPool m_Workers;
+
+    public:
+
+        DownloadManager() = default;
+
+        ~DownloadManager() = default;
+
+        void Add(
+            std::string const& TaskId,
+            std::string const& SourceUrl,
+            std::string const& TargetPath,
+            std::string const& Sha256Hash = std::string());
+
+        bool Wait(
+            std::string const& TaskId);
+
+        DownloadTask Query(
+            std::string const& TaskId);
     };
 }
 
