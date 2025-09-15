@@ -58,9 +58,8 @@ namespace HalalCloud
 
     struct DownloadTask
     {
-        std::atomic_uint8_t Status = DownloadTaskStatus::Waiting;
+        std::uint8_t Status = DownloadTaskStatus::Waiting;
         std::string Source;
-        std::string Hash;
         std::string Target;
     };
 
@@ -77,18 +76,28 @@ namespace HalalCloud
 
         DownloadManager() = default;
 
-        ~DownloadManager() = default;
+        ~DownloadManager();
+
+        void Clear();
 
         void Add(
             std::string const& TaskId,
             std::string const& SourceUrl,
-            std::string const& TargetPath,
-            std::string const& Sha256Hash = std::string());
+            std::string const& TargetPath);
 
         bool Wait(
             std::string const& TaskId);
 
-        DownloadTask Query(
+        void Remove(
+            std::string const& TaskId);
+
+        std::uint8_t GetStatus(
+            std::string const& TaskId);
+
+        std::string GetSource(
+            std::string const& TaskId);
+
+        std::string GetTarget(
             std::string const& TaskId);
     };
 }
