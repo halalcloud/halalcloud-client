@@ -176,6 +176,14 @@ void HalalCloud::DownloadManager::Add(
 
             if (CURLE_OK != ::curl_easy_setopt(
                 CurlHandle,
+                CURLOPT_SSL_VERIFYPEER,
+                0L))
+            {
+                break;
+            }
+
+            if (CURLE_OK != ::curl_easy_setopt(
+                CurlHandle,
                 CURLOPT_URL,
                 SourceUrl.c_str()))
             {
