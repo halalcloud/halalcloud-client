@@ -277,8 +277,8 @@ HCC_RPC_STATUS HccRpcPostRequest(
     const char SignaturePrefix[] = "HL6";
     const char DefaultSignatureAlgorithm[] = "HL6-HMAC-SHA256";
 
-    const char SecretId[] = "APPK_5f02f0889301fd7be1ac972c11bf3e7d";
-    const char SecretKey[] = "AppSecretForTest_KSMWNDBAJ2hs__AS";
+    const char SecretId[] = "puc_5_dcpqfdvu8qnt_v1";
+    const char SecretKey[] = "c8303e83dc164352a38289409681df8d";
 
     std::time_t RequestPosixTime = ::GetCurrentPosixTime();
 
