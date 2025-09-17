@@ -607,7 +607,7 @@ MO_BOOL HccCidGetSha256(
 
     std::string_view CidStringView(CidString);
     if (CidStringView.empty() ||
-        59 != CidStringView.size() ||
+        HCC_CID_STRING_LENGTH != CidStringView.size() ||
         'b' != CidStringView.front())
     {
         return MO_FALSE;
@@ -615,18 +615,19 @@ MO_BOOL HccCidGetSha256(
 
     std::vector<std::uint8_t> Content = ::DecodeBase32Rfc4648(
         CidStringView.substr(1));
-    if (36 != Content.size() ||
+    if (HCC_CID_CONTENT_LENGTH != Content.size() ||
         MULTICODEC_TYPE_CIDV1 != Content[0] ||
         MULTICODEC_TYPE_IPLD_RAW != Content[1] ||
         MULTIHASH_TYPE_SHA2_256 != Content[2] ||
-        32 != Content[3])
+        HCC_SHA256_HASH_LENGTH != Content[3])
     {
         return MO_FALSE;
     }
 
     // Copy the SHA-256 hash value to the output buffer. Let it crash if the
-    // caller cannot ensure that the output buffer is at least 32 bytes.
-    std::memcpy(HashBytes, Content.data() + 4, 32);
+    // caller cannot ensure that the output buffer is at least
+    // HCC_SHA256_HASH_LENGTH bytes.
+    std::memcpy(HashBytes, Content.data() + 4, HCC_SHA256_HASH_LENGTH);
 
     return MO_TRUE;
 }

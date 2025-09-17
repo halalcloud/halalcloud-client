@@ -99,6 +99,30 @@ HCC_RPC_STATUS HccRpcPostRequest(
     std::string const& RequestJson,
     std::string& ResponseJson);
 
+// The length of a SHA-256 hash value in bytes.
+#define HCC_SHA256_HASH_LENGTH 32
+
+// The length of the CID content used in the current Halal Cloud service
+// implementation should be 36 bytes long, which is calculated as follows:
+// - 1 byte for CID version
+// - 1 byte for multicodec type
+// - 1 byte for multihash type
+// - 1 byte for the length of the hash value
+// - 32 bytes for the SHA-256 hash value
+#define HCC_CID_CONTENT_LENGTH (1 + 1 + 1 + 1 + HCC_SHA256_HASH_LENGTH)
+
+// The CID string used in the current Halal Cloud service implementation should
+// be 59 characters long, which is calculated as follows:
+// - 1 character for multibase encoding
+// - 58 characters for the Base32-encoded content which the content is
+//   HCC_CID_CONTENT_LENGTH bytes long.
+#define HCC_CID_STRING_LENGTH 59
+
+// The length of a CID string buffer used in the current Halal Cloud service
+// implementation. The buffer contains space for the CID string and a
+// null-terminator.
+#define HCC_CID_STRING_BUFFER_LENGTH (HCC_CID_STRING_LENGTH + 1)
+
 /**
  * @brief Get the SHA-256 hash value from a CID string used in Halal Cloud.
  * @param CidString The input CID string, the caller must ensure that string is
@@ -112,15 +136,7 @@ HCC_RPC_STATUS HccRpcPostRequest(
  *         - CID version: CIDv1
  *         - Multicodec type: InterPlanetary Linked Data Format - Raw binary
  *         - Multihash type: SHA2-256
- *         Also, it means that the CID string should be 59 characters long,
- *         which contains:
- *         - 1 character for multibase encoding
- *         - 58 characters for the Base32-encoded content which contains:
- *           - 1 byte for CID version
- *           - 1 byte for multicodec type
- *           - 1 byte for multihash type
- *           - 1 byte for the length of the hash value
- *           - 32 bytes for the SHA-256 hash value
+ *         - CID string length: HCC_CID_STRING_LENGTH
  */
 MO_BOOL HccCidGetSha256(
     _In_ MO_CONSTANT_STRING CidString,
