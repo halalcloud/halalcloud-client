@@ -22,6 +22,7 @@
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Cpp.Default.props" />
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Cpp.props" />
   <Import Project="..\HalalCloud.Dependencies\HalalCloud.Dependencies.props" />
+  <Import Project="..\HccApi\HccApi.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <GuardEHContMetadata Condition="'$(Platform)' == 'ARM64' Or '$(Platform)' == 'ARM64EC' Or '$(Platform)' == 'x64'">

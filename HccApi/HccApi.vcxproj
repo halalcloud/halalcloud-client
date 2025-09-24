@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{EE83BC19-1C1B-45AF-83A1-32D2B59C65DF}</ProjectGuid>
+    <RootNamespace>HccApi</RootNamespace>
+    <MileProjectType>DynamicLibrary</MileProjectType>
+    <MileProjectUseProjectProperties>true</MileProjectUseProjectProperties>
+    <MileProjectCompanyName>Halal Cloud</MileProjectCompanyName>
+    <MileProjectFileDescription>Halal Cloud Client Library</MileProjectFileDescription>
+    <MileProjectInternalName>HccApi</MileProjectInternalName>
+    <MileProjectLegalCopyright>© Halal Cloud. All rights reserved.</MileProjectLegalCopyright>
+    <MileProjectOriginalFilename>HccApi.dll</MileProjectOriginalFilename>
+    <MileProjectProductName>HccApi</MileProjectProductName>
+    <MileProjectVersion>1.0.$([System.DateTime]::Today.Subtract($([System.DateTime]::Parse('2024-01-16'))).TotalDays).0</MileProjectVersion>
+    <MileProjectVersionTag Condition="false">Alpha 1</MileProjectVersionTag>
+    <MileUniCrtDisableRuntimeDebuggingFeature>true</MileUniCrtDisableRuntimeDebuggingFeature>
+    <MileWindowsHelpersNoCppWinRTHelpers>true</MileWindowsHelpersNoCppWinRTHelpers>
+  </PropertyGroup>
+  <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Platform.x86.props" />
+  <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Platform.x64.props" />
+  <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Platform.ARM64.props" />
+  <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Cpp.Default.props" />
+  <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Cpp.props" />
+  <Import Project="..\HalalCloud.Dependencies\HalalCloud.Dependencies.props" />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <RuntimeLibrary Condition="'$(Configuration)' == 'Debug'">MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)' == 'Release'">MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <ModuleDefinitionFile>HccApi.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="HccApi.def" />
+    <None Include="HccApi.props" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="HccApi.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Mile.Windows.Helpers">
+      <Version>1.0.952</Version>
+    </PackageReference>
+    <PackageReference Include="Mile.Windows.UniCrt">
+      <Version>1.2.410</Version>
+    </PackageReference>
+    <PackageReference Include="Mile.Mobility">
+      <Version>1.0.306</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="HccApi.h" />
+  </ItemGroup>
+  <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Cpp.targets" />
+</Project>
