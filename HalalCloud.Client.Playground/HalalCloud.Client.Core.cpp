@@ -18,9 +18,6 @@
 #include "HalalCloud.Specification.Multiformats.h"
 
 #include <curl/curl.h>
-#include <mbedtls/ctr_drbg.h>
-#include <mbedtls/entropy.h>
-#include <mbedtls/md.h>
 
 #include <ctime>
 #include <map>
@@ -44,49 +41,15 @@ std::string BytesToHexString(
 std::string ComputeSha256(
     std::string const& Data)
 {
-    std::vector<std::uint8_t> Result;
+    std::vector<std::uint8_t> Result(HCC_SHA256_HASH_LENGTH);
 
-    mbedtls_md_context_t Context;
-    ::mbedtls_md_init(&Context);
-
-    do
+    if (MO_RESULT_SUCCESS_OK != ::HccComputeSha256(
+        Result.data(),
+        Data.c_str(),
+        static_cast<MO_UINT32>(Data.size() * sizeof(char))))
     {
-        const mbedtls_md_info_t* Algorithm =
-            ::mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
-        if (!Algorithm)
-        {
-            break;
-        }
-
-        if (0 != ::mbedtls_md_setup(&Context, Algorithm, 0))
-        {
-            break;
-        }
-
-        if (0 != ::mbedtls_md_starts(&Context))
-        {
-            break;
-        }
-
-        if (0 != ::mbedtls_md_update(
-            &Context,
-            reinterpret_cast<const unsigned char*>(Data.c_str()),
-            Data.size() * sizeof(char)))
-        {
-            break;
-        }
-
-        Result.resize(::mbedtls_md_get_size(Algorithm));
-
-        if (0 != ::mbedtls_md_finish(&Context, Result.data()))
-        {
-            Result.clear();
-            break;
-        }
-
-    } while (false);
-
-    ::mbedtls_md_free(&Context);
+        return {};
+    }
 
     return ::BytesToHexString(Result);
 }
@@ -95,52 +58,17 @@ std::vector<std::uint8_t> ComputeHmacSha256(
     std::vector<std::uint8_t> const& Key,
     std::string const& Data)
 {
-    std::vector<std::uint8_t> Result;
+    std::vector<std::uint8_t> Result(HCC_SHA256_HASH_LENGTH);
 
-    mbedtls_md_context_t Context;
-    ::mbedtls_md_init(&Context);
-
-    do
+    if (MO_RESULT_SUCCESS_OK != ::HccComputeHmacSha256(
+        Result.data(),
+        Key.data(),
+        static_cast<MO_UINT32>(Key.size()),
+        Data.c_str(),
+        static_cast<MO_UINT32>(Data.size() * sizeof(char))))
     {
-        const mbedtls_md_info_t* Algorithm =
-            ::mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
-        if (!Algorithm)
-        {
-            break;
-        }
-
-        if (0 != ::mbedtls_md_setup(&Context, Algorithm, 1))
-        {
-            break;
-        }
-
-        if (0 != mbedtls_md_hmac_starts(
-            &Context,
-            Key.data(),
-            Key.size()))
-        {
-            break;
-        }
-
-        if (0 != mbedtls_md_hmac_update(
-            &Context,
-            reinterpret_cast<const unsigned char*>(Data.c_str()),
-            Data.size() * sizeof(char)))
-        {
-            break;
-        }
-
-        Result.resize(::mbedtls_md_get_size(Algorithm));
-
-        if (0 != ::mbedtls_md_hmac_finish(&Context, Result.data()))
-        {
-            Result.clear();
-            break;
-        }
-
-    } while (false);
-
-    ::mbedtls_md_free(&Context);
+        return {};
+    }
 
     return Result;
 }
@@ -149,41 +77,12 @@ std::string GenerateNonce()
 {
     GUID Guid = {};
 
-    mbedtls_entropy_context EntropyContext;
-    ::mbedtls_entropy_init(&EntropyContext);
-
-    mbedtls_ctr_drbg_context CtrDrbgContext;
-    ::mbedtls_ctr_drbg_init(&CtrDrbgContext);
-    ::mbedtls_ctr_drbg_set_prediction_resistance(
-        &CtrDrbgContext,
-        MBEDTLS_CTR_DRBG_PR_ON);
-
-    do
+    if (MO_RESULT_SUCCESS_OK != ::HccGenerateRandomBytes(
+        &Guid,
+        sizeof(GUID)))
     {
-        if (0 != ::mbedtls_ctr_drbg_seed(
-            &CtrDrbgContext,
-            ::mbedtls_entropy_func,
-            &EntropyContext,
-            nullptr,
-            0))
-        {
-            break;
-        }
-
-
-        if (0 != ::mbedtls_ctr_drbg_random(
-            &CtrDrbgContext,
-            reinterpret_cast<unsigned char*>(&Guid),
-            sizeof(Guid)))
-        {
-            break;
-        }
-
-    } while (false);
-
-    ::mbedtls_ctr_drbg_free(&CtrDrbgContext);
-
-    ::mbedtls_entropy_free(&EntropyContext);
+        return {};
+    }
 
     return Mile::FormatString(
         "%08x-%04hx-%04hx-%02hhx%02hhx-%02hhx%02hhx%02hhx%02hhx%02hhx%02hhx",

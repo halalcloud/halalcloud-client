@@ -26,9 +26,12 @@
     <ClCompile>
       <RuntimeLibrary Condition="'$(Configuration)' == 'Debug'">MultiThreadedDebug</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)' == 'Release'">MultiThreaded</RuntimeLibrary>
+      <GuardEHContMetadata Condition="'$(Platform)' == 'ARM64' Or '$(Platform)' == 'ARM64EC' Or '$(Platform)' == 'x64'">
+      </GuardEHContMetadata>
     </ClCompile>
     <Link>
       <ModuleDefinitionFile>HccApi.def</ModuleDefinitionFile>
+      <AdditionalDependencies>bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

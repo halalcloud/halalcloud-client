@@ -14,8 +14,7 @@
 // Temporarily
 #include <string>
 
-#define MILE_MOBILITY_ENABLE_MINIMUM_SAL
-#include <Mile.Mobility.Portable.Types.h>
+#include <HccApi.h>
 
 typedef MO_INT32 HCC_RPC_STATUS;
 
@@ -98,9 +97,6 @@ HCC_RPC_STATUS HccRpcPostRequest(
     std::string const& ApiPath,
     std::string const& RequestJson,
     std::string& ResponseJson);
-
-// The length of a SHA-256 hash value in bytes.
-#define HCC_SHA256_HASH_LENGTH 32
 
 // The length of the CID content used in the current Halal Cloud service
 // implementation should be 36 bytes long, which is calculated as follows:
