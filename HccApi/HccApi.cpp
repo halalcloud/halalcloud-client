@@ -10,9 +10,35 @@
 
 #include "HccApi.h"
 
+#ifdef _WIN32
+#include <Mile.Helpers.CppBase.h>
+#endif // _WIN32
+
+#include <cstdlib>
+
 #include <mbedtls/ctr_drbg.h>
 #include <mbedtls/entropy.h>
 #include <mbedtls/md.h>
+
+EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
+    _In_ MO_UINTN Size)
+{
+#ifdef _WIN32
+    return ::MileAllocateMemory(Size);
+#else
+    return std::calloc(1, Size);
+#endif
+}
+
+EXTERN_C VOID MOAPI HccFreeMemory(
+    _In_ MO_POINTER Block)
+{
+#ifdef _WIN32
+    ::MileFreeMemory(Block);
+#else
+    std::free(Block);
+#endif
+}
 
 EXTERN_C MO_RESULT MOAPI HccComputeSha256(
     _Out_ MO_POINTER OutputBuffer,

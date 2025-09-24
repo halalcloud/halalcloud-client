@@ -2,6 +2,9 @@
 
 EXPORTS
 
+HccAllocateMemory
+HccFreeMemory
+
 HccComputeSha256
 HccComputeHmacSha256
 HccGenerateRandomBytes

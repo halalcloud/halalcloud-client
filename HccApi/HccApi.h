@@ -24,6 +24,29 @@ typedef short SHORT;
 typedef long LONG;
 #endif // VOID
 
+/**
+ * @brief Allocates a block of memory from the default heap of the calling
+ *        process. The allocated memory will be initialized to zero. The
+ *        allocated memory is not movable.
+ * @param Size The number of bytes to be allocated.
+ * @return If the function succeeds, the return value is a pointer to the
+ *         allocated memory block. If the function fails, the return value is
+ *         nullptr.
+ */
+EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
+    _In_ MO_UINTN Size);
+
+/**
+ * @brief Frees a memory block allocated from a heap by the HccAllocateMemory
+ *        function.
+ * @param Block A pointer to the memory block to be freed. This pointer is
+ *        returned by the Allocate or Reallocate method. If this pointer is
+ *        nullptr, the behavior is undefined.
+ * @return This function does not return a value.
+ */
+EXTERN_C VOID MOAPI HccFreeMemory(
+    _In_ MO_POINTER Block);
+
 // The length of a SHA-256 hash value in bytes.
 #define HCC_SHA256_HASH_LENGTH 32
 
