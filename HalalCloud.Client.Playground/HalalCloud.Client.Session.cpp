@@ -23,7 +23,7 @@
 
 #include <fstream>
 
-#include "HalalCloud.Client.Core.h"
+#include <HccApi.h>
 
 [[noreturn]] void HalalCloud::ThrowException(
     std::string_view Checkpoint,

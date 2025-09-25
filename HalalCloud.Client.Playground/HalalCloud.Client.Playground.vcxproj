@@ -30,7 +30,6 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="HalalCloud.Client.Core.cpp" />
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
     <ClCompile Include="HalalCloud.Portable.Helpers.cpp" />
@@ -43,7 +42,6 @@
     <Manifest Include="HalalCloud.Client.Playground.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="HalalCloud.Client.Core.h" />
     <ClInclude Include="HalalCloud.Client.Session.h" />
     <ClInclude Include="HalalCloud.Portable.Helpers.h" />
   </ItemGroup>
