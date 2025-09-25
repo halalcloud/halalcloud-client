@@ -16,12 +16,6 @@
 
 #include <HccApi.h>
 
-HCC_RPC_STATUS HccRpcPostRequest(
-    std::string const& AccessToken,
-    std::string const& ApiPath,
-    std::string const& RequestJson,
-    std::string& ResponseJson);
-
 // The length of the CID content used in the current Halal Cloud service
 // implementation should be 36 bytes long, which is calculated as follows:
 // - 1 byte for CID version

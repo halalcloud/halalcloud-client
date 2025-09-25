@@ -169,4 +169,26 @@ typedef MO_INT32 HCC_RPC_STATUS;
 // The request does not have valid authentication credentials for the operation.
 #define HCC_RPC_STATUS_UNAUTHENTICATED ((HCC_RPC_STATUS)16)
 
+/**
+ * @brief Request an RPC call to the Halal Cloud Service.
+ * @param ResponseJsonString The output buffer to receive the response JSON
+ *                           string, the caller must ensure that the buffer is
+ *                           freed by calling HccFreeMemory function when it
+ *                           is no longer needed. This parameter can be nullptr
+ *                           if the caller does not need the response content.
+ * @param AccessTokenString The access token string, the caller must ensure that
+ *                          the string is null-terminated and encoded in UTF-8.
+ * @param ApiPathString The API path string, the caller must ensure that the string
+ *                      is null-terminated and encoded in UTF-8.
+ * @param RequestJsonString The request JSON string, the caller must ensure that the
+ *                          string is null-terminated and encoded in UTF-8.
+ * @return If the function succeeds, it returns HCC_RPC_STATUS_OK. Otherwise,
+ *         it returns an HCC_RPC_STATUS error code.
+ */
+EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
+    _Out_opt_ PMO_STRING ResponseJsonString,
+    _In_ MO_CONSTANT_STRING AccessTokenString,
+    _In_ MO_CONSTANT_STRING ApiPathString,
+    _In_ MO_CONSTANT_STRING RequestJsonString);
+
 #endif // !HALALCLOUD_CLIENT_API

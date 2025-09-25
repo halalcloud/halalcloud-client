@@ -36,6 +36,7 @@
     <ClCompile Include="HalalCloud.Portable.Helpers.cpp" />
     <ClCompile Include="TextUserInterfaceDemo.cpp">
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4166;</DisableSpecificWarnings>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
