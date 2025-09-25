@@ -13,3 +13,5 @@ HccEncodeBase64UrlSafe
 
 HccRpcPostRequest
 HccDownloadFile
+
+HccCidGetSha256

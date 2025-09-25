@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HccApi.h" />
+    <ClInclude Include="Multiformats.h" />
   </ItemGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1768" Project="Mile.Project.Cpp.targets" />
 </Project>

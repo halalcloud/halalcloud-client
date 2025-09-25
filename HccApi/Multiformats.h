@@ -1,6 +1,6 @@
 ﻿/*
  * PROJECT:    Halal Cloud Client
- * FILE:       HalalCloud.Specification.Multiformats.h
+ * FILE:       Multiformats.h
  * PURPOSE:    Definition for Multiformats Specification
  *
  * LICENSE:    The MIT License
