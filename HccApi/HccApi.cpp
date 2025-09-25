@@ -14,12 +14,14 @@
 #include <Mile.Helpers.CppBase.h>
 #endif // _WIN32
 
+#include <cstdio>
 #include <cstdlib>
 #include <ctime>
 #include <map>
 #include <string>
 
 #include <curl/curl.h>
+#include <mbedtls/base64.h>
 #include <mbedtls/ctr_drbg.h>
 #include <mbedtls/entropy.h>
 #include <mbedtls/md.h>
@@ -172,6 +174,81 @@ EXTERN_C MO_RESULT MOAPI HccGenerateRandomBytes(
     ::mbedtls_ctr_drbg_free(&CtrDrbgContext);
 
     ::mbedtls_entropy_free(&EntropyContext);
+
+    return Result;
+}
+
+EXTERN_C MO_RESULT MOAPI HccEncodeBase64(
+    _Out_ PMO_STRING OutputString,
+    _In_ MO_CONSTANT_POINTER InputBuffer,
+    _In_ MO_UINT32 InputSize)
+{
+    if (!OutputString || !InputBuffer || !InputSize)
+    {
+        return MO_RESULT_ERROR_INVALID_PARAMETER;
+    }
+
+    std::size_t OutputSize = 0;
+    if (MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL != ::mbedtls_base64_encode(
+        nullptr,
+        0,
+        &OutputSize,
+        reinterpret_cast<const unsigned char*>(InputBuffer),
+        InputSize))
+    {
+        return MO_RESULT_ERROR_FAIL;
+    }
+
+    *OutputString = reinterpret_cast<MO_STRING>(
+        ::HccAllocateMemory(OutputSize * sizeof(MO_CHAR)));
+    if (!*OutputString)
+    {
+        return MO_RESULT_ERROR_OUT_OF_MEMORY;
+    }
+
+    if (0 != ::mbedtls_base64_encode(
+        reinterpret_cast<unsigned char*>(*OutputString),
+        OutputSize,
+        &OutputSize,
+        reinterpret_cast<const unsigned char*>(InputBuffer),
+        InputSize))
+    {
+        ::HccFreeMemory(*OutputString);
+        *OutputString = nullptr;
+        return MO_RESULT_ERROR_FAIL;
+    }
+
+    (*OutputString)[OutputSize] = '\0';
+    return MO_RESULT_SUCCESS_OK;
+}
+
+EXTERN_C MO_RESULT MOAPI HccEncodeBase64UrlSafe(
+    _Out_ PMO_STRING OutputString,
+    _In_ MO_CONSTANT_POINTER InputBuffer,
+    _In_ MO_UINT32 InputSize)
+{
+    MO_RESULT Result = ::HccEncodeBase64(OutputString, InputBuffer, InputSize);
+    if (MO_RESULT_SUCCESS_OK != Result)
+    {
+        return Result;
+    }
+
+    std::size_t Length = std::strlen(*OutputString);
+    for (std::size_t i = 0; i < Length; i++)
+    {
+        if ('+' == (*OutputString)[i])
+        {
+            (*OutputString)[i] = '-';
+        }
+        else if ('/' == (*OutputString)[i])
+        {
+            (*OutputString)[i] = '_';
+        }
+        else if ('=' == (*OutputString)[i])
+        {
+            (*OutputString)[i] = '\0';
+        }
+    }
 
     return Result;
 }
@@ -621,4 +698,120 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
     }
 
     return Status;
+}
+
+namespace
+{
+    static FILE* CrtFileOpen(
+        char const* FileName,
+        char const* Mode)
+    {
+#ifdef _WIN32
+        FILE* FileStream = nullptr;
+        return (
+            0 == ::_wfopen_s(
+                &FileStream,
+                Mile::ToWideString(CP_UTF8, FileName).c_str(),
+                Mile::ToWideString(CP_UTF8, Mode).c_str())) ?
+            FileStream :
+            nullptr;
+#else
+        return std::fopen(FileName, Mode);
+#endif
+    }
+}
+
+EXTERN_C MO_RESULT MOAPI HccDownloadFile(
+    _In_ MO_CONSTANT_STRING SourceUrl,
+    _In_ MO_CONSTANT_STRING TargetPath)
+{
+    if (!SourceUrl || !TargetPath)
+    {
+        return MO_RESULT_ERROR_INVALID_PARAMETER;
+    }
+
+    MO_RESULT Result = MO_RESULT_ERROR_FAIL;
+    CURL* CurlHandle = nullptr;
+    FILE* FileStream = nullptr;
+
+    do
+    {
+        CurlHandle = ::curl_easy_init();
+        if (!CurlHandle)
+        {
+            break;
+        }
+
+        if (CURLE_OK != ::curl_easy_setopt(
+            CurlHandle,
+            CURLOPT_FOLLOWLOCATION,
+            CURLFOLLOW_ALL))
+        {
+            break;
+        }
+
+        if (CURLE_OK != ::curl_easy_setopt(
+            CurlHandle,
+            CURLOPT_SSL_VERIFYPEER,
+            0L))
+        {
+            break;
+        }
+
+        if (CURLE_OK != ::curl_easy_setopt(
+            CurlHandle,
+            CURLOPT_URL,
+            SourceUrl))
+        {
+            break;
+        }
+
+        FileStream = ::CrtFileOpen(TargetPath, "wb");
+        if (!FileStream)
+        {
+            break;
+        }
+
+        if (CURLE_OK != ::curl_easy_setopt(
+            CurlHandle,
+            CURLOPT_WRITEDATA,
+            FileStream))
+        {
+            break;
+        }
+
+        if (CURLE_OK != ::curl_easy_perform(CurlHandle))
+        {
+            break;
+        }
+
+        long ResponseCode = 0;
+        if (CURLE_OK != ::curl_easy_getinfo(
+            CurlHandle,
+            CURLINFO_RESPONSE_CODE,
+            &ResponseCode))
+        {
+            break;
+        }
+
+        if (200 != ResponseCode)
+        {
+            break;
+        }
+
+        Result = MO_RESULT_SUCCESS_OK;
+
+    } while (false);
+
+    if (FileStream)
+    {
+        std::fclose(FileStream);
+    }
+
+    if (CurlHandle)
+    {
+        ::curl_easy_cleanup(CurlHandle);
+    }
+
+    return Result;
 }

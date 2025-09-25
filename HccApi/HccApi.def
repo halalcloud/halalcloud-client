@@ -8,5 +8,8 @@ HccFreeMemory
 HccComputeSha256
 HccComputeHmacSha256
 HccGenerateRandomBytes
+HccEncodeBase64
+HccEncodeBase64UrlSafe
 
 HccRpcPostRequest
+HccDownloadFile

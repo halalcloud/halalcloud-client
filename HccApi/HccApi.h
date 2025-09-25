@@ -93,6 +93,36 @@ EXTERN_C MO_RESULT MOAPI HccGenerateRandomBytes(
     _Out_ MO_POINTER OutputBuffer,
     _In_ MO_UINT32 OutputSize);
 
+/**
+ * @brief Encode data to Base64 string.
+ * @param OutputString The output buffer to receive the Base64 string, the
+ *                     caller must ensure that the buffer is freed by calling
+ *                     HccFreeMemory function when it is no longer needed.
+ * @param InputBuffer The input buffer to be encoded.
+ * @param InputSize The size of the input buffer, in bytes.
+ * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
+ *         it returns an MO_RESULT error code.
+ */
+EXTERN_C MO_RESULT MOAPI HccEncodeBase64(
+    _Out_ PMO_STRING OutputString,
+    _In_ MO_CONSTANT_POINTER InputBuffer,
+    _In_ MO_UINT32 InputSize);
+
+/**
+ * @brief Encode data to URL-safe Base64 string.
+ * @param OutputString The output buffer to receive the Base64 string, the
+ *                     caller must ensure that the buffer is freed by calling
+ *                     HccFreeMemory function when it is no longer needed.
+ * @param InputBuffer The input buffer to be encoded.
+ * @param InputSize The size of the input buffer, in bytes.
+ * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
+ *         it returns an MO_RESULT error code.
+ */
+EXTERN_C MO_RESULT MOAPI HccEncodeBase64UrlSafe(
+    _Out_ PMO_STRING OutputString,
+    _In_ MO_CONSTANT_POINTER InputBuffer,
+    _In_ MO_UINT32 InputSize);
+
 typedef MO_INT32 HCC_RPC_STATUS;
 
 // Not an error; returned on success.
@@ -190,5 +220,18 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
     _In_ MO_CONSTANT_STRING AccessTokenString,
     _In_ MO_CONSTANT_STRING ApiPathString,
     _In_ MO_CONSTANT_STRING RequestJsonString);
+
+/**
+ * @brief Download a file from the specified URL to the target path.
+ * @param SourceUrl The source URL, the caller must ensure that the string is
+ *                  null-terminated and encoded in UTF-8.
+ * @param TargetPath The target path, the caller must ensure that the string is
+ *                   null-terminated and encoded in UTF-8.
+ * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
+ *         it returns an MO_RESULT error code.
+ */
+EXTERN_C MO_RESULT MOAPI HccDownloadFile(
+    _In_ MO_CONSTANT_STRING SourceUrl,
+    _In_ MO_CONSTANT_STRING TargetPath);
 
 #endif // !HALALCLOUD_CLIENT_API

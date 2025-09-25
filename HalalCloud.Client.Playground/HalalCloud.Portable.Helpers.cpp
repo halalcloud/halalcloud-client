@@ -77,34 +77,7 @@ void HalalCloud::ThreadPool::Enqueue(
     this->m_TaskQueueCondition.notify_one();
 }
 
-#include <curl/curl.h>
-
-#include <cstdio>
-
-#ifdef _WIN32
-#include <Mile.Helpers.CppBase.h>
-#endif // _WIN32
-
-namespace
-{
-    static FILE* CrtFileOpen(
-        char const* FileName,
-        char const* Mode)
-    {
-#ifdef _WIN32
-        FILE* FileStream = nullptr;
-        return (
-            0 == ::_wfopen_s(
-                &FileStream,
-                Mile::ToWideString(CP_UTF8, FileName).c_str(),
-                Mile::ToWideString(CP_UTF8, Mode).c_str())) ?
-            FileStream :
-            nullptr;
-#else
-        return std::fopen(FileName, Mode);
-#endif
-    }
-}
+#include <HccApi.h>
 
 HalalCloud::DownloadManager::~DownloadManager()
 {
@@ -162,80 +135,9 @@ void HalalCloud::DownloadManager::Add(
             TargetPath = this->m_Tasks[TaskId].Target;
         }
 
-        bool Success = false;
-        CURL* CurlHandle = nullptr;
-        FILE* FileStream = nullptr;
-
-        do
-        {
-            CurlHandle = ::curl_easy_init();
-            if (!CurlHandle)
-            {
-                break;
-            }
-
-            if (CURLE_OK != ::curl_easy_setopt(
-                CurlHandle,
-                CURLOPT_SSL_VERIFYPEER,
-                0L))
-            {
-                break;
-            }
-
-            if (CURLE_OK != ::curl_easy_setopt(
-                CurlHandle,
-                CURLOPT_URL,
-                SourceUrl.c_str()))
-            {
-                break;
-            }
-
-            FileStream = ::CrtFileOpen(TargetPath.c_str(), "wb");
-            if (!FileStream)
-            {
-                break;
-            }
-
-            if (CURLE_OK != ::curl_easy_setopt(
-                CurlHandle,
-                CURLOPT_WRITEDATA,
-                FileStream))
-            {
-                break;
-            }
-
-            if (CURLE_OK != ::curl_easy_perform(CurlHandle))
-            {
-                break;
-            }
-
-            long ResponseCode = 0;
-            if (CURLE_OK != ::curl_easy_getinfo(
-                CurlHandle,
-                CURLINFO_RESPONSE_CODE,
-                &ResponseCode))
-            {
-                break;
-            }
-
-            if (200 != ResponseCode)
-            {
-                break;
-            }
-
-            Success = true;
-
-        } while (false);
-
-        if (FileStream)
-        {
-            std::fclose(FileStream);
-        }
-
-        if (CurlHandle)
-        {
-            ::curl_easy_cleanup(CurlHandle);
-        }
+        bool Success = (MO_RESULT_SUCCESS_OK == ::HccDownloadFile(
+            SourceUrl.c_str(),
+            TargetPath.c_str()));
 
         {
             std::unique_lock<std::mutex> Lock(this->m_Mutex);
