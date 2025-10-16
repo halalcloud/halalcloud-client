@@ -455,54 +455,13 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
         "/v6/userfile/parse_file_slice",
         Request);
 
-    std::vector<std::int64_t> Sizes;
-    for (nlohmann::json const& Size : Mile::Json::GetSubKey(Response, "sizes"))
-    {
-        std::int64_t StartIndex = Mile::ToUInt64(Mile::Json::ToString(
-            Mile::Json::GetSubKey(Size, "start_index")));
-        std::int64_t EndIndex = Mile::ToUInt64(Mile::Json::ToString(
-            Mile::Json::GetSubKey(Size, "end_index")));
-        std::int64_t BlockSize = Mile::ToUInt64(Mile::Json::ToString(
-            Mile::Json::GetSubKey(Size, "size")));
-        for (std::int64_t i = StartIndex; i < EndIndex + 1; ++i)
-        {
-            Sizes.push_back(BlockSize);
-        }
-    }
-
-    nlohmann::json RawNodes = Mile::Json::GetSubKey(Response, "raw_nodes");
-    if (RawNodes.size() != Sizes.size())
-    {
-        throw std::runtime_error(
-            "The file nodes information acquisition failed.");
-    }
-    std::vector<std::string> Nodes;
-    for (nlohmann::json const& Node : RawNodes)
-    {
-        Nodes.push_back(Mile::Json::ToString(Node));
-    }
-
-    std::int64_t ReportedFileSize = Mile::ToUInt64(Mile::Json::ToString(
-        Mile::Json::GetSubKey(Response, "file_size")));
-    std::int64_t FileSize = 0;
-    std::vector<std::int64_t> Offsets;
-    for(std::int64_t const& Size : Sizes)
-    {
-        Offsets.push_back(FileSize);
-        FileSize += Size;
-    }
-    if (FileSize != ReportedFileSize)
-    {
-        throw std::runtime_error(
-            "The file size verification failed.");
-    }
-
-    HalalCloud::FileStorageInformation Result;
-    Result.Identifier = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Response, "content_identity"));
-    Result.Size = ReportedFileSize;
+    HalalCloud::FileStorageInformation Result = {};
+    Result.Name = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "name"));
     Result.Path = Mile::Json::ToString(
         Mile::Json::GetSubKey(Response, "path"));
+    Result.Size = Mile::ToUInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "file_size")));
     switch (Mile::Json::ToInt64(Mile::Json::GetSubKey(Response, "store_type")))
     {
     case 0:
@@ -512,15 +471,74 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
         Result.Type = HalalCloud::FileStorageType::BaiduObjectStorage;
         break;
     default:
+        Result.Type = HalalCloud::FileStorageType::Unknown;
         break;
     }
-    for (std::size_t i = 0; i < RawNodes.size(); ++i)
     {
-        HalalCloud::FileStorageNode Current;
-        Current.Offset = Offsets[i];
-        Current.Size = Sizes[i];
-        Current.Identifier = Nodes[i];
-        Result.Nodes.push_back(Current);
+        std::string Identifier = Mile::Json::ToString(
+            Mile::Json::GetSubKey(Response, "content_identity"));
+        if (HCC_CID_STRING_BUFFER_LENGTH != Identifier.size() + 1)
+        {
+            throw std::runtime_error(
+                "The file identifier is invalid.");
+        }
+        std::memcpy(
+            Result.Identifier,
+            Identifier.c_str(),
+            HCC_CID_STRING_BUFFER_LENGTH);
+    }
+
+    nlohmann::json RawNodes = Mile::Json::GetSubKey(Response, "raw_nodes");
+    nlohmann::json RawSizes = Mile::Json::GetSubKey(Response, "sizes");
+
+    std::size_t TotalNodeCount = 0;
+    std::int64_t TotalNodeSize = 0;
+    std::vector<std::int64_t> NodeSizes;
+    for (nlohmann::json const& Size : RawSizes)
+    {
+        std::size_t StartIndex = Mile::ToUInt32(Mile::Json::ToString(
+            Mile::Json::GetSubKey(Size, "start_index")));
+        std::size_t EndIndex = Mile::ToUInt32(Mile::Json::ToString(
+            Mile::Json::GetSubKey(Size, "end_index")));
+        std::int64_t NodeSize = Mile::ToInt64(Mile::Json::ToString(
+            Mile::Json::GetSubKey(Size, "size")));
+
+        std::size_t CurrentCount = EndIndex - StartIndex + 1;
+        TotalNodeCount += CurrentCount;
+        TotalNodeSize += NodeSize * CurrentCount;
+
+        for (std::size_t i = StartIndex; i < EndIndex + 1; ++i)
+        {
+            NodeSizes.push_back(NodeSize);
+        }
+    }
+    if (RawNodes.size() != TotalNodeCount ||
+        Result.Size != TotalNodeSize)
+    {
+        throw std::runtime_error(
+            "The file nodes information acquisition failed.");
+    }
+
+    Result.Nodes.resize(TotalNodeCount);
+
+    std::size_t CurrentNodeIndex = 0;
+    std::uint64_t CurrentFileOffset = 0;
+    for (nlohmann::json const& Node : RawNodes)
+    {
+        Result.Nodes[CurrentNodeIndex].Offset = CurrentFileOffset;
+        Result.Nodes[CurrentNodeIndex].Size = NodeSizes[CurrentNodeIndex];
+        CurrentFileOffset += Result.Nodes[CurrentNodeIndex].Size;
+        std::string CurrentIdentifier = Mile::Json::ToString(Node);
+        if (HCC_CID_STRING_BUFFER_LENGTH != CurrentIdentifier.size() + 1)
+        {
+            throw std::runtime_error(
+                "The file node identifier is invalid.");
+        }
+        std::memcpy(
+            Result.Nodes[CurrentNodeIndex].Identifier,
+            CurrentIdentifier.c_str(),
+            HCC_CID_STRING_BUFFER_LENGTH);
+        ++CurrentNodeIndex;
     }
 
     return Result;

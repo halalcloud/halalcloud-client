@@ -11,6 +11,8 @@
 #ifndef HALALCLOUD_CLIENT_SESSION
 #define HALALCLOUD_CLIENT_SESSION
 
+#include "HccApi.h"
+
 #include <Mile.Helpers.CppBase.h>
 
 #include <Mile.Json.h>
@@ -69,15 +71,16 @@ namespace HalalCloud
     {
         std::int64_t Offset;
         std::int64_t Size;
-        std::string Identifier;
+        char Identifier[HCC_CID_STRING_BUFFER_LENGTH];
     };
 
     struct FileStorageInformation
     {
-        std::string Identifier;
-        std::int64_t Size;
+        std::string Name;
         std::string Path;
+        std::int64_t Size;
         std::uint32_t Type;
+        char Identifier[HCC_CID_STRING_BUFFER_LENGTH];
         std::vector<FileStorageNode> Nodes;
     };
 
