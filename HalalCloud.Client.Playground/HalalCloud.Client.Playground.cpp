@@ -78,26 +78,29 @@ int HccFuseReadCallback(
         return -EINVAL;
     }
 
-    try
-    {
-        HalalCloud::FileStorageInformation Information =
-            Session->GetFileStorageInformation(path);
-        for (HalalCloud::FileStorageNode const& Node : Information.Nodes)
-        {
-            if (offset < Node.Offset || offset > Node.Offset + Node.Size)
-            {
-                continue;
-            }
+    UNREFERENCED_PARAMETER(path);
+    UNREFERENCED_PARAMETER(buf);
 
-            std::memset(buf, 0, size);
-            std::memcpy(buf, Node.Identifier.c_str(), Node.Identifier.size());
-            break;
-        }
-    }
-    catch (...)
-    {
-        return -EINVAL;
-    }
+    // try
+    // {
+    //     HalalCloud::FileStorageInformation Information =
+    //         Session->GetFileStorageInformation(path);
+    //     for (HalalCloud::FileStorageNode const& Node : Information.Nodes)
+    //     {
+    //         if (offset < Node.Offset || offset > Node.Offset + Node.Size)
+    //         {
+    //             continue;
+    //         }
+
+    //         std::memset(buf, 0, size);
+    //         std::memcpy(buf, Node.Identifier, HCC_CID_STRING_BUFFER_LENGTH);
+    //         break;
+    //     }
+    // }
+    // catch (...)
+    // {
+    //     return -EINVAL;
+    // }
 
     return (int)size;
 }

@@ -67,11 +67,11 @@ namespace HalalCloud
         };
     }
 
-    struct FileStorageNode
+    struct FileStorageSizeRange
     {
-        std::int64_t Offset;
-        std::int64_t Size;
-        char Identifier[HCC_CID_STRING_BUFFER_LENGTH];
+        std::size_t StartBlockIndex;
+        std::size_t EndBlockIndex;
+        std::int64_t SingleBlockSize;
     };
 
     struct FileStorageInformation
@@ -80,8 +80,9 @@ namespace HalalCloud
         std::string Path;
         std::int64_t Size;
         std::uint32_t Type;
-        char Identifier[HCC_CID_STRING_BUFFER_LENGTH];
-        std::vector<FileStorageNode> Nodes;
+        std::string Identifier;
+        std::vector<FileStorageSizeRange> SizeRanges;
+        std::vector<std::string> Blocks;
     };
 
     struct BlockStorageInformation

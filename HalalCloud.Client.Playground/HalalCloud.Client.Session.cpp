@@ -475,17 +475,8 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
         break;
     }
     {
-        std::string Identifier = Mile::Json::ToString(
+        Result.Identifier = Mile::Json::ToString(
             Mile::Json::GetSubKey(Response, "content_identity"));
-        if (HCC_CID_STRING_BUFFER_LENGTH != Identifier.size() + 1)
-        {
-            throw std::runtime_error(
-                "The file identifier is invalid.");
-        }
-        std::memcpy(
-            Result.Identifier,
-            Identifier.c_str(),
-            HCC_CID_STRING_BUFFER_LENGTH);
     }
 
     nlohmann::json RawNodes = Mile::Json::GetSubKey(Response, "raw_nodes");
@@ -493,7 +484,6 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
 
     std::size_t TotalNodeCount = 0;
     std::int64_t TotalNodeSize = 0;
-    std::vector<std::int64_t> NodeSizes;
     for (nlohmann::json const& Size : RawSizes)
     {
         std::size_t StartIndex = Mile::ToUInt32(Mile::Json::ToString(
@@ -503,14 +493,15 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
         std::int64_t NodeSize = Mile::ToInt64(Mile::Json::ToString(
             Mile::Json::GetSubKey(Size, "size")));
 
+        FileStorageSizeRange Range = {};
+        Range.StartBlockIndex = StartIndex;
+        Range.EndBlockIndex = EndIndex;
+        Range.SingleBlockSize = NodeSize;
+        Result.SizeRanges.push_back(Range);
+
         std::size_t CurrentCount = EndIndex - StartIndex + 1;
         TotalNodeCount += CurrentCount;
         TotalNodeSize += NodeSize * CurrentCount;
-
-        for (std::size_t i = StartIndex; i < EndIndex + 1; ++i)
-        {
-            NodeSizes.push_back(NodeSize);
-        }
     }
     if (RawNodes.size() != TotalNodeCount ||
         Result.Size != TotalNodeSize)
@@ -519,26 +510,9 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
             "The file nodes information acquisition failed.");
     }
 
-    Result.Nodes.resize(TotalNodeCount);
-
-    std::size_t CurrentNodeIndex = 0;
-    std::uint64_t CurrentFileOffset = 0;
     for (nlohmann::json const& Node : RawNodes)
     {
-        Result.Nodes[CurrentNodeIndex].Offset = CurrentFileOffset;
-        Result.Nodes[CurrentNodeIndex].Size = NodeSizes[CurrentNodeIndex];
-        CurrentFileOffset += Result.Nodes[CurrentNodeIndex].Size;
-        std::string CurrentIdentifier = Mile::Json::ToString(Node);
-        if (HCC_CID_STRING_BUFFER_LENGTH != CurrentIdentifier.size() + 1)
-        {
-            throw std::runtime_error(
-                "The file node identifier is invalid.");
-        }
-        std::memcpy(
-            Result.Nodes[CurrentNodeIndex].Identifier,
-            CurrentIdentifier.c_str(),
-            HCC_CID_STRING_BUFFER_LENGTH);
-        ++CurrentNodeIndex;
+        Result.Blocks.emplace_back(Mile::Json::ToString(Node));
     }
 
     return Result;
@@ -596,17 +570,11 @@ void HalalCloud::Session::DownloadFile(
 {
     TargetFilePath;
 
-    std::vector<std::string> Identifiers;
-
     HalalCloud::FileStorageInformation Information =
         this->GetFileStorageInformation(SourceFilePath);
-    for (HalalCloud::FileStorageNode const& Node : Information.Nodes)
-    {
-        Identifiers.push_back(Node.Identifier);
-    }
 
     std::vector<HalalCloud::BlockStorageInformation> Blocks =
-        this->GetBlockStorageInformation(Identifiers);
+        this->GetBlockStorageInformation(Information.Blocks);
     for (HalalCloud::BlockStorageInformation const& Block : Blocks)
     {
         MO_UINT8 OutputHashBytes[32] = {};
