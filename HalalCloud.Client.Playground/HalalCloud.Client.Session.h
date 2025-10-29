@@ -17,6 +17,8 @@
 
 #include <Mile.Json.h>
 
+#include "HalalCloud.Portable.Helpers.h"
+
 #include <filesystem>
 #include <functional>
 #include <string_view>
@@ -29,6 +31,8 @@ namespace HalalCloud
         std::int32_t const& Code);
 
     std::filesystem::path GetApplicationDataRootPath();
+
+    std::filesystem::path GetBlocksCachePath();
 
     std::filesystem::path GetUserCloudCachePath(
         std::string_view UserIdentity);
@@ -105,10 +109,10 @@ namespace HalalCloud
             std::int64_t const& Offset) const;
 
         bool GetBlocks(
-            std::vector<std::pair<std::string, std::int64_t>>& Blocks,
+            std::vector<std::pair<std::string, std::int64_t>>& RequestedBlocks,
             std::int64_t& StartBlockOffset,
             std::int64_t const& Offset,
-            std::uint32_t const& Size) const;
+            std::uint32_t const& Length) const;
     };
 
     struct BlockStorageInformation
@@ -131,6 +135,8 @@ namespace HalalCloud
             nlohmann::json const& Object);
 
     public:
+
+        HalalCloud::DownloadManager m_DownloadManager;
 
         nlohmann::json CurrentToken();
 

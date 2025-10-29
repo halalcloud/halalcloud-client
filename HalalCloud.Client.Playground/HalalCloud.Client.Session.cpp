@@ -114,6 +114,17 @@ std::filesystem::path HalalCloud::GetApplicationDataRootPath()
     return CachedResult;
 }
 
+std::filesystem::path HalalCloud::GetBlocksCachePath()
+{
+    std::filesystem::path Result = HalalCloud::GetApplicationDataRootPath();
+    Result /= "BlocksCache";
+    if (!std::filesystem::exists(Result))
+    {
+        std::filesystem::create_directories(Result);
+    }
+    return Result;
+}
+
 std::filesystem::path HalalCloud::GetUserCloudCachePath(
     std::string_view UserIdentity)
 {
@@ -211,16 +222,16 @@ bool HalalCloud::FileStorageInformation::GetStartBlockIndex(
 }
 
 bool HalalCloud::FileStorageInformation::GetBlocks(
-    std::vector<std::pair<std::string, std::int64_t>>& Blocks,
+    std::vector<std::pair<std::string, std::int64_t>>& RequestedBlocks,
     std::int64_t& StartBlockOffset,
     std::int64_t const& Offset,
-    std::uint32_t const& Size) const
+    std::uint32_t const& Length) const
 {
-    if (Offset < 0 || Offset + Size > this->Size)
+    if (Offset < 0 || Offset + Length > this->Size)
     {
         return false;
     }
-    Blocks.clear();
+    RequestedBlocks.clear();
 
     std::size_t StartBlockIndex = 0;
     if (!this->GetStartBlockIndex(
@@ -241,7 +252,7 @@ bool HalalCloud::FileStorageInformation::GetBlocks(
 
         for (size_t i = StartBlockIndex; i <= SizeRange.EndBlockIndex; ++i)
         {
-            Blocks.push_back(std::make_pair(
+            RequestedBlocks.push_back(std::make_pair(
                 this->Blocks[i],
                 SizeRange.SingleBlockSize));
 
@@ -250,14 +261,14 @@ bool HalalCloud::FileStorageInformation::GetBlocks(
                 ? SizeRange.SingleBlockSize
                 : (SizeRange.SingleBlockSize - StartBlockOffset));
 
-            if (ProceededSize >= Size)
+            if (ProceededSize >= Length)
             {
                 return true;
             }
         }
     }
 
-    Blocks.clear();
+    RequestedBlocks.clear();
     StartBlockOffset = -1;
     return false;
 }

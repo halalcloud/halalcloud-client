@@ -78,31 +78,98 @@ int HccFuseReadCallback(
         return -EINVAL;
     }
 
-    UNREFERENCED_PARAMETER(path);
-    UNREFERENCED_PARAMETER(buf);
+    std::size_t ProceededSize = 0;
+    try
+    {
+        HalalCloud::FileStorageInformation StorageInformation =
+            Session->GetFileStorageInformation(path);
+        std::vector<std::pair<std::string, std::int64_t>> RequestedBlocks;
+        std::int64_t StartBlockOffset = 0;
+        if (!StorageInformation.GetBlocks(
+            RequestedBlocks,
+            StartBlockOffset,
+            static_cast<std::int64_t>(offset),
+            static_cast<std::uint32_t>(size)))
+        {
+            return -EINVAL;
+        }
 
-    // try
-    // {
-    //     HalalCloud::FileStorageInformation Information =
-    //         Session->GetFileStorageInformation(path);
-    //     for (HalalCloud::FileStorageNode const& Node : Information.Nodes)
-    //     {
-    //         if (offset < Node.Offset || offset > Node.Offset + Node.Size)
-    //         {
-    //             continue;
-    //         }
+        std::vector<std::string> Identifiers;
+        for (auto const& Block : RequestedBlocks)
+        {
+            Identifiers.push_back(Block.first);
+        }
 
-    //         std::memset(buf, 0, size);
-    //         std::memcpy(buf, Node.Identifier, HCC_CID_STRING_BUFFER_LENGTH);
-    //         break;
-    //     }
-    // }
-    // catch (...)
-    // {
-    //     return -EINVAL;
-    // }
+        std::filesystem::path BlocksCachePath =
+            HalalCloud::GetBlocksCachePath();
 
-    return (int)size;
+        std::vector<HalalCloud::BlockStorageInformation> BlocksInfo =
+            Session->GetBlockStorageInformation(Identifiers);
+        for (auto const& BlockInfo : BlocksInfo)
+        {
+            Session->m_DownloadManager.Add(
+                BlockInfo.Identifier,
+                BlockInfo.DownloadLink,
+                (BlocksCachePath / BlockInfo.Identifier).string());
+        }
+
+        for (auto const& BlockInfo : BlocksInfo)
+        {
+            if (!Session->m_DownloadManager.Wait(BlockInfo.Identifier))
+            {
+                return -EINVAL;
+            }
+        }
+
+        for (size_t i = 0; i < RequestedBlocks.size(); ++i)
+        {
+            if (RequestedBlocks[i].first != BlocksInfo[i].Identifier)
+            {
+                return -EINVAL;
+            }
+
+            std::vector<std::uint8_t> Bytes = HalalCloud::ReadAllBytesFromFile(
+                (BlocksCachePath / BlocksInfo[i].Identifier).string());
+            if (static_cast<std::size_t>(RequestedBlocks[i].second) != Bytes.size())
+            {
+                return -EINVAL;
+            }
+
+            if (BlocksInfo[i].EncryptionByte)
+            {
+                for (size_t j = 0; j < Bytes.size(); j++)
+                {
+                    Bytes[j] ^= BlocksInfo[i].EncryptionByte;
+                }
+            }
+
+            std::uint8_t* CopyStart = Bytes.data();
+            std::size_t CopyMaximumSize = Bytes.size();
+            if (!ProceededSize)
+            {
+                CopyStart += StartBlockOffset;
+                CopyMaximumSize -= StartBlockOffset;
+            }
+            std::size_t CopySize = CopyMaximumSize;
+            if (ProceededSize + CopySize > size)
+            {
+                CopySize = size - ProceededSize;
+            }
+
+            std::memcpy(
+                buf + ProceededSize,
+                CopyStart,
+                CopySize);
+
+            ProceededSize += CopySize;
+        }
+    }
+    catch (...)
+    {
+        return -EINVAL;
+    }
+
+    return static_cast<int>(ProceededSize);
 }
 
 int HccFuseStatFsCallback(
@@ -265,8 +332,6 @@ void TextUserInterfaceMain();
 
 int main()
 {
-    //::TextUserInterfaceMain();
-
     std::printf(
         "ApplicationDataRootPath = \"%s\"\n",
         HalalCloud::GetApplicationDataRootPath().string().data());
@@ -293,13 +358,15 @@ int main()
         std::printf("Waiting...\n");
     });
 
+    //Session.Impersonate("rt__1fc4496396704771945da06329c329ea_123336e8-4dca-44fa-b3b5-15249b798940");
+
     std::printf("Login Success!\n");
 
     std::printf(
         "Token = \"%s\"\n",
         Session.CurrentToken().dump(2).c_str());
 
-    Session.DownloadFile("/9p.cap", "D:\\9p.cap");
+    //Session.DownloadFile("/Civil.War.2024.2160p.WEB-DL.DDP5.1.Atmos.DV.HDR.H.265-FLUX[TGx]/Civil.War.2024.2160p.WEB-DL.DDP5.1.Atmos.DV.HDR.H.265-FLUX.mkv", "D:\\Civil.War.2024.2160p.WEB-DL.DDP5.1.Atmos.DV.HDR.H.265-FLUX.mkv");
 
     /*Session.Impersonate(Mile::Json::ToString(
         Mile::Json::GetSubKey(Session.CurrentToken(), "refresh_token")));
@@ -344,6 +411,7 @@ int main()
     fuse_args Arguments = FUSE_ARGS_INIT(0, nullptr);
     ::fuse_opt_add_arg(&Arguments, "HalalCloud");
     ::fuse_opt_add_arg(&Arguments, "-ovolname=HalalCloud");
+    ::fuse_opt_add_arg(&Arguments, "-odaemon_timeout=86400");
 
     fuse_operations Operations = {};
     Operations.open = ::HccFuseOpenCallback;
