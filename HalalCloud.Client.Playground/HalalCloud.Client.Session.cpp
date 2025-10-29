@@ -278,12 +278,12 @@ HalalCloud::FileInformation HalalCloud::Session::ToFileInformation(
 {
     HalalCloud::FileInformation Result;
 
-    Result.CreationTime = Mile::Json::ToInt64(
-        Mile::Json::GetSubKey(Object, "create_ts"));
-    Result.LastWriteTime = Mile::Json::ToInt64(
-        Mile::Json::GetSubKey(Object, "update_ts"));
-    Result.FileSize = Mile::Json::ToInt64(
-        Mile::Json::GetSubKey(Object, "size"));
+    Result.CreationTime = Mile::ToInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "create_ts")));
+    Result.LastWriteTime = Mile::ToInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "update_ts")));
+    Result.FileSize = Mile::ToInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "size")));
     Result.FileAttributes.Fields.IsDirectory = Mile::Json::ToBoolean(
         Mile::Json::GetSubKey(Object, "dir"));
     Result.FileAttributes.Fields.IsHidden = Mile::Json::ToBoolean(

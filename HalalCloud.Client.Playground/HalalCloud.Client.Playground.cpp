@@ -83,13 +83,24 @@ int HccFuseReadCallback(
     {
         HalalCloud::FileStorageInformation StorageInformation =
             Session->GetFileStorageInformation(path);
+        if (offset >= StorageInformation.Size)
+        {
+            return 0;
+        }
+        std::uint32_t RequestedSize = static_cast<std::uint32_t>(size);
+        if (offset + RequestedSize > static_cast<std::int64_t>(StorageInformation.Size))
+        {
+            RequestedSize = static_cast<std::uint32_t>(
+                StorageInformation.Size - offset);
+        }
+
         std::vector<std::pair<std::string, std::int64_t>> RequestedBlocks;
         std::int64_t StartBlockOffset = 0;
         if (!StorageInformation.GetBlocks(
             RequestedBlocks,
             StartBlockOffset,
             static_cast<std::int64_t>(offset),
-            static_cast<std::uint32_t>(size)))
+            RequestedSize))
         {
             return -EINVAL;
         }
@@ -107,10 +118,17 @@ int HccFuseReadCallback(
             Session->GetBlockStorageInformation(Identifiers);
         for (auto const& BlockInfo : BlocksInfo)
         {
-            Session->m_DownloadManager.Add(
-                BlockInfo.Identifier,
-                BlockInfo.DownloadLink,
-                (BlocksCachePath / BlockInfo.Identifier).string());
+            try
+            {
+                Session->m_DownloadManager.Add(
+                    BlockInfo.Identifier,
+                    BlockInfo.DownloadLink,
+                    (BlocksCachePath / BlockInfo.Identifier).string());
+            }
+            catch (...)
+            {
+
+            }
         }
 
         for (auto const& BlockInfo : BlocksInfo)
@@ -357,8 +375,6 @@ int main()
 
         std::printf("Waiting...\n");
     });
-
-    //Session.Impersonate("rt__1fc4496396704771945da06329c329ea_123336e8-4dca-44fa-b3b5-15249b798940");
 
     std::printf("Login Success!\n");
 
