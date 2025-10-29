@@ -69,13 +69,26 @@ namespace HalalCloud
 
     struct FileStorageSizeRange
     {
+    public:
+
         std::size_t StartBlockIndex;
         std::size_t EndBlockIndex;
         std::int64_t SingleBlockSize;
+
+    public:
+
+        bool IsInRange(
+            std::size_t const& Index) const;
+
+        std::size_t GetRangeBlockCount() const;
+
+        std::int64_t GetRangeTotalSize() const;
     };
 
     struct FileStorageInformation
     {
+    public:
+
         std::string Name;
         std::string Path;
         std::int64_t Size;
@@ -83,6 +96,19 @@ namespace HalalCloud
         std::string Identifier;
         std::vector<FileStorageSizeRange> SizeRanges;
         std::vector<std::string> Blocks;
+
+    public:
+
+        bool GetStartBlockIndex(
+            std::size_t& StartBlockIndex,
+            std::int64_t& StartBlockOffset,
+            std::int64_t const& Offset) const;
+
+        bool GetBlocks(
+            std::vector<std::pair<std::string, std::int64_t>>& Blocks,
+            std::int64_t& StartBlockOffset,
+            std::int64_t const& Offset,
+            std::uint32_t const& Size) const;
     };
 
     struct BlockStorageInformation

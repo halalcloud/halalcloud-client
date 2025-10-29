@@ -161,6 +161,107 @@ void HalalCloud::WriteAllBytesToFile(
     }
 }
 
+bool HalalCloud::FileStorageSizeRange::IsInRange(
+    std::size_t const& Index) const
+{
+    return Index >= this->StartBlockIndex && Index <= this->EndBlockIndex;
+}
+
+std::size_t HalalCloud::FileStorageSizeRange::GetRangeBlockCount() const
+{
+    return (this->EndBlockIndex - this->StartBlockIndex + 1);
+}
+
+std::int64_t HalalCloud::FileStorageSizeRange::GetRangeTotalSize() const
+{
+    return this->GetRangeBlockCount() * this->SingleBlockSize;
+}
+
+bool HalalCloud::FileStorageInformation::GetStartBlockIndex(
+    std::size_t& StartBlockIndex,
+    std::int64_t& StartBlockOffset,
+    std::int64_t const& Offset) const
+{
+    if (Offset < 0 || Offset >= this->Size)
+    {
+        return false;
+    }
+
+    StartBlockOffset = Offset;
+    for (HalalCloud::FileStorageSizeRange const& SizeRange : this->SizeRanges)
+    {
+        std::int64_t CurrentRangeSize = SizeRange.GetRangeTotalSize();
+        if (StartBlockOffset >= CurrentRangeSize)
+        {
+            StartBlockOffset -= CurrentRangeSize;
+            continue;
+        }
+
+        std::size_t BlocksToSkip = static_cast<std::size_t>(
+            StartBlockOffset / SizeRange.SingleBlockSize);
+        StartBlockIndex += SizeRange.StartBlockIndex + BlocksToSkip;
+        StartBlockOffset = StartBlockOffset % SizeRange.SingleBlockSize;
+        return true;
+    }
+
+    StartBlockIndex = static_cast<std::size_t>(-1);
+    StartBlockOffset = -1;
+
+    return false;
+}
+
+bool HalalCloud::FileStorageInformation::GetBlocks(
+    std::vector<std::pair<std::string, std::int64_t>>& Blocks,
+    std::int64_t& StartBlockOffset,
+    std::int64_t const& Offset,
+    std::uint32_t const& Size) const
+{
+    if (Offset < 0 || Offset + Size > this->Size)
+    {
+        return false;
+    }
+    Blocks.clear();
+
+    std::size_t StartBlockIndex = 0;
+    if (!this->GetStartBlockIndex(
+        StartBlockIndex,
+        StartBlockOffset,
+        Offset))
+    {
+        return false;
+    }
+
+    std::int64_t ProceededSize = 0;
+    for (HalalCloud::FileStorageSizeRange const& SizeRange : this->SizeRanges)
+    {
+        if (!SizeRange.IsInRange(StartBlockIndex))
+        {
+            continue;
+        }
+
+        for (size_t i = StartBlockIndex; i <= SizeRange.EndBlockIndex; ++i)
+        {
+            Blocks.push_back(std::make_pair(
+                this->Blocks[i],
+                SizeRange.SingleBlockSize));
+
+            // If this is the first block, adjust the size with the offset.
+            ProceededSize += (ProceededSize
+                ? SizeRange.SingleBlockSize
+                : (SizeRange.SingleBlockSize - StartBlockOffset));
+
+            if (ProceededSize >= Size)
+            {
+                return true;
+            }
+        }
+    }
+
+    Blocks.clear();
+    StartBlockOffset = -1;
+    return false;
+}
+
 HalalCloud::FileInformation HalalCloud::Session::ToFileInformation(
     nlohmann::json const& Object)
 {
@@ -486,22 +587,18 @@ HalalCloud::FileStorageInformation HalalCloud::Session::GetFileStorageInformatio
     std::int64_t TotalNodeSize = 0;
     for (nlohmann::json const& Size : RawSizes)
     {
-        std::size_t StartIndex = Mile::ToUInt32(Mile::Json::ToString(
+        HalalCloud::FileStorageSizeRange Range = {};
+        Range.StartBlockIndex = Mile::ToUInt32(Mile::Json::ToString(
             Mile::Json::GetSubKey(Size, "start_index")));
-        std::size_t EndIndex = Mile::ToUInt32(Mile::Json::ToString(
+        Range.EndBlockIndex = Mile::ToUInt32(Mile::Json::ToString(
             Mile::Json::GetSubKey(Size, "end_index")));
-        std::int64_t NodeSize = Mile::ToInt64(Mile::Json::ToString(
+        Range.SingleBlockSize = Mile::ToInt64(Mile::Json::ToString(
             Mile::Json::GetSubKey(Size, "size")));
 
-        FileStorageSizeRange Range = {};
-        Range.StartBlockIndex = StartIndex;
-        Range.EndBlockIndex = EndIndex;
-        Range.SingleBlockSize = NodeSize;
-        Result.SizeRanges.push_back(Range);
+        TotalNodeCount += Range.GetRangeBlockCount();
+        TotalNodeSize += Range.GetRangeTotalSize();
 
-        std::size_t CurrentCount = EndIndex - StartIndex + 1;
-        TotalNodeCount += CurrentCount;
-        TotalNodeSize += NodeSize * CurrentCount;
+        Result.SizeRanges.emplace_back(Range);
     }
     if (RawNodes.size() != TotalNodeCount ||
         Result.Size != TotalNodeSize)
