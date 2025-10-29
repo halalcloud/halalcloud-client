@@ -212,21 +212,20 @@ int HccFuseStatFsCallback(
     try
     {
         nlohmann::json Response = Session->Request(
-            "/v6.services.pub.PubUser/GetStatisticsAndQuota",
+            "/v6/user/get_statistics_and_quota",
             nlohmann::json::object());
 
-        std::printf(
-            "Response = %s\n",
-            Response.dump(2).c_str());
+        nlohmann::json DiskStatisticsQuota =
+            Mile::Json::GetSubKey(Response, "disk_statistics_quota");
+        std::uint64_t BytesQuota = Mile::ToUInt64(Mile::Json::ToString(
+            Mile::Json::GetSubKey(DiskStatisticsQuota, "bytes_quota")));
+        std::uint64_t BytesUsed = Mile::ToUInt64(Mile::Json::ToString(
+            Mile::Json::GetSubKey(DiskStatisticsQuota, "bytes_used")));
 
         std::memset(buf, 0, sizeof(statvfs));
         buf->f_bsize = 512;
-        buf->f_blocks = Mile::Json::ToUInt64(Mile::Json::GetSubKey(
-            Mile::Json::GetSubKey(Response, "disk_statistics_quota"),
-            "bytes_quota")) / buf->f_bsize;
-        buf->f_bfree = Mile::Json::ToUInt64(Mile::Json::GetSubKey(
-            Mile::Json::GetSubKey(Response, "disk_statistics_quota"),
-            "bytes_used")) / buf->f_bsize;
+        buf->f_blocks = BytesQuota / buf->f_bsize;
+        buf->f_bfree = BytesUsed / buf->f_bsize;
         buf->f_bavail = buf->f_blocks - buf->f_bfree;
     }
     catch (...)
