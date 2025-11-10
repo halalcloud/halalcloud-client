@@ -61,10 +61,28 @@ EXTERN_C VOID MOAPI HccXorBufferWithByte(
         return;
     }
 
-    PMO_UINT8 ByteBuffer = reinterpret_cast<PMO_UINT8>(Buffer);
-    for (MO_UINT32 i = 0; i < BufferSize; ++i)
+    const MO_UINT32 NativeVariableSize = sizeof(MO_UINTN);
+    MO_UINT32 UnalignedSize = BufferSize % NativeVariableSize;
+    MO_UINT32 AlignedSize = BufferSize - UnalignedSize;
+    MO_UINT32 AlignedCount = AlignedSize / NativeVariableSize;
+
+    MO_UINTN AlignedXorValue = 0;
+    for (MO_UINT32 i = 0; i < NativeVariableSize; ++i)
     {
-        ByteBuffer[i] ^= XorByte;
+        AlignedXorValue |= (static_cast<MO_UINTN>(XorByte) << (i * 8));
+    }
+
+    PMO_UINTN AlignedBuffer = reinterpret_cast<PMO_UINTN>(Buffer);
+    for (MO_UINT32 i = 0; i < AlignedCount; ++i)
+    {
+        AlignedBuffer[i] ^= AlignedXorValue;
+    }
+
+    PMO_UINT8 UnalignedBuffer = reinterpret_cast<PMO_UINT8>(
+        AlignedBuffer + AlignedCount);
+    for (MO_UINT32 i = 0; i < UnalignedSize; ++i)
+    {
+        UnalignedBuffer[i] ^= XorByte;
     }
 }
 
