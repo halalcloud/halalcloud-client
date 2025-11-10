@@ -19,7 +19,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <PackageReference Include="Mile.Mobility">
-      <Version>1.0.306</Version>
+      <Version>1.0.371</Version>
     </PackageReference>
     <ProjectReference Include="$(MSBuildThisFileDirectory)HccApi.vcxproj">
       <Project>{EE83BC19-1C1B-45AF-83A1-32D2B59C65DF}</Project>
