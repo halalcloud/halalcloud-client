@@ -5,6 +5,7 @@ EXPORTS
 HccAllocateMemory
 HccFreeMemory
 
+HccXorBufferWithByte
 HccComputeSha256
 HccComputeHmacSha256
 HccGenerateRandomBytes

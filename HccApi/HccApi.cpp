@@ -49,6 +49,25 @@ EXTERN_C VOID MOAPI HccFreeMemory(
 #endif
 }
 
+EXTERN_C VOID MOAPI HccXorBufferWithByte(
+    _Inout_ MO_POINTER Buffer,
+    _In_ MO_UINT32 BufferSize,
+    _In_ MO_UINT8 XorByte)
+{
+    // When XorByte is 0, the buffer will remain unchanged. So we also skip the
+    // operation in this case.
+    if (!Buffer || !BufferSize || !XorByte)
+    {
+        return;
+    }
+
+    PMO_UINT8 ByteBuffer = reinterpret_cast<PMO_UINT8>(Buffer);
+    for (MO_UINT32 i = 0; i < BufferSize; ++i)
+    {
+        ByteBuffer[i] ^= XorByte;
+    }
+}
+
 EXTERN_C MO_RESULT MOAPI HccComputeSha256(
     _Out_ MO_POINTER OutputBuffer,
     _In_ MO_CONSTANT_POINTER InputBuffer,
@@ -237,7 +256,7 @@ EXTERN_C MO_RESULT MOAPI HccEncodeBase64UrlSafe(
     }
 
     std::size_t Length = std::strlen(*OutputString);
-    for (std::size_t i = 0; i < Length; i++)
+    for (std::size_t i = 0; i < Length; ++i)
     {
         if ('+' == (*OutputString)[i])
         {

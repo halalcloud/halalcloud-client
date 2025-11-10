@@ -347,13 +347,10 @@ std::vector<std::uint8_t> HalalCloud::Session::AcquireBlock(
                         ComputedHashBytes,
                         HCC_SHA256_HASH_LENGTH))
                     {
-                        if (BlockInfo.EncryptionByte)
-                        {
-                            for (std::size_t i = 0; i < Bytes.size(); ++i)
-                            {
-                                Bytes[i] ^= BlockInfo.EncryptionByte;
-                            }
-                        }
+                        ::HccXorBufferWithByte(
+                            Bytes.data(),
+                            static_cast<MO_UINT32>(Bytes.size()),
+                            BlockInfo.EncryptionByte);
 
                         return Bytes;
                     }
@@ -370,13 +367,10 @@ std::vector<std::uint8_t> HalalCloud::Session::AcquireBlock(
                     Bytes.data(),
                     static_cast<MO_UINT32>(Bytes.size())))
                 {
-                    if (BlockInfo.EncryptionByte)
-                    {
-                        for (std::size_t i = 0; i < Bytes.size(); ++i)
-                        {
-                            Bytes[i] ^= BlockInfo.EncryptionByte;
-                        }
-                    }
+                    ::HccXorBufferWithByte(
+                        Bytes.data(),
+                        static_cast<MO_UINT32>(Bytes.size()),
+                        BlockInfo.EncryptionByte);
 
                     MO_UINT8 ContentHashBytes[HCC_SHA256_HASH_LENGTH] = {};
                     if (::HccCidGetSha256(
@@ -429,13 +423,10 @@ std::vector<std::uint8_t> HalalCloud::Session::AcquireBlock(
                 Bytes.data(),
                 static_cast<MO_UINT32>(Bytes.size())))
             {
-                if (BlockInfo.EncryptionByte)
-                {
-                    for (std::size_t i = 0; i < Bytes.size(); ++i)
-                    {
-                        Bytes[i] ^= BlockInfo.EncryptionByte;
-                    }
-                }
+                ::HccXorBufferWithByte(
+                    Bytes.data(),
+                    static_cast<MO_UINT32>(Bytes.size()),
+                    BlockInfo.EncryptionByte);
 
                 MO_UINT8 ContentHashBytes[HCC_SHA256_HASH_LENGTH] = {};
                 if (::HccCidGetSha256(

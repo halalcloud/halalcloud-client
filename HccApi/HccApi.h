@@ -47,6 +47,17 @@ EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
 EXTERN_C VOID MOAPI HccFreeMemory(
     _In_ MO_POINTER Block);
 
+/**
+ * @brief Execute XOR operation on a buffer with a single byte.
+ * @param Buffer The buffer to be processed.
+ * @param BufferSize The size of the buffer, in bytes.
+ * @param XorByte The byte used for XOR operation.
+ */
+EXTERN_C VOID MOAPI HccXorBufferWithByte(
+    _Inout_ MO_POINTER Buffer,
+    _In_ MO_UINT32 BufferSize,
+    _In_ MO_UINT8 XorByte);
+
 // The length of a SHA-256 hash value in bytes.
 #define HCC_SHA256_HASH_LENGTH 32
 
