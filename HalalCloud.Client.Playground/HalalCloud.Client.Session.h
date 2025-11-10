@@ -126,13 +126,26 @@ namespace HalalCloud
     {
     private:
 
-        nlohmann::json m_CurrentToken;
-
         FileInformation ToFileInformation(
             nlohmann::json const& Object);
 
         BlockStorageInformation ToBlockStorageInformation(
             nlohmann::json const& Object);
+
+    private:
+
+        std::mutex m_CachedBlocksMutex;
+        std::map<std::string, std::vector<MO_UINT8>> m_CachedBlocks;
+
+    public:
+
+        std::vector<std::uint8_t> AcquireBlock(
+            BlockStorageInformation const& BlockInfo,
+            std::int64_t const& ExpectedSize);
+
+    private:
+
+        nlohmann::json m_CurrentToken;
 
     public:
 

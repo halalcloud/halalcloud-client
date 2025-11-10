@@ -111,33 +111,8 @@ int HccFuseReadCallback(
             Identifiers.push_back(Block.first);
         }
 
-        std::filesystem::path BlocksCachePath =
-            HalalCloud::GetBlocksCachePath();
-
         std::vector<HalalCloud::BlockStorageInformation> BlocksInfo =
             Session->GetBlockStorageInformation(Identifiers);
-        for (auto const& BlockInfo : BlocksInfo)
-        {
-            try
-            {
-                Session->m_DownloadManager.Add(
-                    BlockInfo.Identifier,
-                    BlockInfo.DownloadLink,
-                    (BlocksCachePath / BlockInfo.Identifier).string());
-            }
-            catch (...)
-            {
-
-            }
-        }
-
-        for (auto const& BlockInfo : BlocksInfo)
-        {
-            if (!Session->m_DownloadManager.Wait(BlockInfo.Identifier))
-            {
-                return -EINVAL;
-            }
-        }
 
         for (size_t i = 0; i < RequestedBlocks.size(); ++i)
         {
@@ -146,19 +121,12 @@ int HccFuseReadCallback(
                 return -EINVAL;
             }
 
-            std::vector<std::uint8_t> Bytes = HalalCloud::ReadAllBytesFromFile(
-                (BlocksCachePath / BlocksInfo[i].Identifier).string());
-            if (static_cast<std::size_t>(RequestedBlocks[i].second) != Bytes.size())
+            std::vector<std::uint8_t> Bytes = Session->AcquireBlock(
+                BlocksInfo[i],
+                RequestedBlocks[i].second);
+            if (Bytes.empty())
             {
                 return -EINVAL;
-            }
-
-            if (BlocksInfo[i].EncryptionByte)
-            {
-                for (size_t j = 0; j < Bytes.size(); j++)
-                {
-                    Bytes[j] ^= BlocksInfo[i].EncryptionByte;
-                }
             }
 
             std::uint8_t* CopyStart = Bytes.data();

@@ -308,6 +308,174 @@ HalalCloud::BlockStorageInformation HalalCloud::Session::ToBlockStorageInformati
     return Result;
 }
 
+std::vector<std::uint8_t> HalalCloud::Session::AcquireBlock(
+    HalalCloud::BlockStorageInformation const& BlockInfo,
+    std::int64_t const& ExpectedSize)
+{
+    std::lock_guard<std::mutex> Lock(this->m_CachedBlocksMutex);
+
+    std::filesystem::path BlockCachePath =
+        HalalCloud::GetBlocksCachePath() / BlockInfo.Identifier;
+
+    std::vector<MO_UINT8> CachedHashBytes;
+    {
+        auto Iterator = this->m_CachedBlocks.find(BlockInfo.Identifier);
+        if (this->m_CachedBlocks.end() != Iterator)
+        {
+            if (HCC_SHA256_HASH_LENGTH == Iterator->second.size())
+            {
+                CachedHashBytes = Iterator->second;
+            }
+        }
+    }
+
+    {
+        std::vector<std::uint8_t> Bytes = HalalCloud::ReadAllBytesFromFile(
+            BlockCachePath.string());
+        if (Bytes.size() == static_cast<std::size_t>(ExpectedSize))
+        {
+            if (!CachedHashBytes.empty())
+            {
+                MO_UINT8 ComputedHashBytes[HCC_SHA256_HASH_LENGTH] = {};
+                if (MO_RESULT_SUCCESS_OK == ::HccComputeSha256(
+                    ComputedHashBytes,
+                    Bytes.data(),
+                    static_cast<MO_UINT32>(Bytes.size())))
+                {
+                    if (0 == std::memcmp(
+                        CachedHashBytes.data(),
+                        ComputedHashBytes,
+                        HCC_SHA256_HASH_LENGTH))
+                    {
+                        if (BlockInfo.EncryptionByte)
+                        {
+                            for (std::size_t i = 0; i < Bytes.size(); ++i)
+                            {
+                                Bytes[i] ^= BlockInfo.EncryptionByte;
+                            }
+                        }
+
+                        return Bytes;
+                    }
+                }
+
+                CachedHashBytes.clear();
+                this->m_CachedBlocks.erase(BlockInfo.Identifier);
+            }
+            else
+            {
+                CachedHashBytes.resize(HCC_SHA256_HASH_LENGTH);
+                if (MO_RESULT_SUCCESS_OK == ::HccComputeSha256(
+                    CachedHashBytes.data(),
+                    Bytes.data(),
+                    static_cast<MO_UINT32>(Bytes.size())))
+                {
+                    if (BlockInfo.EncryptionByte)
+                    {
+                        for (std::size_t i = 0; i < Bytes.size(); ++i)
+                        {
+                            Bytes[i] ^= BlockInfo.EncryptionByte;
+                        }
+                    }
+
+                    MO_UINT8 ContentHashBytes[HCC_SHA256_HASH_LENGTH] = {};
+                    if (::HccCidGetSha256(
+                        BlockInfo.Identifier.c_str(),
+                        ContentHashBytes))
+                    {
+                        MO_UINT8 ComputedHashBytes[HCC_SHA256_HASH_LENGTH] = {};
+                        if (MO_RESULT_SUCCESS_OK == ::HccComputeSha256(
+                            ComputedHashBytes,
+                            Bytes.data(),
+                            static_cast<MO_UINT32>(Bytes.size())))
+                        {
+                            if (0 == std::memcmp(
+                                ContentHashBytes,
+                                ComputedHashBytes,
+                                HCC_SHA256_HASH_LENGTH))
+                            {
+                                this->m_CachedBlocks.emplace(
+                                    BlockInfo.Identifier,
+                                    CachedHashBytes);
+                                return Bytes;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // For legacy Baidu Object Storage, it doesn't have CID.
+                        // So, only check the size.
+                        this->m_CachedBlocks.emplace(
+                            BlockInfo.Identifier,
+                            CachedHashBytes);
+                        return Bytes;
+                    }
+                }
+            }
+        }
+    }
+
+    if (MO_RESULT_SUCCESS_OK == ::HccDownloadFile(
+        BlockInfo.DownloadLink.c_str(),
+        BlockCachePath.string().c_str()))
+    {
+        std::vector<std::uint8_t> Bytes = HalalCloud::ReadAllBytesFromFile(
+            BlockCachePath.string());
+        if (Bytes.size() == static_cast<std::size_t>(ExpectedSize))
+        {
+            CachedHashBytes.resize(HCC_SHA256_HASH_LENGTH);
+            if (MO_RESULT_SUCCESS_OK == ::HccComputeSha256(
+                CachedHashBytes.data(),
+                Bytes.data(),
+                static_cast<MO_UINT32>(Bytes.size())))
+            {
+                if (BlockInfo.EncryptionByte)
+                {
+                    for (std::size_t i = 0; i < Bytes.size(); ++i)
+                    {
+                        Bytes[i] ^= BlockInfo.EncryptionByte;
+                    }
+                }
+
+                MO_UINT8 ContentHashBytes[HCC_SHA256_HASH_LENGTH] = {};
+                if (::HccCidGetSha256(
+                    BlockInfo.Identifier.c_str(),
+                    ContentHashBytes))
+                {
+                    MO_UINT8 ComputedHashBytes[HCC_SHA256_HASH_LENGTH] = {};
+                    if (MO_RESULT_SUCCESS_OK == ::HccComputeSha256(
+                        ComputedHashBytes,
+                        Bytes.data(),
+                        static_cast<MO_UINT32>(Bytes.size())))
+                    {
+                        if (0 == std::memcmp(
+                            ContentHashBytes,
+                            ComputedHashBytes,
+                            HCC_SHA256_HASH_LENGTH))
+                        {
+                            this->m_CachedBlocks.emplace(
+                                BlockInfo.Identifier,
+                                CachedHashBytes);
+                            return Bytes;
+                        }
+                    }
+                }
+                else
+                {
+                    // For legacy Baidu Object Storage, it doesn't have CID.
+                    // So, only check the size.
+                    this->m_CachedBlocks.emplace(
+                        BlockInfo.Identifier,
+                        CachedHashBytes);
+                    return Bytes;
+                }
+            }
+        }
+    }
+
+    return std::vector<std::uint8_t>();
+}
+
 nlohmann::json HalalCloud::Session::CurrentToken()
 {
     return this->m_CurrentToken;
