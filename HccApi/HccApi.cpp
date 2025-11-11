@@ -49,6 +49,55 @@ EXTERN_C VOID MOAPI HccFreeMemory(
 #endif
 }
 
+#ifdef _MSC_VER
+#include <intrin.h>
+#endif // _MSC_VER
+
+namespace
+{
+    template<typename XorValueType>
+    void XorBufferWithSingleUInt(
+        _Inout_ MO_POINTER Buffer,
+        _In_ MO_UINT32 Count,
+        _In_ XorValueType XorValue)
+    {
+        XorValueType* TypedBuffer = reinterpret_cast<XorValueType*>(Buffer);
+        do
+        {
+            *TypedBuffer++ ^= XorValue;
+        } while (--Count);
+    }
+
+    static MO_UINTN GetAlignedSize(
+        _In_ MO_UINTN Size,
+        _In_ MO_UINTN Alignment)
+    {
+        return (Size + Alignment - 1) & ~(Alignment - 1);
+    }
+
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+
+    template<>
+    void XorBufferWithSingleUInt<__m128i>(
+        _Inout_ MO_POINTER Buffer,
+        _In_ MO_UINT32 Count,
+        _In_ __m128i XorValue)
+    {
+        __m128i* TypedBuffer = reinterpret_cast<__m128i*>(Buffer);
+        do
+        {
+            ::_mm_store_si128(
+                TypedBuffer,
+                ::_mm_xor_si128(
+                    ::_mm_load_si128(TypedBuffer),
+                    XorValue));
+            ++TypedBuffer;
+        } while (--Count);
+    }
+
+#endif // defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+}
+
 EXTERN_C VOID MOAPI HccXorBufferWithByte(
     _Inout_ MO_POINTER Buffer,
     _In_ MO_UINT32 BufferSize,
@@ -61,29 +110,74 @@ EXTERN_C VOID MOAPI HccXorBufferWithByte(
         return;
     }
 
-    const MO_UINT32 NativeVariableSize = sizeof(MO_UINTN);
-    MO_UINT32 UnalignedSize = BufferSize % NativeVariableSize;
-    MO_UINT32 AlignedSize = BufferSize - UnalignedSize;
-    MO_UINT32 AlignedCount = AlignedSize / NativeVariableSize;
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+    using NativeType = __m128i;
+#else
+    using NativeType = MO_UINTN;
+#endif
 
-    MO_UINTN AlignedXorValue = 0;
-    for (MO_UINT32 i = 0; i < NativeVariableSize; ++i)
+    MO_UINTN BufferAddress = reinterpret_cast<MO_UINTN>(Buffer);
+    MO_UINTN BufferAddressAligned = ::GetAlignedSize(
+        sizeof(NativeType),
+        BufferAddress);
+
+    // If the buffer address is not aligned, process the unaligned part with
+    // generic implementation first.
+    if (BufferAddress != BufferAddressAligned)
     {
-        AlignedXorValue |= (static_cast<MO_UINTN>(XorByte) << (i * 8));
+        MO_UINT32 UnalignedSize = static_cast<MO_UINT32>(
+            BufferAddressAligned - BufferAddress);
+        if (UnalignedSize > BufferSize)
+        {
+            UnalignedSize = BufferSize;
+        }
+        ::XorBufferWithSingleUInt<MO_UINT8>(
+            Buffer,
+            UnalignedSize,
+            XorByte);
+        if (UnalignedSize == BufferSize)
+        {
+            // If all bytes have been processed, return directly.
+            return;
+        }
+        Buffer = reinterpret_cast<PMO_UINT8>(Buffer) + UnalignedSize;
+        BufferSize -= UnalignedSize;
     }
 
-    PMO_UINTN AlignedBuffer = reinterpret_cast<PMO_UINTN>(Buffer);
-    for (MO_UINT32 i = 0; i < AlignedCount; ++i)
+    // If the buffer is not large enough, use the generic implementation.
+    if (BufferSize < sizeof(NativeType))
     {
-        AlignedBuffer[i] ^= AlignedXorValue;
+        ::XorBufferWithSingleUInt<MO_UINT8>(
+            Buffer,
+            BufferSize,
+            XorByte);
+        return;
     }
 
-    PMO_UINT8 UnalignedBuffer = reinterpret_cast<PMO_UINT8>(
-        AlignedBuffer + AlignedCount);
-    for (MO_UINT32 i = 0; i < UnalignedSize; ++i)
+    MO_UINT32 AlignedCount = BufferSize / sizeof(NativeType);
+    MO_UINT32 UnalignedCount = BufferSize % sizeof(NativeType);
+    PMO_UINT8 ByteBuffer = reinterpret_cast<PMO_UINT8>(Buffer);
+
+#if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
+    NativeType XorVector = ::_mm_set1_epi8(static_cast<char>(XorByte));
+#else
+    NativeType XorVector = 0;
+    for (MO_UINT32 i = 0; i < sizeof(NativeType); ++i)
     {
-        UnalignedBuffer[i] ^= XorByte;
+        XorVector |= (static_cast<NativeType>(XorByte) << (i * 8));
     }
+#endif
+
+    ::XorBufferWithSingleUInt<NativeType>(
+        ByteBuffer,
+        AlignedCount,
+        XorVector);
+
+    // Process remaining bytes with generic implementation.
+    ::XorBufferWithSingleUInt<MO_UINT8>(
+        ByteBuffer + AlignedCount * sizeof(NativeType),
+        UnalignedCount,
+        XorByte);
 }
 
 EXTERN_C MO_RESULT MOAPI HccComputeSha256(
