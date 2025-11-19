@@ -1,0 +1,13 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="HalalCloud.Client.Playground/HalalCloud.Client.Playground.vcxproj" Id="86d4afad-e229-4849-965b-3d1de93ca98c" />
+  <Project Path="HalalCloud.Client/HalalCloud.Client.vcxproj" Id="2597465e-3330-43d7-93cc-790cbb26b69e">
+    <Build Solution="*|ARM64" Project="false" />
+    <Build Solution="*|x86" Project="false" />
+  </Project>
+  <Project Path="HccApi/HccApi.vcxproj" Id="ee83bc19-1c1b-45af-83a1-32d2b59c65df" />
+</Solution>
