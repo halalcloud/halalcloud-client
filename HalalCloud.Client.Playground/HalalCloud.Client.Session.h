@@ -122,6 +122,12 @@ namespace HalalCloud
         std::uint8_t EncryptionByte;
     };
 
+    struct CachedBlockItem
+    {
+        MO_UINT8 HashBytes[HCC_SHA256_HASH_LENGTH];
+        MO_BOOL HashExisted;
+    };
+
     class Session : Mile::DisableCopyConstruction
     {
     private:
@@ -135,7 +141,7 @@ namespace HalalCloud
     private:
 
         std::mutex m_CachedBlocksMutex;
-        std::map<std::string, std::vector<MO_UINT8>> m_CachedBlocks;
+        std::map<std::string, CachedBlockItem> m_CachedBlocks;
 
     public:
 
