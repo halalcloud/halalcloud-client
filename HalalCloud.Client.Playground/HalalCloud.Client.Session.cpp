@@ -374,8 +374,8 @@ std::vector<std::uint8_t> HalalCloud::Session::AcquireBlock(
 
                     MO_UINT8 ContentHashBytes[HCC_SHA256_HASH_LENGTH] = {};
                     if (::HccCidGetSha256(
-                        BlockInfo.Identifier.c_str(),
-                        ContentHashBytes))
+                        ContentHashBytes,
+                        BlockInfo.Identifier.c_str()))
                     {
                         MO_UINT8 ComputedHashBytes[HCC_SHA256_HASH_LENGTH] = {};
                         if (MO_RESULT_SUCCESS_OK == ::HccComputeSha256(
@@ -430,8 +430,8 @@ std::vector<std::uint8_t> HalalCloud::Session::AcquireBlock(
 
                 MO_UINT8 ContentHashBytes[HCC_SHA256_HASH_LENGTH] = {};
                 if (::HccCidGetSha256(
-                    BlockInfo.Identifier.c_str(),
-                    ContentHashBytes))
+                    ContentHashBytes,
+                    BlockInfo.Identifier.c_str()))
                 {
                     MO_UINT8 ComputedHashBytes[HCC_SHA256_HASH_LENGTH] = {};
                     if (MO_RESULT_SUCCESS_OK == ::HccComputeSha256(
@@ -844,10 +844,10 @@ void HalalCloud::Session::DownloadFile(
         this->GetBlockStorageInformation(Information.Blocks);
     for (HalalCloud::BlockStorageInformation const& Block : Blocks)
     {
-        MO_UINT8 OutputHashBytes[32] = {};
+        MO_UINT8 OutputHashBytes[HCC_SHA256_HASH_LENGTH] = {};
         if (::HccCidGetSha256(
-            Block.Identifier.c_str(),
-            &OutputHashBytes))
+            OutputHashBytes,
+            Block.Identifier.c_str()))
         {
             std::string HashString;
             static const char* HexChars = "0123456789abcdef";

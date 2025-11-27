@@ -286,10 +286,10 @@ EXTERN_C MO_RESULT MOAPI HccDownloadFile(
 
 /**
  * @brief Get the SHA-256 hash value from a CID string used in Halal Cloud.
- * @param CidString The input CID string, the caller must ensure that string is
- *                  null-terminated and encoded in UTF-8.
  * @param HashBytes The output buffer to receive the SHA-256 hash value, the
  *                  caller must ensure that the buffer is at least 32 bytes.
+ * @param CidString The input CID string, the caller must ensure that string is
+ *                  null-terminated and encoded in UTF-8.
  * @return Returns MO_TRUE on success; otherwise, returns MO_FALSE.
  * @remark This function only supports CIDs used in the current Halal Cloud
  *         service implementation, which has the following properties:
@@ -300,7 +300,7 @@ EXTERN_C MO_RESULT MOAPI HccDownloadFile(
  *         - CID string length: HCC_CID_STRING_LENGTH
  */
 EXTERN_C MO_BOOL MOAPI HccCidGetSha256(
-    _In_ MO_CONSTANT_STRING CidString,
-    _Out_ MO_POINTER HashBytes);
+    _Out_ MO_POINTER HashBytes,
+    _In_ MO_CONSTANT_STRING CidString);
 
 #endif // !HALALCLOUD_CLIENT_API

@@ -1078,8 +1078,8 @@ namespace
 }
 
 EXTERN_C MO_BOOL MOAPI HccCidGetSha256(
-    _In_ MO_CONSTANT_STRING CidString,
-    _Out_ MO_POINTER HashBytes)
+    _Out_ MO_POINTER HashBytes,
+    _In_ MO_CONSTANT_STRING CidString)
 {
     if (!CidString || !HashBytes)
     {
