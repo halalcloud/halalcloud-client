@@ -855,6 +855,79 @@ namespace
     }
 }
 
+EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
+    _Out_ PMO_POINTER ContentBuffer,
+    _Out_ PMO_UINT32 ContentSize,
+    _In_ MO_CONSTANT_STRING FilePath)
+{
+    if (!ContentBuffer || !ContentSize || !FilePath)
+    {
+        return MO_RESULT_ERROR_INVALID_PARAMETER;
+    }
+    *ContentBuffer = nullptr;
+    *ContentSize = 0;
+
+    MO_RESULT Result = MO_RESULT_ERROR_FAIL;
+    FILE* FileStream = nullptr;
+
+    do
+    {
+        FileStream = ::CrtFileOpen(FilePath, "rb");
+        if (!FileStream)
+        {
+            break;
+        }
+
+        if (0 != std::fseek(FileStream, 0, SEEK_END))
+        {
+            break;
+        }
+
+        MO_UINT32 FileSize = 0;
+        {
+            long TemporaryFileSize = std::ftell(FileStream);
+            if (TemporaryFileSize < 0)
+            {
+                break;
+            }
+            FileSize = TemporaryFileSize;
+        }
+
+        if (0 != std::fseek(FileStream, 0, SEEK_SET))
+        {
+            break;
+        }
+
+        MO_POINTER Buffer = ::HccAllocateMemory(FileSize);
+        if (!Buffer)
+        {
+            break;
+        }
+
+        if (FileSize != std::fread(
+            Buffer,
+            sizeof(MO_UINT8),
+            FileSize,
+            FileStream))
+        {
+            ::HccFreeMemory(Buffer);
+            break;
+        }
+
+        *ContentBuffer = Buffer;
+        *ContentSize = FileSize;
+        Result = MO_RESULT_SUCCESS_OK;
+
+    } while (false);
+
+    if (FileStream)
+    {
+        std::fclose(FileStream);
+    }
+
+    return Result;
+}
+
 EXTERN_C MO_RESULT MOAPI HccDownloadFile(
     _In_ MO_CONSTANT_STRING SourceUrl,
     _In_ MO_CONSTANT_STRING TargetPath)

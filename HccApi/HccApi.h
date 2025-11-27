@@ -233,6 +233,24 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
     _In_ MO_CONSTANT_STRING RequestJsonString);
 
 /**
+ * @brief Read all bytes from file.
+ * @param ContentBuffer The buffer to receive file content. The caller must
+ *                      ensure that the address is valid. The caller is
+ *                      responsible for freeing the buffer via HccFreeMemory
+ *                      function when it is no longer needed.
+ * @param ContentSize The size of the content buffer in bytes. The caller must
+ *                    ensure that the address is valid.
+ * @param FilePath The file path to read. The caller must ensure that the string
+ *                 is null-terminated and encoded in UTF-8.
+ * @return If the function succeeds, it returns HCC_RPC_STATUS_OK. Otherwise,
+ *         it returns an HCC_RPC_STATUS error code.
+ */
+EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
+    _Out_ PMO_POINTER ContentBuffer,
+    _Out_ PMO_UINT32 ContentSize,
+    _In_ MO_CONSTANT_STRING FilePath);
+
+/**
  * @brief Download a file from the specified URL to the target path.
  * @param SourceUrl The source URL, the caller must ensure that the string is
  *                  null-terminated and encoded in UTF-8.
