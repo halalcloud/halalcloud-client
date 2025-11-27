@@ -246,7 +246,7 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
  *         it returns an HCC_RPC_STATUS error code.
  */
 EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
-    _Out_ PMO_POINTER ContentBuffer,
+    _Out_ PMO_UINT8* ContentBuffer,
     _Out_ PMO_UINT32 ContentSize,
     _In_ MO_CONSTANT_STRING FilePath);
 

@@ -856,7 +856,7 @@ namespace
 }
 
 EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
-    _Out_ PMO_POINTER ContentBuffer,
+    _Out_ PMO_UINT8* ContentBuffer,
     _Out_ PMO_UINT32 ContentSize,
     _In_ MO_CONSTANT_STRING FilePath)
 {
@@ -914,7 +914,7 @@ EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
             break;
         }
 
-        *ContentBuffer = Buffer;
+        *ContentBuffer = reinterpret_cast<PMO_UINT8>(Buffer);
         *ContentSize = FileSize;
         Result = MO_RESULT_SUCCESS_OK;
 
