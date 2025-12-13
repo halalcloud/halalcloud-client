@@ -31,7 +31,8 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Label="QtSettings">
-    <QtInstall Condition="'$(Platform)' == 'x64'">QieQt_x64</QtInstall>
+    <QtInstall Condition="'$(Platform)' == 'x64'">halalcloud-qt-binaries_x64</QtInstall>
+    <QtInstall Condition="'$(Platform)' == 'Win32'">halalcloud-qt-binaries_x86</QtInstall>
     <QtModules>core;gui;svg;widgets</QtModules>
     <QtBuildConfig Condition="'$(Configuration)' == 'Debug'">debug</QtBuildConfig>
     <QtBuildConfig Condition="'$(Configuration)' == 'Release'">release</QtBuildConfig>
