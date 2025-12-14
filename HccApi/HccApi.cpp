@@ -1,5 +1,5 @@
 ﻿/*
- * PROJECT:    Halal Cloud Client Library
+ * PROJECT:    Halal Cloud Client
  * FILE:       HccApi.cpp
  * PURPOSE:    Implementation for Halal Cloud Client Library
  *

@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
-  PROJECT:    Halal Cloud Client Library
+  PROJECT:    Halal Cloud Client
   FILE:       HccApi.props
   PURPOSE:    MSBuild Properties for referencing the Halal Cloud Client Library
 
