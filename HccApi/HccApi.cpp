@@ -118,8 +118,8 @@ EXTERN_C VOID MOAPI HccXorBufferWithByte(
 
     MO_UINTN BufferAddress = reinterpret_cast<MO_UINTN>(Buffer);
     MO_UINTN BufferAddressAligned = ::GetAlignedSize(
-        sizeof(NativeType),
-        BufferAddress);
+        BufferAddress,
+        sizeof(NativeType));
 
     // If the buffer address is not aligned, process the unaligned part with
     // generic implementation first.
