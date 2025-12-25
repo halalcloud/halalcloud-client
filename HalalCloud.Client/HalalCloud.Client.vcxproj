@@ -51,6 +51,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.cpp" />
+    <ClCompile Include="qrcodegen.cpp">
+      <DependentUpon>qrcodegen.hpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="HalalCloud.Client.manifest" />
@@ -58,13 +62,13 @@
   <ItemGroup>
     <QtUic Include="HccUxNewCredentialWidget.ui" />
   </ItemGroup>
-    <ItemGroup>
+  <ItemGroup>
     <QtMoc Include="HccUxNewCredentialWidget.h">
       <DependentUpon>HccUxNewCredentialWidget.ui</DependentUpon>
       <SubType>Code</SubType>
     </QtMoc>
   </ItemGroup>
-   <ItemGroup>
+  <ItemGroup>
     <ClCompile Include="HccUxNewCredentialWidget.cpp">
       <DependentUpon>HccUxNewCredentialWidget.ui</DependentUpon>
       <SubType>Code</SubType>
@@ -77,6 +81,9 @@
     <PackageReference Include="Mile.Windows.UniCrt">
       <Version>1.2.410</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="qrcodegen.hpp" />
   </ItemGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1827" Project="Mile.Project.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
