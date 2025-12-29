@@ -13,11 +13,13 @@
     <IncludePath>$(MSBuildThisFileDirectory);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <Target Name="HalalCloudBuildIconResource" BeforeTargets="BeforeResourceCompile">
-    <ItemGroup Condition="'$(QtVsProjectVersion)' != ''">
-      <QtRcc Include="$(MSBuildThisFileDirectory)HalalCloud.Icon.qrc" />
-    </ItemGroup>
     <ItemGroup>
       <ResourceCompile Include="$(MSBuildThisFileDirectory)HalalCloud.Icon.rc" />
+    </ItemGroup>
+  </Target>
+  <Target Name="HalalCloudBuildQtIconResource" BeforeTargets="BeforeClCompile" Condition="'$(QtVsProjectVersion)' != ''">
+    <ItemGroup >
+      <QtRcc Include="$(MSBuildThisFileDirectory)HalalCloud.Icon.qrc" />
     </ItemGroup>
   </Target>
 </Project>
