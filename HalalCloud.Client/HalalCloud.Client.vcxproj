@@ -86,6 +86,7 @@
     <ClInclude Include="qrcodegen.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <QtRcc Include="..\Assets\HalalCloud.qrc" />
     <QtRcc Include="HalalCloud.Client.qrc" />
   </ItemGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1827" Project="Mile.Project.Cpp.targets" />
