@@ -42,7 +42,7 @@
     <Import Project="$(QtMsBuild)\qt.props" />
   </ImportGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1827" Project="Mile.Project.Cpp.props" />
-  <Import Project="..\HalalCloud.Client.Icon\HalalCloud.Client.Icon.props" />
+  <Import Project="..\Assets\HalalCloud.Icon.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <RuntimeLibrary Condition="'$(Configuration)' == 'Debug'">MultiThreadedDebug</RuntimeLibrary>
@@ -84,9 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="qrcodegen.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtRcc Include="..\Assets\HalalCloud.Icon.qrc" />
   </ItemGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1827" Project="Mile.Project.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
