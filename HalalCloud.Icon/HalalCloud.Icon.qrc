@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/HalalCloud">
-        <file alias="SvgIcon">HalalCloud.svg</file>
+        <file alias="SvgIcon">HalalCloud.Icon.svg</file>
     </qresource>
 </RCC>
