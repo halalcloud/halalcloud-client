@@ -11,6 +11,9 @@
 #pragma once
 
 #include <QWidget>
+
+#include <string>
+
 #include "ui_HccUxNewCredentialWidget.h"
 
 class HccUxNewCredentialWidget :
@@ -25,4 +28,7 @@ public:
         QWidget* Parent = nullptr);
 
 	~HccUxNewCredentialWidget();
+
+    void UpdateWebLink(
+        std::string const& WebLink);
 };
