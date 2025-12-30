@@ -77,11 +77,14 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Mile.Windows.UniCrt">
+      <Version>1.2.410</Version>
+    </PackageReference>
     <PackageReference Include="Mile.Windows.Helpers">
       <Version>1.0.952</Version>
     </PackageReference>
-    <PackageReference Include="Mile.Windows.UniCrt">
-      <Version>1.2.410</Version>
+    <PackageReference Include="Mile.Json">
+      <Version>1.0.1057</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
