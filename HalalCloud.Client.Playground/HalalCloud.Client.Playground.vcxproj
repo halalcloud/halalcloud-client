@@ -36,6 +36,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\HalalCloud.Client\HccProtocolWrappers.cpp" />
     <ClCompile Include="HalalCloud.Client.Playground.cpp" />
     <ClCompile Include="HalalCloud.Client.Session.cpp" />
     <ClCompile Include="HalalCloud.Portable.Helpers.cpp" />
@@ -44,6 +45,7 @@
     <Manifest Include="HalalCloud.Client.Playground.manifest" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\HalalCloud.Client\HccProtocolWrappers.h" />
     <ClInclude Include="HalalCloud.Client.Session.h" />
     <ClInclude Include="HalalCloud.Portable.Helpers.h" />
   </ItemGroup>

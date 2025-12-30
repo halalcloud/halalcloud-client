@@ -43,6 +43,7 @@
   </ImportGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1827" Project="Mile.Project.Cpp.props" />
   <Import Project="..\HalalCloud.Icon\HalalCloud.Icon.props" />
+  <Import Project="..\HccApi\HccApi.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <RuntimeLibrary Condition="'$(Configuration)' == 'Debug'">MultiThreadedDebug</RuntimeLibrary>
@@ -51,6 +52,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HalalCloud.Client.cpp" />
+    <ClCompile Include="HccProtocolWrappers.cpp" />
     <ClCompile Include="qrcodegen.cpp">
       <DependentUpon>qrcodegen.hpp</DependentUpon>
       <SubType>Code</SubType>
@@ -83,6 +85,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="HccProtocolWrappers.h" />
     <ClInclude Include="qrcodegen.hpp" />
   </ItemGroup>
   <Import Sdk="Mile.Project.Configurations" Version="1.0.1827" Project="Mile.Project.Cpp.targets" />
