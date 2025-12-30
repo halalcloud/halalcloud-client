@@ -503,21 +503,10 @@ nlohmann::json HalalCloud::Session::Request(
             Mile::Json::GetSubKey(this->m_CurrentToken, "access_token"));
     }
 
-    MO_STRING ResponseJsonString = nullptr;
-    HCC_RPC_STATUS Status = ::HccRpcPostRequest(
-        &ResponseJsonString,
-        AccessToken.c_str(),
-        MethodFullName.data(),
-        Request.dump().c_str());
-    if (HCC_RPC_STATUS_OK != Status)
-    {
-        HalalCloud::ThrowException(
-            "HccRpcPostRequest",
-            Status);
-    }
-    nlohmann::json ResponseJson = nlohmann::json::parse(ResponseJsonString);
-    ::HccFreeMemory(ResponseJsonString);
-    return ResponseJson;
+    return nlohmann::json::parse(HalalCloud::Request(
+        AccessToken,
+        MethodFullName,
+        Request.dump()));
 }
 
 void HalalCloud::Session::Authenticate(

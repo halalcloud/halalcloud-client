@@ -23,3 +23,25 @@
         Checkpoint.data(),
         Code));
 }
+
+std::string HalalCloud::Request(
+    std::string_view AccessToken,
+    std::string_view MethodFullName,
+    std::string_view RequestJson)
+{
+    MO_STRING RawResponseJson = nullptr;
+    HCC_RPC_STATUS Status = ::HccRpcPostRequest(
+        &RawResponseJson,
+        AccessToken.data(),
+        MethodFullName.data(),
+        RequestJson.data());
+    if (HCC_RPC_STATUS_OK != Status)
+    {
+        HalalCloud::ThrowException(
+            "HalalCloud::Request!HccRpcPostRequest",
+            Status);
+    }
+    std::string ResponseJson = std::string(RawResponseJson);
+    ::HccFreeMemory(RawResponseJson);
+    return ResponseJson;
+}

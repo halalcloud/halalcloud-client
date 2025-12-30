@@ -13,6 +13,7 @@
 
 #include <HccApi.h>
 
+#include <string>
 #include <string_view>
 
 namespace HalalCloud
@@ -20,6 +21,11 @@ namespace HalalCloud
     [[noreturn]] void ThrowException(
         std::string_view Checkpoint,
         std::int32_t const& Code);
+
+    std::string Request(
+        std::string_view AccessToken,
+        std::string_view MethodFullName,
+        std::string_view RequestJson);
 }
 
 #endif // !HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
