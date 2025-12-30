@@ -126,6 +126,8 @@ namespace HalalCloud
     {
         MO_UINT8 HashBytes[HCC_SHA256_HASH_LENGTH];
         MO_BOOL HashExisted;
+        MO_UINT32 DataSize; // Not implemented
+        PMO_UINT8 DataBytes; // Not implemented
     };
 
     class Session : Mile::DisableCopyConstruction
