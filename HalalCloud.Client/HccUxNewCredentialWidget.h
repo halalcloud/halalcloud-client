@@ -22,6 +22,10 @@ class HccUxNewCredentialWidget :
 {
 	Q_OBJECT
 
+private slots:
+
+    void WebLinkOpenButtonClick();
+
 public:
 
 	HccUxNewCredentialWidget(

@@ -19,6 +19,8 @@ int main(int argc, char* argv[])
     QApplication Application(argc, argv);
 
     HccUxNewCredentialWidget* Widget = new HccUxNewCredentialWidget();
+    Widget->setWindowFlags(Qt::Dialog);
+    Widget->UpdateWebLink("https://www.bing.com");
     Widget->show();
 
     return Application.exec();

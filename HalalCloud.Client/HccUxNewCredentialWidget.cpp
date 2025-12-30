@@ -13,6 +13,7 @@
 #include <Mile.Helpers.CppBase.h>
 
 #include <QtCore/QByteArray>
+#include <QtGui/QDesktopServices>
 #include <QtGui/QPainter>
 #include <QtSvg/QSvgRenderer>
 
@@ -89,13 +90,22 @@ namespace
     }
 }
 
+void HccUxNewCredentialWidget::WebLinkOpenButtonClick()
+{
+    QDesktopServices::openUrl(QUrl(this->WebLinkPlainTextEdit->toPlainText()));  
+}
+
 HccUxNewCredentialWidget::HccUxNewCredentialWidget(
     QWidget* Parent)
 	: QWidget(Parent)
 {
     this->setupUi(this);
 
-    this->UpdateWebLink("https://www.bing.com");
+    this->connect(
+        this->WebLinkOpenButton,
+        SIGNAL(clicked()),
+        this,
+        SLOT(WebLinkOpenButtonClick()));
 }
 
 HccUxNewCredentialWidget::~HccUxNewCredentialWidget()
