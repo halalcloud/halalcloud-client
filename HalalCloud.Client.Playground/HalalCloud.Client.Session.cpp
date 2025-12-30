@@ -25,15 +25,7 @@
 
 #include <HccApi.h>
 
-[[noreturn]] void HalalCloud::ThrowException(
-    std::string_view Checkpoint,
-    std::int32_t const& Code)
-{
-    throw std::runtime_error(Mile::FormatString(
-        "[HalalCloud.Client] %s Failed. (Code = %d)",
-        Checkpoint.data(),
-        Code));
-}
+#include "../HalalCloud.Client/HccProtocolWrappers.h"
 
 std::filesystem::path HalalCloud::GetApplicationDataRootPath()
 {
