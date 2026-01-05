@@ -35,7 +35,28 @@ namespace HalalCloud
 
     std::filesystem::path GetProfilePath(
         std::string_view ProfileName);
+}
 
+namespace HalalCloud
+{
+    enum class AuthorizeState
+    {
+        PendingLogin,
+        PendingConfirmation,
+        TokenCreated,
+        Success,
+        Failed
+    };
+
+    struct UserToken
+    {
+        std::string AccessToken;
+        std::string RefreshToken;
+    };
+}
+
+namespace HalalCloud
+{
     std::string Request(
         std::string_view AccessToken,
         std::string_view MethodFullName,
@@ -48,23 +69,8 @@ namespace HalalCloud
         std::string& RedirectUri,
         std::string_view CodeVerifier);
 
-    enum class AuthorizeState
-    {
-        PendingLogin,
-        PendingConfirmation,
-        TokenCreated,
-        Success,
-        Failed
-    };
-
     AuthorizeState GetAuthorizeState(
         std::string_view Code);
-
-    struct UserToken
-    {
-        std::string AccessToken;
-        std::string RefreshToken;
-    };
 
     UserToken GetToken(
         std::string_view Code,
