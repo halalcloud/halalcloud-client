@@ -24,9 +24,17 @@ namespace HalalCloud
     std::string PathToUtf8String(
         std::filesystem::path const& Path);
 
+    std::filesystem::path EnsureDirectoryPathExists(
+        std::filesystem::path const& Path);
+
     std::filesystem::path GetApplicationDataRootPath();
 
     std::filesystem::path GetBlocksCachePath();
+
+    std::filesystem::path GetProfilesRootPath();
+
+    std::filesystem::path GetProfilePath(
+        std::string_view ProfileName);
 
     std::string Request(
         std::string_view AccessToken,

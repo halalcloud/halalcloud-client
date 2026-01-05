@@ -45,6 +45,16 @@ std::string HalalCloud::PathToUtf8String(
 #endif
 }
 
+std::filesystem::path HalalCloud::EnsureDirectoryPathExists(
+    std::filesystem::path const& Path)
+{
+    if (!std::filesystem::exists(Path))
+    {
+        std::filesystem::create_directories(Path);
+    }
+    return Path;
+}
+
 std::filesystem::path HalalCloud::GetApplicationDataRootPath()
 {
     static std::filesystem::path CachedResult = ([]() -> std::filesystem::path
@@ -116,23 +126,33 @@ std::filesystem::path HalalCloud::GetApplicationDataRootPath()
         Data /= "HalalCloud";
         return Data;
     }());
-
-    if (!std::filesystem::exists(CachedResult))
-    {
-        std::filesystem::create_directories(CachedResult);
-    }
-    return CachedResult;
+    return HalalCloud::EnsureDirectoryPathExists(CachedResult);
 }
 
 std::filesystem::path HalalCloud::GetBlocksCachePath()
 {
-    std::filesystem::path Result = HalalCloud::GetApplicationDataRootPath();
-    Result /= "BlocksCache";
-    if (!std::filesystem::exists(Result))
+    static std::filesystem::path CachedResult = ([]() -> std::filesystem::path
     {
-        std::filesystem::create_directories(Result);
-    }
-    return Result;
+        return HalalCloud::GetApplicationDataRootPath() / "BlocksCache";
+    }());
+    return HalalCloud::EnsureDirectoryPathExists(CachedResult);
+}
+
+std::filesystem::path HalalCloud::GetProfilesRootPath()
+{
+    static std::filesystem::path CachedResult = ([]() -> std::filesystem::path
+    {
+        return HalalCloud::GetApplicationDataRootPath() / "Profiles";
+    }());
+    return HalalCloud::EnsureDirectoryPathExists(CachedResult);
+}
+
+std::filesystem::path HalalCloud::GetProfilePath(
+    std::string_view ProfileName)
+{
+    std::filesystem::path ProfilePath = HalalCloud::GetProfilesRootPath();
+    ProfilePath /= ProfileName;
+    return HalalCloud::EnsureDirectoryPathExists(ProfilePath);
 }
 
 std::string HalalCloud::Request(
