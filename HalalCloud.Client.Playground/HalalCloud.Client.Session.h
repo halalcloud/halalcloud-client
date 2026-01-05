@@ -11,7 +11,8 @@
 #ifndef HALALCLOUD_CLIENT_SESSION
 #define HALALCLOUD_CLIENT_SESSION
 
-#include "HccApi.h"
+#include <HccApi.h>
+#include "../HalalCloud.Client/HccProtocolWrappers.h"
 
 #include <Mile.Helpers.CppBase.h>
 
@@ -19,21 +20,11 @@
 
 #include "HalalCloud.Portable.Helpers.h"
 
-#include <filesystem>
 #include <functional>
-#include <string_view>
 #include <vector>
 
 namespace HalalCloud
 {
-    [[noreturn]] void ThrowException(
-        std::string_view Checkpoint,
-        std::int32_t const& Code);
-
-    std::filesystem::path GetApplicationDataRootPath();
-
-    std::filesystem::path GetBlocksCachePath();
-
     std::filesystem::path GetUserCloudCachePath(
         std::string_view UserIdentity);
 

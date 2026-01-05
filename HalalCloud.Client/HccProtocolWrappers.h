@@ -11,6 +11,7 @@
 #ifndef HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
 #define HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
 
+#include <filesystem>
 #include <string>
 #include <string_view>
 
@@ -19,6 +20,10 @@ namespace HalalCloud
     [[noreturn]] void ThrowException(
         std::string_view Checkpoint,
         std::int32_t const& Code);
+
+    std::filesystem::path GetApplicationDataRootPath();
+
+    std::filesystem::path GetBlocksCachePath();
 
     std::string Request(
         std::string_view AccessToken,
