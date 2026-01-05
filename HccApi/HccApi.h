@@ -242,13 +242,28 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
  *                    ensure that the address is valid.
  * @param FilePath The file path to read. The caller must ensure that the string
  *                 is null-terminated and encoded in UTF-8.
- * @return If the function succeeds, it returns HCC_RPC_STATUS_OK. Otherwise,
- *         it returns an HCC_RPC_STATUS error code.
+ * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
+ *         it returns an MO_RESULT error code.
  */
 EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
     _Out_ PMO_UINT8* ContentBuffer,
     _Out_ PMO_UINT32 ContentSize,
     _In_ MO_CONSTANT_STRING FilePath);
+
+/**
+ * @brief Write all bytes to file.
+ * @param FilePath The file path to write. The caller must ensure that the
+ *                 string is null-terminated and encoded in UTF-8.
+ * @param ContentBuffer The buffer containing the content to be written. The
+ *                      caller must ensure that the address is valid.
+ * @param ContentSize The size of the content buffer in bytes.
+ * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
+ *         it returns an MO_RESULT error code.
+ */
+EXTERN_C MO_RESULT MOAPI HccWriteAllBytesToFile(
+    _In_ MO_CONSTANT_STRING FilePath,
+    _In_ PMO_UINT8 ContentBuffer,
+    _In_ MO_UINT32 ContentSize);
 
 /**
  * @brief Download a file from the specified URL to the target path.

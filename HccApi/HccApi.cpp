@@ -928,6 +928,48 @@ EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
     return Result;
 }
 
+EXTERN_C MO_RESULT MOAPI HccWriteAllBytesToFile(
+    _In_ MO_CONSTANT_STRING FilePath,
+    _In_ PMO_UINT8 ContentBuffer,
+    _In_ MO_UINT32 ContentSize)
+{
+    if (!FilePath || !ContentBuffer || !ContentSize)
+    {
+        return MO_RESULT_ERROR_INVALID_PARAMETER;
+    }
+
+    MO_RESULT Result = MO_RESULT_ERROR_FAIL;
+    FILE* FileStream = nullptr;
+
+    do
+    {
+        FileStream = ::CrtFileOpen(FilePath, "wb");
+        if (!FileStream)
+        {
+            break;
+        }
+
+        if (ContentSize != std::fwrite(
+            ContentBuffer,
+            sizeof(MO_UINT8),
+            ContentSize,
+            FileStream))
+        {
+            break;
+        }
+
+        Result = MO_RESULT_SUCCESS_OK;
+
+    } while (false);
+
+    if (FileStream)
+    {
+        std::fclose(FileStream);
+    }
+
+    return Result;
+}
+
 EXTERN_C MO_RESULT MOAPI HccDownloadFile(
     _In_ MO_CONSTANT_STRING SourceUrl,
     _In_ MO_CONSTANT_STRING TargetPath)
