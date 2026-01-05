@@ -37,19 +37,6 @@ std::vector<std::uint8_t> HalalCloud::ReadAllBytesFromFile(
     return Result;
 }
 
-void HalalCloud::WriteAllBytesToFile(
-    std::string_view FilePath,
-    std::vector<std::uint8_t> const& Bytes)
-{
-    std::ofstream FileStream(FilePath.data(), std::ios::binary);
-    if (FileStream.is_open())
-    {
-        FileStream.write(
-            reinterpret_cast<char const*>(Bytes.data()),
-            Bytes.size());
-    }
-}
-
 bool HalalCloud::FileStorageSizeRange::IsInRange(
     std::size_t const& Index) const
 {

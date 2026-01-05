@@ -28,10 +28,6 @@ namespace HalalCloud
     std::vector<std::uint8_t> ReadAllBytesFromFile(
         std::string_view FilePath);
 
-    void WriteAllBytesToFile(
-        std::string_view FilePath,
-        std::vector<std::uint8_t> const& Bytes);
-
     struct FileInformation
     {
         std::int64_t CreationTime;
