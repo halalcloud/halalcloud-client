@@ -155,6 +155,44 @@ std::filesystem::path HalalCloud::GetProfilePath(
     return HalalCloud::EnsureDirectoryPathExists(ProfilePath);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+void HalalCloud::UserToken::Clear()
+{
+    this->AccessToken.clear();
+    this->RefreshToken.clear();
+}
+
+bool HalalCloud::UserToken::Validate()
+{
+    bool Valid = !this->AccessToken.empty() && !this->RefreshToken.empty();
+    if (!Valid)
+    {
+        // Invalidate the token if it's not valid.
+        this->Clear();
+    }
+    return Valid;
+}
+
+void HalalCloud::UserToken::Parse(
+    std::string_view JsonString)
+{
+    nlohmann::json Object = nlohmann::json::parse(JsonString);
+    this->AccessToken = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "access_token"));
+    this->RefreshToken = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "refresh_token"));
+    this->Validate();
+}
+
+HalalCloud::UserToken::UserToken(
+    std::string_view JsonString)
+{
+    this->Parse(JsonString);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 std::string HalalCloud::Request(
     std::string_view AccessToken,
     std::string_view MethodFullName,
@@ -279,14 +317,37 @@ HalalCloud::UserToken HalalCloud::GetToken(
     nlohmann::json Request = nlohmann::json();
     Request["code"] = Code;
     Request["code_verifier"] = CodeVerifier;
-    nlohmann::json Response = nlohmann::json::parse(HalalCloud::Request(
+    return HalalCloud::UserToken(HalalCloud::Request(
         "*",
         "/v6/oauth/get_token",
         Request.dump()));
-    HalalCloud::UserToken Result;
-    Result.AccessToken = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Response, "access_token"));
-    Result.RefreshToken = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Response, "refresh_token"));
-    return Result;
 }
+
+HalalCloud::UserToken HalalCloud::RefreshToken(
+    std::string_view RefreshToken)
+{
+    nlohmann::json Request = nlohmann::json();
+    Request["refresh_token"] = RefreshToken;
+    return HalalCloud::UserToken(HalalCloud::Request(
+        "*",
+        "/v6/oauth/refresh_token",
+        Request.dump()));
+}
+
+void HalalCloud::Logoff(
+    HalalCloud::UserToken& Token)
+{
+    if (Token.Validate())
+    {
+        nlohmann::json Request = nlohmann::json();
+        Request["access_token"] = Token.AccessToken;
+        Request["refresh_token"] = Token.RefreshToken;
+        HalalCloud::Request(
+            Token.AccessToken,
+            "/v6/user/logoff",
+            Request.dump());
+        Token.Clear();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////

@@ -416,31 +416,12 @@ void HalalCloud::Session::Authenticate(
 void HalalCloud::Session::Impersonate(
     std::string_view RefreshToken)
 {
-    nlohmann::json Request;
-    Request["refresh_token"] = RefreshToken;
-    nlohmann::json Response = this->Request(
-        "/v6/oauth/refresh_token",
-        Request);
-    this->m_CurrentToken.AccessToken = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Response, "access_token"));
-    this->m_CurrentToken.RefreshToken = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Response, "refresh_token"));
+    this->m_CurrentToken = HalalCloud::RefreshToken(RefreshToken);
 }
 
 void HalalCloud::Session::Logout()
 {
-    if (!this->m_CurrentToken.AccessToken.empty() &&
-        !this->m_CurrentToken.RefreshToken.empty())
-    {
-        nlohmann::json Request = nlohmann::json();
-        Request["access_token"] = this->m_CurrentToken.AccessToken;
-        Request["refresh_token"] = this->m_CurrentToken.RefreshToken;
-        this->Request(
-            "/v6/user/logoff",
-            Request);
-        this->m_CurrentToken.AccessToken.clear();
-        this->m_CurrentToken.RefreshToken.clear();
-    }
+    HalalCloud::Logoff(this->m_CurrentToken);
 }
 
 nlohmann::json HalalCloud::Session::GetUserInformation()

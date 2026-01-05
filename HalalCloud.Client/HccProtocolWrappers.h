@@ -50,8 +50,26 @@ namespace HalalCloud
 
     struct UserToken
     {
+    public:
+
         std::string AccessToken;
         std::string RefreshToken;
+
+    public:
+
+        void Clear();
+
+        bool Validate();
+
+        void Parse(
+            std::string_view JsonString);
+
+    public:
+
+        UserToken() = default;
+
+        UserToken(
+            std::string_view JsonString);
     };
 }
 
@@ -76,6 +94,15 @@ namespace HalalCloud
         std::string_view Code,
         std::string_view CodeVerifier);
 
+    UserToken RefreshToken(
+        std::string_view RefreshToken);
+
+    void Logoff(
+        UserToken& Token);
+}
+
+namespace HalalCloud
+{
     struct GlobalConfigurations
     {
         std::string CurrentProfile = "Default";
