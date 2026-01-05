@@ -165,13 +165,14 @@ void HalalCloud::UserToken::Clear()
 
 bool HalalCloud::UserToken::Validate()
 {
-    bool Valid = !this->AccessToken.empty() && !this->RefreshToken.empty();
-    if (!Valid)
+    bool AccessTokenValid = !this->AccessToken.empty();
+    bool RefreshTokenValid = !this->RefreshToken.empty();
+    if (AccessTokenValid != RefreshTokenValid)
     {
         // Invalidate the token if it's not valid.
         this->Clear();
     }
-    return Valid;
+    return AccessTokenValid && RefreshTokenValid;
 }
 
 void HalalCloud::UserToken::Parse(
