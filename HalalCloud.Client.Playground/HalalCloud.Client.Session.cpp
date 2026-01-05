@@ -512,86 +512,29 @@ nlohmann::json HalalCloud::Session::Request(
 void HalalCloud::Session::Authenticate(
     std::function<void(std::string_view)> Callback)
 {
-    std::string CodeVerifier;
-    {
-        MO_UINT8 CodeVerifierBytes[32] = {};
-        if (MO_RESULT_SUCCESS_OK == ::HccGenerateRandomBytes(
-            CodeVerifierBytes,
-            sizeof(CodeVerifierBytes)))
-        {
-            MO_STRING RawCodeVerifier = nullptr;
-            if (MO_RESULT_SUCCESS_OK == ::HccEncodeBase64UrlSafe(
-                &RawCodeVerifier,
-                CodeVerifierBytes,
-                sizeof(CodeVerifierBytes)))
-            {
-                CodeVerifier = std::string(RawCodeVerifier);
-                ::HccFreeMemory(RawCodeVerifier);
-            }
-        }
-    }
+    std::string CodeVerifier = HalalCloud::GenerateCodeVerifier();
 
-    std::string CodeChallenge;
-    {
-        MO_UINT8 CodeChallengeBytes[HCC_SHA256_HASH_LENGTH] = {};
-        if (MO_RESULT_SUCCESS_OK == ::HccComputeSha256(
-            CodeChallengeBytes,
-            CodeVerifier.data(),
-            static_cast<MO_UINT32>(CodeVerifier.size())))
-        {
-            MO_STRING RawCodeChallenge = nullptr;
-            if (MO_RESULT_SUCCESS_OK == ::HccEncodeBase64UrlSafe(
-                &RawCodeChallenge,
-                CodeChallengeBytes,
-                sizeof(CodeChallengeBytes)))
-            {
-                CodeChallenge = std::string(RawCodeChallenge);
-                ::HccFreeMemory(RawCodeChallenge);
-            }
-        }
-    }
+    std::string Code;
+    std::string RedirectUri;
+    HalalCloud::Authorize(Code, RedirectUri, CodeVerifier);
 
-    nlohmann::json Request;
-    {
-        Request = nlohmann::json();
-        Request["client_id"] = "puc_5_dcpqfdvu8qnt_v1";
-        Request["code_challenge"] = CodeChallenge;
-        Request["code_challenge_method"] = "S256";
-        Request["legacy"] = true;
-
-        nlohmann::json Response = this->Request(
-            "/v6/oauth/authorize",
-            Request);
-
-        Callback(Mile::Json::ToString(
-            Mile::Json::GetSubKey(Response, "redirect_uri")));
-
-        Request = nlohmann::json();
-        Request["code"] = Mile::Json::ToString(
-            Mile::Json::GetSubKey(Response, "code"));
-    }
-
+    Callback(RedirectUri);
+    
     while (true)
     {
-        nlohmann::json Response = this->Request(
-            "/v6/oauth/get_authorize_state",
-            Request);
-        std::string Status = Mile::Json::ToString(
-            Mile::Json::GetSubKey(Response, "status"));
-        if ("AUTHORIZATION_FAILED" == Status)
+        HalalCloud::AuthorizeState State =
+            HalalCloud::GetAuthorizeState(Code);
+        if (HalalCloud::AuthorizeState::Failed == State)
         {
             HalalCloud::ThrowException(
                 "Authorization Failed",
                 -1);
         }
 
-        if ("AUTHORIZATION_TOKEN_CREATED" == Status)
+        if (HalalCloud::AuthorizeState::TokenCreated == State)
         {
-            Request["code_verifier"] = CodeVerifier;
-            nlohmann::json Token = this->Request(
-                "/v6/oauth/get_token",
-                Request);
-            this->m_CurrentToken = Token;
+            this->m_CurrentToken = nlohmann::json::parse(
+                HalalCloud::GetToken(Code, CodeVerifier));
             break;
         }
 

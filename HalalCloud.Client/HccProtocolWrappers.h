@@ -11,8 +11,6 @@
 #ifndef HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
 #define HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
 
-#include <HccApi.h>
-
 #include <string>
 #include <string_view>
 
@@ -26,6 +24,29 @@ namespace HalalCloud
         std::string_view AccessToken,
         std::string_view MethodFullName,
         std::string_view RequestJson);
+
+    std::string GenerateCodeVerifier();
+
+    void Authorize(
+        std::string& Code,
+        std::string& RedirectUri,
+        std::string_view CodeVerifier);
+
+    enum class AuthorizeState
+    {
+        PendingLogin,
+        PendingConfirmation,
+        TokenCreated,
+        Success,
+        Failed
+    };
+
+    AuthorizeState GetAuthorizeState(
+        std::string_view Code);
+
+    std::string GetToken(
+        std::string_view Code,
+        std::string_view CodeVerifier);
 }
 
 #endif // !HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
