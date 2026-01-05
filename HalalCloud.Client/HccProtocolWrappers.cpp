@@ -35,6 +35,16 @@
         Code));
 }
 
+std::string HalalCloud::PathToUtf8String(
+    std::filesystem::path const& Path)
+{
+#ifdef _WIN32
+    return Mile::ToString(CP_UTF8, Path.wstring());
+#else
+    return Path.string();
+#endif
+}
+
 std::filesystem::path HalalCloud::GetApplicationDataRootPath()
 {
     static std::filesystem::path CachedResult = ([]() -> std::filesystem::path
