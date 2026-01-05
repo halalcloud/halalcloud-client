@@ -108,6 +108,8 @@ namespace HalalCloud
         std::string CurrentProfile = "Default";
         UserToken CurrentToken;
     };
+
+    GlobalConfigurations& GetGlobalConfigurations();
 }
 
 #endif // !HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS

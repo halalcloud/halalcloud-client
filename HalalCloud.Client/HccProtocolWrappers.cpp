@@ -351,3 +351,9 @@ void HalalCloud::Logoff(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+HalalCloud::GlobalConfigurations& HalalCloud::GetGlobalConfigurations()
+{
+    static HalalCloud::GlobalConfigurations CachedConfigurations = {};
+    return CachedConfigurations;
+}
