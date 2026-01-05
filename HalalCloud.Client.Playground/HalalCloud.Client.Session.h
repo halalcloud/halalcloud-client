@@ -25,9 +25,6 @@
 
 namespace HalalCloud
 {
-    std::filesystem::path GetUserCloudCachePath(
-        std::string_view UserIdentity);
-
     std::vector<std::uint8_t> ReadAllBytesFromFile(
         std::string_view FilePath);
 

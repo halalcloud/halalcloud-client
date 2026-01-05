@@ -17,20 +17,6 @@
 
 #include <HccApi.h>
 
-std::filesystem::path HalalCloud::GetUserCloudCachePath(
-    std::string_view UserIdentity)
-{
-    std::filesystem::path Result = HalalCloud::GetApplicationDataRootPath();
-    Result /= "Users";
-    Result /= UserIdentity;
-    Result /= "CloudCache";
-    if (!std::filesystem::exists(Result))
-    {
-        std::filesystem::create_directories(Result);
-    }
-    return Result;
-}
-
 std::vector<std::uint8_t> HalalCloud::ReadAllBytesFromFile(
     std::string_view FilePath)
 {
