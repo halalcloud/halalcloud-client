@@ -345,9 +345,12 @@ int main()
 
     std::printf("Login Success!\n");
 
+    HalalCloud::UserToken CurrentToken = Session.CurrentToken();
     std::printf(
-        "Token = \"%s\"\n",
-        Session.CurrentToken().dump(2).c_str());
+        "Current Access Token = \"%s\"\n"
+        "Current Refresh Token = \"%s\"\n",
+        CurrentToken.AccessToken.c_str(),
+        CurrentToken.RefreshToken.c_str());
 
     //Session.DownloadFile("/Civil.War.2024.2160p.WEB-DL.DDP5.1.Atmos.DV.HDR.H.265-FLUX[TGx]/Civil.War.2024.2160p.WEB-DL.DDP5.1.Atmos.DV.HDR.H.265-FLUX.mkv", "D:\\Civil.War.2024.2160p.WEB-DL.DDP5.1.Atmos.DV.HDR.H.265-FLUX.mkv");
 

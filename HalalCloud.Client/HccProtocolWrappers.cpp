@@ -272,15 +272,21 @@ HalalCloud::AuthorizeState HalalCloud::GetAuthorizeState(
     return HalalCloud::AuthorizeState::Failed;
 }
 
-std::string HalalCloud::GetToken(
+HalalCloud::UserToken HalalCloud::GetToken(
     std::string_view Code,
     std::string_view CodeVerifier)
 {
     nlohmann::json Request = nlohmann::json();
     Request["code"] = Code;
     Request["code_verifier"] = CodeVerifier;
-    return HalalCloud::Request(
+    nlohmann::json Response = nlohmann::json::parse(HalalCloud::Request(
         "*",
         "/v6/oauth/get_token",
-        Request.dump());
+        Request.dump()));
+    HalalCloud::UserToken Result;
+    Result.AccessToken = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "access_token"));
+    Result.RefreshToken = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "refresh_token"));
+    return Result;
 }

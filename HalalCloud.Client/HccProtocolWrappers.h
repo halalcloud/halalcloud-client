@@ -60,9 +60,21 @@ namespace HalalCloud
     AuthorizeState GetAuthorizeState(
         std::string_view Code);
 
-    std::string GetToken(
+    struct UserToken
+    {
+        std::string AccessToken;
+        std::string RefreshToken;
+    };
+
+    UserToken GetToken(
         std::string_view Code,
         std::string_view CodeVerifier);
+
+    struct GlobalConfigurations
+    {
+        std::string CurrentProfile = "Default";
+        UserToken CurrentToken;
+    };
 }
 
 #endif // !HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS

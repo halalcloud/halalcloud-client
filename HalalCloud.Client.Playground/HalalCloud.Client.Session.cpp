@@ -360,7 +360,7 @@ std::vector<std::uint8_t> HalalCloud::Session::AcquireBlock(
     return std::vector<std::uint8_t>();
 }
 
-nlohmann::json HalalCloud::Session::CurrentToken()
+HalalCloud::UserToken HalalCloud::Session::CurrentToken()
 {
     return this->m_CurrentToken;
 }
@@ -370,10 +370,9 @@ nlohmann::json HalalCloud::Session::Request(
     nlohmann::json const& Request)
 {
     std::string AccessToken = "*";
-    if (!this->m_CurrentToken.empty())
+    if (!this->m_CurrentToken.AccessToken.empty())
     {
-        AccessToken = Mile::Json::ToString(
-            Mile::Json::GetSubKey(this->m_CurrentToken, "access_token"));
+        AccessToken = this->m_CurrentToken.AccessToken;
     }
 
     return nlohmann::json::parse(HalalCloud::Request(
@@ -406,8 +405,7 @@ void HalalCloud::Session::Authenticate(
 
         if (HalalCloud::AuthorizeState::TokenCreated == State)
         {
-            this->m_CurrentToken = nlohmann::json::parse(
-                HalalCloud::GetToken(Code, CodeVerifier));
+            this->m_CurrentToken = HalalCloud::GetToken(Code, CodeVerifier);
             break;
         }
 
@@ -423,17 +421,25 @@ void HalalCloud::Session::Impersonate(
     nlohmann::json Response = this->Request(
         "/v6/oauth/refresh_token",
         Request);
-    this->m_CurrentToken = Response;
+    this->m_CurrentToken.AccessToken = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "access_token"));
+    this->m_CurrentToken.RefreshToken = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "refresh_token"));
 }
 
 void HalalCloud::Session::Logout()
 {
-    if (!this->m_CurrentToken.empty())
+    if (!this->m_CurrentToken.AccessToken.empty() &&
+        !this->m_CurrentToken.RefreshToken.empty())
     {
+        nlohmann::json Request = nlohmann::json();
+        Request["access_token"] = this->m_CurrentToken.AccessToken;
+        Request["refresh_token"] = this->m_CurrentToken.RefreshToken;
         this->Request(
             "/v6/user/logoff",
-            this->m_CurrentToken);
-        this->m_CurrentToken = std::string();
+            Request);
+        this->m_CurrentToken.AccessToken.clear();
+        this->m_CurrentToken.RefreshToken.clear();
     }
 }
 
