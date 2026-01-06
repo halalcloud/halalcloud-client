@@ -12,10 +12,11 @@
 
 #include <thread>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
 
 #include "HccProtocolWrappers.h"
 
-#include "HccUxNewCredentialWidget.h"
+#include "HccUxNewCredentialDialog.h"
 
 int main(int argc, char* argv[])
 {
@@ -23,16 +24,16 @@ int main(int argc, char* argv[])
 
     if (!HalalCloud::GetGlobalConfigurations().CurrentToken.Validate())
     {
-        std::string CodeVerifier = HalalCloud::GenerateCodeVerifier();
-
-        std::string Code;
-        std::string RedirectUri;
-        HalalCloud::Authorize(Code, RedirectUri, CodeVerifier);
-
-        HccUxNewCredentialWidget* Widget = new HccUxNewCredentialWidget();
-        Widget->setWindowFlags(Qt::Dialog);
-        Widget->UpdateWebLink(RedirectUri.c_str());
-        Widget->show();
+        HccUxNewCredentialDialog* Dialog = new HccUxNewCredentialDialog();
+        Dialog->show();
+        Dialog->exec();
+        if (QDialog::DialogCode::Accepted == Dialog->result())
+        {
+            QMessageBox::information(
+                nullptr,
+                u8"清真云",
+                Dialog->GetUserToken().AccessToken.c_str());
+        }
     }
 
     return Application.exec();

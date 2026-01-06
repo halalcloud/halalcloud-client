@@ -1,14 +1,14 @@
 ﻿/*
  * PROJECT:    Halal Cloud Client
- * FILE:       HccUxNewCredentialWidget.cpp
- * PURPOSE:    Implementation for New Credential Widget
+ * FILE:       HccUxNewCredentialDialog.cpp
+ * PURPOSE:    Implementation for New Credential Dialog
  *
  * LICENSE:    The MIT License
  *
  * MAINTAINER: MouriNaruto (Kenji.Mouri@outlook.com)
  */
 
-#include "HccUxNewCredentialWidget.h"
+#include "HccUxNewCredentialDialog.h"
 
 #include <Mile.Helpers.CppBase.h>
 
@@ -90,40 +90,102 @@ namespace
     }
 }
 
-void HccUxNewCredentialWidget::WebLinkOpenButtonClick()
+void HccUxNewCredentialDialog::UpdateContent()
 {
-    QDesktopServices::openUrl(QUrl(this->WebLinkPlainTextEdit->toPlainText()));  
+    this->m_UserToken.Clear();
+    this->m_CodeVerifier.clear();
+
+    try
+    {
+        std::string CodeVerifier = HalalCloud::GenerateCodeVerifier();
+
+        HalalCloud::Authorize(
+            this->m_Code,
+            this->m_RedirectUri,
+            CodeVerifier);
+
+        this->m_CodeVerifier = std::move(CodeVerifier);
+    }
+    catch (...)
+    {
+        this->m_Code.clear();
+        this->m_RedirectUri.clear();
+    }
+
+    if (!this->m_RedirectUri.empty())
+    {
+        this->WebLinkPlainTextEdit->setPlainText(QString::fromUtf8(
+            this->m_RedirectUri.c_str(),
+            this->m_RedirectUri.size()));
+
+        std::string SvgContent = ::CreateQrCodeSvg(this->m_RedirectUri);
+        QSvgRenderer* SvgRender = new QSvgRenderer();
+        SvgRender->load(QByteArray(SvgContent.c_str(), SvgContent.size()));
+        QPixmap QrCode(this->QrCodePresenterLabel->size());
+        QrCode.fill(Qt::transparent);
+        QPainter Painter(&QrCode);
+        SvgRender->render(&Painter);
+        this->QrCodePresenterLabel->setPixmap(QrCode);
+    }
 }
 
-HccUxNewCredentialWidget::HccUxNewCredentialWidget(
-    QWidget* Parent)
-	: QWidget(Parent)
+void HccUxNewCredentialDialog::WebLinkOpenButtonClick()
+{
+    QDesktopServices::openUrl(QUrl(this->WebLinkPlainTextEdit->toPlainText()));
+}
+
+void HccUxNewCredentialDialog::UpdateStatus()
+{
+    switch (HalalCloud::GetAuthorizeState(this->m_Code))
+    {
+    case HalalCloud::AuthorizeState::Failed:
+    {
+        // Regenerate the authorization.
+        this->UpdateContent();
+        return;
+    }
+    case HalalCloud::AuthorizeState::TokenCreated:
+    {
+        this->m_StatusTimer.stop();
+        this->m_UserToken = HalalCloud::GetToken(
+            this->m_Code,
+            this->m_CodeVerifier);
+        this->done(QDialog::DialogCode::Accepted);
+        break;
+    }
+    default:
+        break;
+    }
+}
+
+HccUxNewCredentialDialog::HccUxNewCredentialDialog(
+    QDialog* Parent)
+	: QDialog(Parent)
 {
     this->setupUi(this);
+
+    this->UpdateContent();
 
     this->connect(
         this->WebLinkOpenButton,
         SIGNAL(clicked()),
         this,
         SLOT(WebLinkOpenButtonClick()));
+
+    this->connect(
+        &this->m_StatusTimer,
+        SIGNAL(timeout()),
+        this,
+        SLOT(UpdateStatus()));
+    this->m_StatusTimer.start(200);
 }
 
-HccUxNewCredentialWidget::~HccUxNewCredentialWidget()
+HccUxNewCredentialDialog::~HccUxNewCredentialDialog()
 {
 
 }
 
-void HccUxNewCredentialWidget::UpdateWebLink(
-    std::string const& WebLink)
+HalalCloud::UserToken HccUxNewCredentialDialog::GetUserToken() const
 {
-    this->WebLinkPlainTextEdit->setPlainText(
-        QString::fromUtf8(WebLink.c_str(), WebLink.size()));
-    std::string SvgContent = ::CreateQrCodeSvg(WebLink);
-    QSvgRenderer* SvgRender = new QSvgRenderer();
-    SvgRender->load(QByteArray(SvgContent.c_str(), SvgContent.size()));
-    QPixmap QrCode(this->QrCodePresenterLabel->size());
-    QrCode.fill(Qt::transparent);
-    QPainter Painter(&QrCode);
-    SvgRender->render(&Painter);
-    this->QrCodePresenterLabel->setPixmap(QrCode);
+    return this->m_UserToken;
 }

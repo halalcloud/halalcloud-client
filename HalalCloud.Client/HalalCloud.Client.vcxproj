@@ -62,17 +62,17 @@
     <Manifest Include="HalalCloud.Client.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <QtUic Include="HccUxNewCredentialWidget.ui" />
+    <QtUic Include="HccUxNewCredentialDialog.ui" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="HccUxNewCredentialWidget.h">
-      <DependentUpon>HccUxNewCredentialWidget.ui</DependentUpon>
+    <QtMoc Include="HccUxNewCredentialDialog.h">
+      <DependentUpon>HccUxNewCredentialDialog.ui</DependentUpon>
       <SubType>Code</SubType>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="HccUxNewCredentialWidget.cpp">
-      <DependentUpon>HccUxNewCredentialWidget.ui</DependentUpon>
+    <ClCompile Include="HccUxNewCredentialDialog.cpp">
+      <DependentUpon>HccUxNewCredentialDialog.ui</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
   </ItemGroup>
