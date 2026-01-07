@@ -14,6 +14,7 @@
 #include <QtWidgets/QDialog>
 
 #include <string>
+#include <thread>
 
 #include "ui_HccUxNewCredentialDialog.h"
 
@@ -33,17 +34,28 @@ private:
     std::string m_Code;
     std::string m_RedirectUri;
 
-    QTimer m_StatusTimer;
+    std::thread m_AuthenticateThread;
+    bool m_AuthenticateThreadStopRequested = false;
 
 private:
 
-    void UpdateContent();
+    void ClearAuthenticateState();
+
+    void AuthenticateWorker();
+
+signals:
+
+    void UpdateContentSignal();
+
+    void LoginSucceededSignal();
 
 private slots:
 
-    void WebLinkOpenButtonClick();
+    void UpdateContent();
 
-    void UpdateStatus();
+    void LoginSucceeded();
+
+    void WebLinkOpenButtonClick();
 
 public:
 
@@ -51,6 +63,9 @@ public:
         QDialog* Parent = nullptr);
 
 	~HccUxNewCredentialDialog();
+
+    virtual void closeEvent(
+        QCloseEvent* event) override;
 
     HalalCloud::UserToken GetUserToken() const;
 };
