@@ -157,8 +157,6 @@ namespace HalalCloud
 
         void Logout();
 
-        nlohmann::json GetUserInformation();
-
         nlohmann::json CreateFolder(
             std::string_view Path);
 

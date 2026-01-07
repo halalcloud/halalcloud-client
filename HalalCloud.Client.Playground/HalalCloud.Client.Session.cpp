@@ -394,7 +394,7 @@ void HalalCloud::Session::Authenticate(
     HalalCloud::Authorize(Code, RedirectUri, CodeVerifier);
 
     Callback(RedirectUri);
-    
+
     while (true)
     {
         HalalCloud::AuthorizeState State =
@@ -425,13 +425,6 @@ void HalalCloud::Session::Impersonate(
 void HalalCloud::Session::Logout()
 {
     HalalCloud::Logoff(this->m_CurrentToken);
-}
-
-nlohmann::json HalalCloud::Session::GetUserInformation()
-{
-    return this->Request(
-        "/v6/user/get",
-        nlohmann::json::object());
 }
 
 nlohmann::json HalalCloud::Session::CreateFolder(
