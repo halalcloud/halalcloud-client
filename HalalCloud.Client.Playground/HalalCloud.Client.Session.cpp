@@ -369,16 +369,19 @@ nlohmann::json HalalCloud::Session::Request(
     std::string_view MethodFullName,
     nlohmann::json const& Request)
 {
-    std::string AccessToken = "*";
-    if (!this->m_CurrentToken.AccessToken.empty())
+    if (this->m_CurrentToken.AccessToken.empty())
     {
-        AccessToken = this->m_CurrentToken.AccessToken;
+        return nlohmann::json::parse(HalalCloud::RequestWithoutToken(
+            MethodFullName,
+            Request.dump()));
     }
-
-    return nlohmann::json::parse(HalalCloud::Request(
-        AccessToken,
-        MethodFullName,
-        Request.dump()));
+    else
+    {
+        return nlohmann::json::parse(HalalCloud::Request(
+            this->m_CurrentToken,
+            MethodFullName,
+            Request.dump()));
+    }
 }
 
 void HalalCloud::Session::Authenticate(

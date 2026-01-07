@@ -215,28 +215,6 @@ std::string HalalCloud::RequestWithoutToken(
     return ResponseJson;
 }
 
-std::string HalalCloud::Request(
-    std::string_view AccessToken,
-    std::string_view MethodFullName,
-    std::string_view RequestJson)
-{
-    MO_STRING RawResponseJson = nullptr;
-    HCC_RPC_STATUS Status = ::HccRpcPostRequest(
-        &RawResponseJson,
-        AccessToken.data(),
-        MethodFullName.data(),
-        RequestJson.data());
-    if (HCC_RPC_STATUS_OK != Status)
-    {
-        HalalCloud::ThrowException(
-            "HalalCloud::Request!HccRpcPostRequest",
-            Status);
-    }
-    std::string ResponseJson = std::string(RawResponseJson);
-    ::HccFreeMemory(RawResponseJson);
-    return ResponseJson;
-}
-
 std::string HalalCloud::GenerateCodeVerifier()
 {
     std::string CodeVerifier;
@@ -354,6 +332,38 @@ HalalCloud::UserToken HalalCloud::RefreshToken(
         Request.dump()));
 }
 
+std::string HalalCloud::Request(
+    UserToken& Token,
+    std::string_view MethodFullName,
+    std::string_view RequestJson)
+{
+    MO_STRING RawResponseJson = nullptr;
+    HCC_RPC_STATUS Status = ::HccRpcPostRequest(
+        &RawResponseJson,
+        Token.AccessToken.data(),
+        MethodFullName.data(),
+        RequestJson.data());
+    if (HCC_RPC_STATUS_UNAUTHENTICATED == Status)
+    {
+        // Try to refresh the token and retry.
+        Token = HalalCloud::RefreshToken(Token.RefreshToken);
+        Status = ::HccRpcPostRequest(
+            &RawResponseJson,
+            Token.AccessToken.data(),
+            MethodFullName.data(),
+            RequestJson.data());
+    }
+    if (HCC_RPC_STATUS_OK != Status)
+    {
+        HalalCloud::ThrowException(
+            "HalalCloud::Request!HccRpcPostRequest",
+            Status);
+    }
+    std::string ResponseJson = std::string(RawResponseJson);
+    ::HccFreeMemory(RawResponseJson);
+    return ResponseJson;
+}
+
 void HalalCloud::Logoff(
     HalalCloud::UserToken& Token)
 {
@@ -363,7 +373,7 @@ void HalalCloud::Logoff(
         Request["access_token"] = Token.AccessToken;
         Request["refresh_token"] = Token.RefreshToken;
         HalalCloud::Request(
-            Token.AccessToken,
+            Token,
             "/v6/user/logoff",
             Request.dump());
         Token.Clear();

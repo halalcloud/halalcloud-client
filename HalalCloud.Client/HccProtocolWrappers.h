@@ -79,11 +79,6 @@ namespace HalalCloud
         std::string_view MethodFullName,
         std::string_view RequestJson);
 
-    std::string Request(
-        std::string_view AccessToken,
-        std::string_view MethodFullName,
-        std::string_view RequestJson);
-
     std::string GenerateCodeVerifier();
 
     void Authorize(
@@ -100,6 +95,11 @@ namespace HalalCloud
 
     UserToken RefreshToken(
         std::string_view RefreshToken);
+
+    std::string Request(
+        UserToken& Token,
+        std::string_view MethodFullName,
+        std::string_view RequestJson);
 
     void Logoff(
         UserToken& Token);
