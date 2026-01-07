@@ -14,7 +14,6 @@
 
 #include "HccProtocolWrappers.h"
 
-#include <HccApi.h>
 #include <Mile.Json.h>
 
 #include <Mile.Helpers.CppBase.h>

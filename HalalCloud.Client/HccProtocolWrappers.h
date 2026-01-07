@@ -11,6 +11,8 @@
 #ifndef HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
 #define HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
 
+#include <HccApi.h>
+
 #include <filesystem>
 #include <string>
 #include <string_view>

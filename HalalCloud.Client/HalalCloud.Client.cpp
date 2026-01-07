@@ -22,25 +22,58 @@ int main(int argc, char* argv[])
 {
     QApplication Application(argc, argv);
 
-    if (!HalalCloud::GetGlobalConfigurations().CurrentToken.Validate())
+    HalalCloud::LoadGlobalConfigurations();
+
+    HalalCloud::GlobalConfigurations& Configurations =
+        HalalCloud::GetGlobalConfigurations();
+
+    HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
+
+    if (!CurrentToken.RefreshToken.empty())
+    {
+        // Restore the user token with the refresh token.
+        CurrentToken = HalalCloud::RefreshToken(CurrentToken.RefreshToken);
+    }
+
+    if (!CurrentToken.Validate())
     {
         HccUxNewCredentialDialog* Dialog = new HccUxNewCredentialDialog();
         Dialog->show();
         Dialog->exec();
-        if (QDialog::DialogCode::Accepted == Dialog->result())
+        if (QDialog::DialogCode::Accepted != Dialog->result())
         {
-            HalalCloud::GetGlobalConfigurations().CurrentToken =
-                Dialog->GetUserToken();
+            // Exit if the user cancelled the login.
+            return 0;
+        }
+        // Get the user token if login succeeded.
+        {
+            CurrentToken = Dialog->GetUserToken();
+            HalalCloud::SaveGlobalConfigurations();
         }
     }
 
-    HalalCloud::UserToken& Token =
-        HalalCloud::GetGlobalConfigurations().CurrentToken;
-
-    if (Token.Validate())
+    if (CurrentToken.Validate())
     {
         HalalCloud::UserInformation Information =
-            HalalCloud::GetUserInformation(Token);
+            HalalCloud::GetUserInformation(CurrentToken);
+
+        if (!Information.Icon.empty())
+        {
+            std::string IconFileExtension = std::string(std::strrchr(
+                Information.Icon.c_str(),
+                '.'));
+            std::string IconFileName = "Profile";
+            IconFileName.append(
+                IconFileExtension.empty() ? "Icon" : IconFileExtension);
+
+            std::filesystem::path CurrentProfilePath =
+                HalalCloud::GetProfilePath(Configurations.CurrentProfile);
+            std::filesystem::path IconFilePath =
+                CurrentProfilePath / IconFileName;
+            ::HccDownloadFile(
+                Information.Icon.c_str(),
+                HalalCloud::PathToUtf8String(IconFilePath).c_str());
+        }
 
         QMessageBox::information(
             nullptr,
@@ -48,5 +81,5 @@ int main(int argc, char* argv[])
             Information.Identity.c_str());
     }
 
-    return Application.exec();
+    return 0;
 }
