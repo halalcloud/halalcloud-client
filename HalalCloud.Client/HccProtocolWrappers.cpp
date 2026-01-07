@@ -194,6 +194,27 @@ HalalCloud::UserToken::UserToken(
 
 ////////////////////////////////////////////////////////////////////////////////
 
+std::string HalalCloud::RequestWithoutToken(
+    std::string_view MethodFullName,
+    std::string_view RequestJson)
+{
+    MO_STRING RawResponseJson = nullptr;
+    HCC_RPC_STATUS Status = ::HccRpcPostRequest(
+        &RawResponseJson,
+        "*",
+        MethodFullName.data(),
+        RequestJson.data());
+    if (HCC_RPC_STATUS_OK != Status)
+    {
+        HalalCloud::ThrowException(
+            "HalalCloud::Request!HccRpcPostRequest",
+            Status);
+    }
+    std::string ResponseJson = std::string(RawResponseJson);
+    ::HccFreeMemory(RawResponseJson);
+    return ResponseJson;
+}
+
 std::string HalalCloud::Request(
     std::string_view AccessToken,
     std::string_view MethodFullName,
@@ -270,10 +291,10 @@ void HalalCloud::Authorize(
     Request["code_challenge"] = CodeChallenge;
     Request["code_challenge_method"] = "S256";
     Request["legacy"] = true;
-    nlohmann::json Response = nlohmann::json::parse(HalalCloud::Request(
-        "*",
-        "/v6/oauth/authorize",
-        Request.dump()));
+    nlohmann::json Response = nlohmann::json::parse(
+        HalalCloud::RequestWithoutToken(
+            "/v6/oauth/authorize",
+            Request.dump()));
     Code = Mile::Json::ToString(
         Mile::Json::GetSubKey(Response, "code"));
     RedirectUri = Mile::Json::ToString(
@@ -285,10 +306,10 @@ HalalCloud::AuthorizeState HalalCloud::GetAuthorizeState(
 {
     nlohmann::json Request = nlohmann::json();
     Request["code"] = Code;
-    nlohmann::json Response = nlohmann::json::parse(HalalCloud::Request(
-        "*",
-        "/v6/oauth/get_authorize_state",
-        Request.dump()));
+    nlohmann::json Response = nlohmann::json::parse(
+        HalalCloud::RequestWithoutToken(
+            "/v6/oauth/get_authorize_state",
+            Request.dump()));
     std::string Status = Mile::Json::ToString(
         Mile::Json::GetSubKey(Response, "status"));
     if ("AUTHORIZATION_PENDING_LOGIN" == Status)
@@ -318,8 +339,7 @@ HalalCloud::UserToken HalalCloud::GetToken(
     nlohmann::json Request = nlohmann::json();
     Request["code"] = Code;
     Request["code_verifier"] = CodeVerifier;
-    return HalalCloud::UserToken(HalalCloud::Request(
-        "*",
+    return HalalCloud::UserToken(HalalCloud::RequestWithoutToken(
         "/v6/oauth/get_token",
         Request.dump()));
 }
@@ -329,8 +349,7 @@ HalalCloud::UserToken HalalCloud::RefreshToken(
 {
     nlohmann::json Request = nlohmann::json();
     Request["refresh_token"] = RefreshToken;
-    return HalalCloud::UserToken(HalalCloud::Request(
-        "*",
+    return HalalCloud::UserToken(HalalCloud::RequestWithoutToken(
         "/v6/oauth/refresh_token",
         Request.dump()));
 }

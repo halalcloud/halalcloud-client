@@ -75,6 +75,10 @@ namespace HalalCloud
 
 namespace HalalCloud
 {
+    std::string RequestWithoutToken(
+        std::string_view MethodFullName,
+        std::string_view RequestJson);
+
     std::string Request(
         std::string_view AccessToken,
         std::string_view MethodFullName,
