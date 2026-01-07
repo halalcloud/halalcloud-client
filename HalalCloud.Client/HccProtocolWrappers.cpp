@@ -380,6 +380,23 @@ void HalalCloud::Logoff(
     }
 }
 
+HalalCloud::UserInformation HalalCloud::GetUserInformation(
+    HalalCloud::UserToken& Token)
+{
+    nlohmann::json Response = nlohmann::json::parse(HalalCloud::Request(
+        Token,
+        "/v6/user/get",
+        "{}"));
+    HalalCloud::UserInformation Information;
+    Information.Identity = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "identity"));
+    Information.Name = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "name"));
+    Information.Icon = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Response, "icon"));
+    return Information;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 HalalCloud::GlobalConfigurations& HalalCloud::GetGlobalConfigurations()

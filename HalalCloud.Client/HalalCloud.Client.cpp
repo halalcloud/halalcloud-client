@@ -29,11 +29,23 @@ int main(int argc, char* argv[])
         Dialog->exec();
         if (QDialog::DialogCode::Accepted == Dialog->result())
         {
-            QMessageBox::information(
-                nullptr,
-                u8"清真云",
-                Dialog->GetUserToken().AccessToken.c_str());
+            HalalCloud::GetGlobalConfigurations().CurrentToken =
+                Dialog->GetUserToken();
         }
+    }
+
+    HalalCloud::UserToken& Token =
+        HalalCloud::GetGlobalConfigurations().CurrentToken;
+
+    if (Token.Validate())
+    {
+        HalalCloud::UserInformation Information =
+            HalalCloud::GetUserInformation(Token);
+
+        QMessageBox::information(
+            nullptr,
+            Information.Name.c_str(),
+            Information.Identity.c_str());
     }
 
     return Application.exec();

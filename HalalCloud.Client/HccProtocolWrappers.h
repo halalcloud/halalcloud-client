@@ -71,6 +71,13 @@ namespace HalalCloud
         UserToken(
             std::string_view JsonString);
     };
+
+    struct UserInformation
+    {
+        std::string Identity;
+        std::string Name;
+        std::string Icon;
+    };
 }
 
 namespace HalalCloud
@@ -102,6 +109,9 @@ namespace HalalCloud
         std::string_view RequestJson);
 
     void Logoff(
+        UserToken& Token);
+
+    UserInformation GetUserInformation(
         UserToken& Token);
 }
 
