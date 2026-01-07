@@ -404,3 +404,61 @@ HalalCloud::GlobalConfigurations& HalalCloud::GetGlobalConfigurations()
     static HalalCloud::GlobalConfigurations CachedConfigurations = {};
     return CachedConfigurations;
 }
+
+void HalalCloud::LoadGlobalConfigurations()
+{
+    HalalCloud::GlobalConfigurations& Configurations =
+        HalalCloud::GetGlobalConfigurations();
+    std::filesystem::path CurrentProfilePath =
+        HalalCloud::GetProfilePath(Configurations.CurrentProfile);
+    std::filesystem::path ConfigurationsFilePath =
+        CurrentProfilePath / "Profile.json";
+
+    PMO_UINT8 ContentBuffer = nullptr;
+    MO_UINT32 ContentSize = 0;
+    if (MO_RESULT_SUCCESS_OK != ::HccReadAllBytesFromFile(
+        &ContentBuffer,
+        &ContentSize,
+        HalalCloud::PathToUtf8String(ConfigurationsFilePath).c_str()))
+    {
+        return;
+    }
+    std::string Content(
+        reinterpret_cast<char const*>(ContentBuffer),
+        static_cast<std::size_t>(ContentSize));
+    ::HccFreeMemory(ContentBuffer);
+
+    nlohmann::json Object;
+    try
+    {
+        Object = nlohmann::json::parse(Content);
+    }
+    catch (...)
+    {
+
+    }
+    Configurations.CurrentToken.RefreshToken = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "RefreshToken"));
+}
+
+void HalalCloud::SaveGlobalConfigurations()
+{
+    HalalCloud::GlobalConfigurations& Configurations =
+        HalalCloud::GetGlobalConfigurations();
+    std::filesystem::path CurrentProfilePath =
+        HalalCloud::GetProfilePath(Configurations.CurrentProfile);
+    std::filesystem::path ConfigurationsFilePath =
+        CurrentProfilePath / "Profile.json";
+
+    nlohmann::json Object = nlohmann::json::object();
+    if (Configurations.CurrentToken.Validate())
+    {
+        Object["RefreshToken"] = Configurations.CurrentToken.RefreshToken;
+    }
+    std::string Content = Object.dump(2);
+
+    ::HccWriteAllBytesToFile(
+        HalalCloud::PathToUtf8String(ConfigurationsFilePath).c_str(),
+        reinterpret_cast<PMO_UINT8>(const_cast<char*>(Content.data())),
+        static_cast<MO_UINT32>(Content.size()));
+}

@@ -124,6 +124,10 @@ namespace HalalCloud
     };
 
     GlobalConfigurations& GetGlobalConfigurations();
+
+    void LoadGlobalConfigurations();
+
+    void SaveGlobalConfigurations();
 }
 
 #endif // !HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
