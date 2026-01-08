@@ -63,16 +63,25 @@
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="HccUxNewCredentialDialog.ui" />
+    <QtUic Include="HccUxMainWindow.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="HccUxNewCredentialDialog.h">
       <DependentUpon>HccUxNewCredentialDialog.ui</DependentUpon>
       <SubType>Code</SubType>
     </QtMoc>
+    <QtMoc Include="HccUxMainWindow.h">
+      <DependentUpon>HccUxMainWindow.ui</DependentUpon>
+      <SubType>Code</SubType>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="HccUxNewCredentialDialog.cpp">
       <DependentUpon>HccUxNewCredentialDialog.ui</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="HccUxMainWindow.cpp">
+      <DependentUpon>HccUxMainWindow.ui</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
   </ItemGroup>

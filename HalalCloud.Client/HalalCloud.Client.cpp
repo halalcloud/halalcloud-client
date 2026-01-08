@@ -17,6 +17,7 @@
 #include "HccProtocolWrappers.h"
 
 #include "HccUxNewCredentialDialog.h"
+#include "HccUxMainWindow.h"
 
 int main(int argc, char* argv[])
 {
@@ -81,5 +82,8 @@ int main(int argc, char* argv[])
             Information.Identity.c_str());
     }
 
-    return 0;
+    HccUxMainWindow* MainWindow = new HccUxMainWindow();
+    MainWindow->show();
+
+    return Application.exec();
 }
