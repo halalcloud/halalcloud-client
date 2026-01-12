@@ -104,17 +104,6 @@ namespace HalalCloud
 
     UserToken RefreshToken(
         std::string_view RefreshToken);
-
-    std::string Request(
-        UserToken& Token,
-        std::string_view MethodFullName,
-        std::string_view RequestJson);
-
-    void Logoff(
-        UserToken& Token);
-
-    UserInformation GetUserInformation(
-        UserToken& Token);
 }
 
 namespace HalalCloud
@@ -130,6 +119,20 @@ namespace HalalCloud
     void LoadGlobalConfigurations();
 
     void SaveGlobalConfigurations();
+}
+
+namespace HalalCloud
+{
+    std::string Request(
+        UserToken& Token,
+        std::string_view MethodFullName,
+        std::string_view RequestJson);
+
+    void Logoff(
+        UserToken& Token);
+
+    UserInformation GetUserInformation(
+        UserToken& Token);
 }
 
 #endif // !HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS
