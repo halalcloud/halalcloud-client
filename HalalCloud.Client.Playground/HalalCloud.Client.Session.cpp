@@ -360,7 +360,7 @@ std::vector<std::uint8_t> HalalCloud::Session::AcquireBlock(
     return std::vector<std::uint8_t>();
 }
 
-HalalCloud::UserToken HalalCloud::Session::CurrentToken()
+HalalCloud::UserToken& HalalCloud::Session::CurrentToken()
 {
     return this->m_CurrentToken;
 }

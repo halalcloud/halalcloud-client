@@ -179,21 +179,13 @@ int HccFuseStatFsCallback(
 
     try
     {
-        nlohmann::json Response = Session->Request(
-            "/v6/user/get_statistics_and_quota",
-            nlohmann::json::object());
-
-        nlohmann::json DiskStatisticsQuota =
-            Mile::Json::GetSubKey(Response, "disk_statistics_quota");
-        std::uint64_t BytesQuota = Mile::ToUInt64(Mile::Json::ToString(
-            Mile::Json::GetSubKey(DiskStatisticsQuota, "bytes_quota")));
-        std::uint64_t BytesUsed = Mile::ToUInt64(Mile::Json::ToString(
-            Mile::Json::GetSubKey(DiskStatisticsQuota, "bytes_used")));
+        HalalCloud::UserStatistics Statistics =
+            HalalCloud::GetUserStatistics(Session->CurrentToken());
 
         std::memset(buf, 0, sizeof(statvfs));
         buf->f_bsize = 512;
-        buf->f_blocks = BytesQuota / buf->f_bsize;
-        buf->f_bfree = BytesUsed / buf->f_bsize;
+        buf->f_blocks = Statistics.BytesQuota / buf->f_bsize;
+        buf->f_bfree = Statistics.BytesUsed / buf->f_bsize;
         buf->f_bavail = buf->f_blocks - buf->f_bfree;
     }
     catch (...)

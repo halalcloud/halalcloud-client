@@ -470,3 +470,20 @@ HalalCloud::UserInformation HalalCloud::GetUserInformation(
         Mile::Json::GetSubKey(Response, "icon"));
     return Information;
 }
+
+HalalCloud::UserStatistics HalalCloud::GetUserStatistics(
+    HalalCloud::UserToken& Token)
+{
+    nlohmann::json Response = nlohmann::json::parse(HalalCloud::Request(
+        Token,
+        "/v6/user/get_statistics_and_quota",
+        "{}"));
+    HalalCloud::UserStatistics Statistics;
+    nlohmann::json DiskStatisticsQuota =
+        Mile::Json::GetSubKey(Response, "disk_statistics_quota");
+    Statistics.BytesQuota = Mile::ToUInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(DiskStatisticsQuota, "bytes_quota")));
+    Statistics.BytesUsed = Mile::ToUInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(DiskStatisticsQuota, "bytes_used")));
+    return Statistics;
+}

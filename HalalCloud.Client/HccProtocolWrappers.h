@@ -80,6 +80,12 @@ namespace HalalCloud
         std::string Name;
         std::string Icon;
     };
+
+    struct UserStatistics
+    {
+        std::uint64_t BytesQuota = 0;
+        std::uint64_t BytesUsed = 0;
+    };
 }
 
 namespace HalalCloud
@@ -133,6 +139,9 @@ namespace HalalCloud
         UserToken& Token);
 
     UserInformation GetUserInformation(
+        UserToken& Token);
+
+    UserStatistics GetUserStatistics(
         UserToken& Token);
 }
 

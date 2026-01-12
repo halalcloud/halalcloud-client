@@ -124,6 +124,26 @@ static int StatFsCallback(
         return -EINVAL;
     }
 
+    try
+    {
+        HalalCloud::GlobalConfigurations& Configurations =
+            HalalCloud::GetGlobalConfigurations();
+        HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
+
+        HalalCloud::UserStatistics Statistics =
+            HalalCloud::GetUserStatistics(CurrentToken);
+
+        std::memset(buf, 0, sizeof(statvfs));
+        buf->f_bsize = 512;
+        buf->f_blocks = Statistics.BytesQuota / buf->f_bsize;
+        buf->f_bfree = Statistics.BytesUsed / buf->f_bsize;
+        buf->f_bavail = buf->f_blocks - buf->f_bfree;
+    }
+    catch (...)
+    {
+        return -EINVAL;
+    }
+
     return 0;
 }
 

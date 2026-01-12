@@ -143,7 +143,7 @@ namespace HalalCloud
 
         HalalCloud::DownloadManager m_DownloadManager;
 
-        HalalCloud::UserToken CurrentToken();
+        HalalCloud::UserToken& CurrentToken();
 
         nlohmann::json Request(
             std::string_view MethodFullName,
