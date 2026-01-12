@@ -14,6 +14,7 @@
 #include <QtWidgets/QApplication>
 
 #include "HccProtocolWrappers.h"
+#include "HccFuseWorker.h"
 
 #include "HccUxNewCredentialDialog.h"
 #include "HccUxMainWindow.h"
@@ -54,10 +55,16 @@ int main(int argc, char* argv[])
         }
     }
 
+    // Start FUSE worker
+    HalalCloud::StartFuseWorker();
+
     HccUxMainWindow* MainWindow = new HccUxMainWindow();
     MainWindow->show();
 
     int Result = Application.exec();
+
+    // Stop FUSE worker
+    HalalCloud::StopFuseWorker();
 
     HalalCloud::SaveGlobalConfigurations();
 

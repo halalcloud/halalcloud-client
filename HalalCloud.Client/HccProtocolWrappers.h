@@ -112,6 +112,7 @@ namespace HalalCloud
     {
         std::string CurrentProfile = "Default";
         UserToken CurrentToken;
+        std::string MountPoint;
     };
 
     GlobalConfigurations& GetGlobalConfigurations();

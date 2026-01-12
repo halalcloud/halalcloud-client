@@ -14,3 +14,10 @@
 #include "HccProtocolWrappers.h"
 
 #endif // !HALALCLOUD_CLIENT_FUSE_WORKER
+
+namespace HalalCloud
+{
+    void StartFuseWorker();
+
+    void StopFuseWorker();
+}

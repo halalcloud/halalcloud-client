@@ -373,6 +373,9 @@ void HalalCloud::LoadGlobalConfigurations()
     }
     Configurations.CurrentToken.RefreshToken = Mile::Json::ToString(
         Mile::Json::GetSubKey(Object, "RefreshToken"));
+    Configurations.MountPoint = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "MountPoint"),
+        "Z:");
 }
 
 void HalalCloud::SaveGlobalConfigurations()
@@ -389,6 +392,7 @@ void HalalCloud::SaveGlobalConfigurations()
     {
         Object["RefreshToken"] = Configurations.CurrentToken.RefreshToken;
     }
+    Object["MountPoint"] = Configurations.MountPoint;
     std::string Content = Object.dump(2);
 
     ::HccWriteAllBytesToFile(
