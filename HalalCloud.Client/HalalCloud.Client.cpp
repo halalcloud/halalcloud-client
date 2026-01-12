@@ -54,35 +54,6 @@ int main(int argc, char* argv[])
         }
     }
 
-    if (CurrentToken.Validate())
-    {
-        HalalCloud::UserInformation Information =
-            HalalCloud::GetUserInformation(CurrentToken);
-
-        if (!Information.Icon.empty())
-        {
-            std::string IconFileExtension = std::string(std::strrchr(
-                Information.Icon.c_str(),
-                '.'));
-            std::string IconFileName = "Profile";
-            IconFileName.append(
-                IconFileExtension.empty() ? "Icon" : IconFileExtension);
-
-            std::filesystem::path CurrentProfilePath =
-                HalalCloud::GetProfilePath(Configurations.CurrentProfile);
-            std::filesystem::path IconFilePath =
-                CurrentProfilePath / IconFileName;
-            ::HccDownloadFile(
-                Information.Icon.c_str(),
-                HalalCloud::PathToUtf8String(IconFilePath).c_str());
-        }
-
-        QMessageBox::information(
-            nullptr,
-            Information.Name.c_str(),
-            Information.Identity.c_str());
-    }
-
     HccUxMainWindow* MainWindow = new HccUxMainWindow();
     MainWindow->show();
 

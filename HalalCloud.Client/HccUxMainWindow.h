@@ -22,6 +22,20 @@ class HccUxMainWindow :
 
 private:
 
+private slots:
+
+    void LogoutButtonClick();
+
+    void OpenDirectoryButtonClick();
+
+    void ViewLogButtonClick();
+
+    void UploadFileButtonClick();
+
+    void HalalCloudButtonClick();
+
+    void GitHubButtonClick();
+
 public:
 
 	HccUxMainWindow(
