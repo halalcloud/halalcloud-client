@@ -14,6 +14,7 @@
 #include <HccApi.h>
 
 #include <filesystem>
+#include <map>
 #include <string>
 #include <string_view>
 
@@ -117,6 +118,8 @@ namespace HalalCloud
         FileInformation(
             std::string_view JsonString);
     };
+
+    using FileDictionary = std::map<std::string, FileInformation>;
 }
 
 namespace HalalCloud
@@ -174,6 +177,15 @@ namespace HalalCloud
 
     UserStatistics GetUserStatistics(
         UserToken& Token);
+
+    FileInformation GetFileInformation(
+        UserToken& Token,
+        std::string_view Path);
+
+    void AppendFileList(
+        FileDictionary& Dictionary,
+        UserToken& Token,
+        std::string_view Path);
 }
 
 #endif // !HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS

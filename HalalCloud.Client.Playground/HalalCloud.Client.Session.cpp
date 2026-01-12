@@ -419,43 +419,25 @@ nlohmann::json HalalCloud::Session::CreateFolder(
 HalalCloud::FileInformation HalalCloud::Session::GetFileInformation(
     std::string_view Path)
 {
-    nlohmann::json Request;
-    Request["path"] = Path;
-
-    nlohmann::json Response = this->Request(
-        "/v6/userfile/get",
-        Request);
-
-    return HalalCloud::FileInformation(Response.dump());
+    return HalalCloud::GetFileInformation(
+        this->m_CurrentToken,
+        Path);
 }
 
 std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
     std::string_view Path)
 {
     std::vector<HalalCloud::FileInformation> Result;
-    std::string NextToken;
 
-    nlohmann::json Request;
-    Request["parent"]["path"] = Path;
-
-    do
+    HalalCloud::FileDictionary Dictionary;
+    HalalCloud::AppendFileList(
+        Dictionary,
+        this->m_CurrentToken,
+        Path);
+    for (auto const& Item : Dictionary)
     {
-        Request["list_info"]["token"] = NextToken;
-
-        nlohmann::json Response = this->Request(
-            "/v6/userfile/list",
-            Request);
-
-        NextToken = Mile::Json::ToString(Mile::Json::GetSubKey(
-            Mile::Json::GetSubKey(Response, "list_info"),
-            "token"));
-
-        for (nlohmann::json const& File
-            : Mile::Json::GetSubKey(Response, "files"))
-        {
-            Result.push_back(HalalCloud::FileInformation(File.dump()));
-        }
-    } while (!NextToken.empty());
+        Result.push_back(Item.second);
+    }
 
     return Result;
 }
