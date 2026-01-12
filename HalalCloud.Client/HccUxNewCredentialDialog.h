@@ -10,7 +10,6 @@
 
 #pragma once
 
-#include <QtCore/QTimer>
 #include <QtWidgets/QDialog>
 
 #include <string>

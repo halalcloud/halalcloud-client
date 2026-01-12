@@ -12,7 +12,11 @@
 
 #include "HccProtocolWrappers.h"
 
+#include <QtGui/QCloseEvent>
 #include <QtGui/QDesktopServices>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 
 #include <Mile.Project.Version.h>
 
@@ -28,7 +32,27 @@ namespace
 
 void HccUxMainWindow::LogoutButtonClick()
 {
+    QMessageBox::StandardButton UserResponse = QMessageBox::question(
+        this,
+        qApp->applicationDisplayName(),
+        QString::fromUtf8(u8"您确定要退出账号登录并退出吗？"),
+        QMessageBox::StandardButton::Yes |
+        QMessageBox::StandardButton::No,
+        QMessageBox::StandardButton::No);
+    if (QMessageBox::StandardButton::Yes != UserResponse)
+    {
+        return;
+    }
 
+    HalalCloud::GlobalConfigurations& Configurations =
+        HalalCloud::GetGlobalConfigurations();
+
+    HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
+    if (CurrentToken.Validate())
+    {
+        HalalCloud::Logoff(CurrentToken);
+        qApp->quit();
+    }
 }
 
 void HccUxMainWindow::OpenDirectoryButtonClick()
@@ -57,20 +81,81 @@ void HccUxMainWindow::GitHubButtonClick()
 }
 
 HccUxMainWindow::HccUxMainWindow(
-    QWidget * Parent)
+    QWidget* Parent)
 	: QMainWindow(Parent)
 {
     this->setupUi(this);
 
-    std::string VersionInformation;
-    VersionInformation.append(
-        reinterpret_cast<const char*>(u8"清真云客户端 "));
-    VersionInformation.append(
-        MILE_PROJECT_VERSION_UTF8_STRING " (Build "
-        MILE_PROJECT_MACRO_TO_UTF8_STRING(MILE_PROJECT_VERSION_BUILD) ")");
-    this->VersionInformationLabel->setText(QString::fromUtf8(
-        VersionInformation.c_str(),
-        VersionInformation.size()));
+    {
+        std::string VersionInformation;
+        VersionInformation.append(
+            qApp->applicationDisplayName().toUtf8().constData());
+        VersionInformation.append(
+            MILE_PROJECT_VERSION_UTF8_STRING " (Build "
+            MILE_PROJECT_MACRO_TO_UTF8_STRING(MILE_PROJECT_VERSION_BUILD) ")");
+        this->VersionInformationLabel->setText(QString::fromUtf8(
+            VersionInformation.c_str(),
+            VersionInformation.size()));
+    }
+
+    {
+        this->m_SystemTray = new QSystemTrayIcon();
+
+        this->m_SystemTrayContextMenu = new QMenu(this);
+
+        this->m_SystemTrayContextMenu->addAction(
+            qApp->applicationDisplayName(),
+            this,
+            [&]()
+        {
+            if (this->isHidden())
+            {
+                this->show();
+                this->activateWindow();
+            }
+            else
+            {
+                this->hide();
+            }
+        });
+
+        this->m_SystemTrayContextMenu->addAction(
+            u8"退出",
+            this,
+            [&]()
+        {
+            qApp->quit();
+        });
+
+        this->m_SystemTray->setContextMenu(
+            this->m_SystemTrayContextMenu);
+        this->m_SystemTray->setToolTip(
+            qApp->applicationDisplayName());
+        this->m_SystemTray->setIcon(
+            QIcon(":/HalalCloud/SvgIcon"));
+        this->connect(
+            this->m_SystemTray,
+            &QSystemTrayIcon::activated,
+            this,
+            [&](QSystemTrayIcon::ActivationReason reason)
+        {
+            if (reason == QSystemTrayIcon::Trigger ||
+                reason == QSystemTrayIcon::DoubleClick ||
+                reason == QSystemTrayIcon::MiddleClick)
+            {
+                if (this->isHidden())
+                {
+                    this->show();
+                    this->activateWindow();
+                }
+                else
+                {
+                    this->hide();
+                }
+            }
+        });
+        this->m_SystemTray->show();
+    }
 
     this->connect(
         this->LogoutButton,
@@ -156,4 +241,11 @@ HccUxMainWindow::HccUxMainWindow(
 HccUxMainWindow::~HccUxMainWindow()
 {
 
+}
+
+void HccUxMainWindow::closeEvent(
+    QCloseEvent* event)
+{
+    this->hide();
+    event->ignore();
 }

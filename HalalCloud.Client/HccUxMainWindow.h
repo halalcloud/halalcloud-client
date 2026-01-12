@@ -11,6 +11,7 @@
 #pragma once
 
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QSystemTrayIcon>
 
 #include "ui_HccUxMainWindow.h"
 
@@ -21,6 +22,9 @@ class HccUxMainWindow :
 	Q_OBJECT
 
 private:
+
+    QSystemTrayIcon* m_SystemTray = nullptr;
+    QMenu* m_SystemTrayContextMenu = nullptr;
 
 private slots:
 
@@ -41,6 +45,9 @@ public:
 	HccUxMainWindow(
         QWidget* Parent = nullptr);
 
-	~HccUxMainWindow();	 
+	~HccUxMainWindow();
+
+    virtual void closeEvent(
+        QCloseEvent* event) override;
 };
 

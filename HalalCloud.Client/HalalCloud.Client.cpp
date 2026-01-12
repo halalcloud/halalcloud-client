@@ -12,7 +12,6 @@
 
 #include <thread>
 #include <QtWidgets/QApplication>
-#include <QtWidgets/QMessageBox>
 
 #include "HccProtocolWrappers.h"
 
@@ -22,6 +21,7 @@
 int main(int argc, char* argv[])
 {
     QApplication Application(argc, argv);
+    qApp->setApplicationDisplayName(u8"清真云客户端");
 
     HalalCloud::LoadGlobalConfigurations();
 
@@ -57,5 +57,9 @@ int main(int argc, char* argv[])
     HccUxMainWindow* MainWindow = new HccUxMainWindow();
     MainWindow->show();
 
-    return Application.exec();
+    int Result = Application.exec();
+
+    HalalCloud::SaveGlobalConfigurations();
+
+    return Result;
 }
