@@ -12,8 +12,8 @@
     <MileProjectLegalCopyright>© Halal Cloud. All rights reserved.</MileProjectLegalCopyright>
     <MileProjectOriginalFilename>HalalCloud.Client.exe</MileProjectOriginalFilename>
     <MileProjectProductName>Halal Cloud Client</MileProjectProductName>
-    <MileProjectVersion>1.0.0.0</MileProjectVersion>
-    <MileProjectVersionTag Condition="false">Alpha 1</MileProjectVersionTag>
+    <MileProjectVersion>1.0.$([System.DateTime]::Today.Subtract($([System.DateTime]::Parse('2024-01-16'))).TotalDays).0</MileProjectVersion>
+    <MileProjectVersionTag>Preview 1</MileProjectVersionTag>
     <MileUniCrtDisableRuntimeDebuggingFeature>true</MileUniCrtDisableRuntimeDebuggingFeature>
     <MileWindowsHelpersNoCppWinRTHelpers>true</MileWindowsHelpersNoCppWinRTHelpers>
   </PropertyGroup>
