@@ -191,6 +191,30 @@ HalalCloud::UserToken::UserToken(
     this->Parse(JsonString);
 }
 
+void HalalCloud::FileInformation::Parse(
+    std::string_view JsonString)
+{
+    nlohmann::json Object = nlohmann::json::parse(JsonString);
+    this->CreationTime = Mile::ToInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "create_ts")));
+    this->LastWriteTime = Mile::ToInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "update_ts")));
+    this->FileSize = Mile::ToInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "size")));
+    this->FileAttributes.Fields.IsDirectory = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Object, "dir"));
+    this->FileAttributes.Fields.IsHidden = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Object, "hidden"));
+    this->FileName = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "name"));
+}
+
+HalalCloud::FileInformation::FileInformation(
+    std::string_view JsonString)
+{
+    this->Parse(JsonString);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 std::string HalalCloud::RequestWithoutToken(

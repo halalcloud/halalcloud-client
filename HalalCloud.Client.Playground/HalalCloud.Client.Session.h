@@ -28,23 +28,6 @@ namespace HalalCloud
     std::vector<std::uint8_t> ReadAllBytesFromFile(
         std::string_view FilePath);
 
-    struct FileInformation
-    {
-        std::int64_t CreationTime;
-        std::int64_t LastWriteTime;
-        std::int64_t FileSize;
-        union
-        {
-            struct
-            {
-                std::uint64_t IsDirectory : 1;
-                std::uint64_t IsHidden : 1;
-            } Fields;
-            std::uint64_t Value;
-        } FileAttributes;
-        std::string FileName;
-    };
-
     namespace FileStorageType
     {
         enum
@@ -117,9 +100,6 @@ namespace HalalCloud
     class Session : Mile::DisableCopyConstruction
     {
     private:
-
-        FileInformation ToFileInformation(
-            nlohmann::json const& Object);
 
         BlockStorageInformation ToBlockStorageInformation(
             nlohmann::json const& Object);

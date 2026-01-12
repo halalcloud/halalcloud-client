@@ -138,27 +138,6 @@ bool HalalCloud::FileStorageInformation::GetBlocks(
     return false;
 }
 
-HalalCloud::FileInformation HalalCloud::Session::ToFileInformation(
-    nlohmann::json const& Object)
-{
-    HalalCloud::FileInformation Result;
-
-    Result.CreationTime = Mile::ToInt64(Mile::Json::ToString(
-        Mile::Json::GetSubKey(Object, "create_ts")));
-    Result.LastWriteTime = Mile::ToInt64(Mile::Json::ToString(
-        Mile::Json::GetSubKey(Object, "update_ts")));
-    Result.FileSize = Mile::ToInt64(Mile::Json::ToString(
-        Mile::Json::GetSubKey(Object, "size")));
-    Result.FileAttributes.Fields.IsDirectory = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Object, "dir"));
-    Result.FileAttributes.Fields.IsHidden = Mile::Json::ToBoolean(
-        Mile::Json::GetSubKey(Object, "hidden"));
-    Result.FileName = Mile::Json::ToString(
-        Mile::Json::GetSubKey(Object, "name"));
-
-    return Result;
-}
-
 HalalCloud::BlockStorageInformation HalalCloud::Session::ToBlockStorageInformation(
     nlohmann::json const& Object)
 {
@@ -447,7 +426,7 @@ HalalCloud::FileInformation HalalCloud::Session::GetFileInformation(
         "/v6/userfile/get",
         Request);
 
-    return this->ToFileInformation(Response);
+    return HalalCloud::FileInformation(Response.dump());
 }
 
 std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
@@ -474,7 +453,7 @@ std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
         for (nlohmann::json const& File
             : Mile::Json::GetSubKey(Response, "files"))
         {
-            Result.push_back(this->ToFileInformation(File));
+            Result.push_back(HalalCloud::FileInformation(File.dump()));
         }
     } while (!NextToken.empty());
 

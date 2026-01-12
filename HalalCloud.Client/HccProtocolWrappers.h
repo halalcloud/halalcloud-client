@@ -86,6 +86,37 @@ namespace HalalCloud
         std::uint64_t BytesQuota = 0;
         std::uint64_t BytesUsed = 0;
     };
+
+    struct FileInformation
+    {
+    public:
+
+        std::int64_t CreationTime;
+        std::int64_t LastWriteTime;
+        std::int64_t FileSize;
+        union
+        {
+            struct
+            {
+                std::uint64_t IsDirectory : 1;
+                std::uint64_t IsHidden : 1;
+            } Fields;
+            std::uint64_t Value;
+        } FileAttributes;
+        std::string FileName;
+
+    public:
+
+        void Parse(
+            std::string_view JsonString);
+
+    public:
+
+        FileInformation() = default;
+
+        FileInformation(
+            std::string_view JsonString);
+    };
 }
 
 namespace HalalCloud
