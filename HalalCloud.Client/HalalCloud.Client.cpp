@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
     {
         // Restore the user token with the refresh token.
         CurrentToken = HalalCloud::RefreshToken(CurrentToken.RefreshToken);
+        HalalCloud::SaveGlobalConfigurations();
     }
 
     if (!CurrentToken.Validate())

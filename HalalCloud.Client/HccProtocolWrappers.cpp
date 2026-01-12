@@ -414,6 +414,9 @@ std::string HalalCloud::Request(
     {
         // Try to refresh the token and retry.
         Token = HalalCloud::RefreshToken(Token.RefreshToken);
+        // Save the new token to the local storage.
+        HalalCloud::SaveGlobalConfigurations();
+        // Retry the request.
         Status = ::HccRpcPostRequest(
             &RawResponseJson,
             Token.AccessToken.data(),
