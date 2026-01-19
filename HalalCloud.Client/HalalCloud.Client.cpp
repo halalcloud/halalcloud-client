@@ -34,8 +34,15 @@ int main(int argc, char* argv[])
     if (!CurrentToken.RefreshToken.empty())
     {
         // Restore the user token with the refresh token.
-        CurrentToken = HalalCloud::RefreshToken(CurrentToken.RefreshToken);
-        HalalCloud::SaveGlobalConfigurations();
+        try
+        {
+            CurrentToken = HalalCloud::RefreshToken(CurrentToken.RefreshToken);
+            HalalCloud::SaveGlobalConfigurations();
+        }
+        catch (...)
+        {
+
+        }
     }
 
     if (!CurrentToken.Validate())
@@ -49,9 +56,14 @@ int main(int argc, char* argv[])
             return 0;
         }
         // Get the user token if login succeeded.
+        try
         {
             CurrentToken = Dialog->GetUserToken();
             HalalCloud::SaveGlobalConfigurations();
+        }
+        catch (...)
+        {
+
         }
     }
 

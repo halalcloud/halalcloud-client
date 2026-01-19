@@ -16,16 +16,16 @@
 
 namespace
 {
-    bool g_WorkerRunning = false;
-    std::thread g_WorkerThread;
+    static bool g_WorkerRunning = false;
+    static std::thread g_WorkerThread;
 
-    std::string g_MountPoint;
-    std::string g_VolumeName;
-    fuse_operations g_Operations = {};
-    fuse_args g_Arguments = FUSE_ARGS_INIT(0, nullptr);
+    static std::string g_MountPoint;
+    static std::string g_VolumeName;
+    static fuse_operations g_Operations = {};
+    static fuse_args g_Arguments = FUSE_ARGS_INIT(0, nullptr);
 
-    fuse_chan* g_Channel = nullptr;
-    fuse* g_Instance = nullptr;
+    static fuse_chan* g_Channel = nullptr;
+    static fuse* g_Instance = nullptr;
 }
 
 static void CleanupWorkerContext()
