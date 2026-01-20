@@ -24,6 +24,9 @@ namespace HalalCloud
         std::string_view Checkpoint,
         std::int32_t const& Code);
 
+    std::filesystem::path PathFromUtf8String(
+        std::string const& Path);
+
     std::string PathToUtf8String(
         std::filesystem::path const& Path,
         bool Generic = false);
