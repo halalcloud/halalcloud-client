@@ -14,7 +14,6 @@
 #include <HccApi.h>
 
 #include <filesystem>
-#include <map>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -121,8 +120,6 @@ namespace HalalCloud
     };
 
     using FileList = std::vector<FileInformation>;
-
-    using FileDictionary = std::map<std::string, FileInformation>;
 }
 
 namespace HalalCloud
@@ -186,11 +183,6 @@ namespace HalalCloud
         std::string_view Path);
 
     FileList GetFileList(
-        UserToken& Token,
-        std::string_view Path);
-
-    void AppendFileList(
-        FileDictionary& Dictionary,
         UserToken& Token,
         std::string_view Path);
 }
