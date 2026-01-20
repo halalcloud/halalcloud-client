@@ -12,6 +12,9 @@
 
 #include <fuse.h>
 
+#include <filesystem>
+#include <map>
+#include <mutex>
 #include <thread>
 
 namespace
@@ -26,10 +29,18 @@ namespace
 
     static fuse_chan* g_Channel = nullptr;
     static fuse* g_Instance = nullptr;
+
+    static std::mutex g_FileInformationCacheMutex;
+    static std::map<std::string, HalalCloud::FileList> g_FileInformationCache;
 }
 
 static void CleanupWorkerContext()
 {
+    {
+        std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
+        g_FileInformationCache.clear();
+    }
+
     if (g_Channel)
     {
         ::fuse_unmount(g_MountPoint.c_str(), g_Channel);
@@ -147,6 +158,24 @@ static int StatFsCallback(
     return 0;
 }
 
+static void ToFuseFileStatistics(
+    FUSE_STAT* Output,
+    HalalCloud::FileInformation const& Input)
+{
+    Output->st_mode = S_IREAD | S_IWRITE;
+    Output->st_mode |= Input.FileAttributes.Fields.IsDirectory
+        ? S_IFDIR
+        : S_IFREG;
+    if (!Input.FileAttributes.Fields.IsDirectory)
+    {
+        Output->st_size = Input.FileSize;
+    }
+    Output->st_atim.tv_sec = Input.LastWriteTime / 1000;
+    Output->st_mtim.tv_sec = Input.LastWriteTime / 1000;
+    Output->st_ctim.tv_sec = Input.LastWriteTime / 1000;
+    Output->st_birthtim.tv_sec = Input.CreationTime / 1000;
+}
+
 static int GetAttributesCallback(
     const char* path,
     FUSE_STAT* buf)
@@ -165,8 +194,69 @@ static int GetAttributesCallback(
         return -EINVAL;
     }
 
-    buf->st_mode = S_IREAD | S_IWRITE;
-    buf->st_mode |= S_IFDIR;
+    if (!std::strcmp(path, "/"))
+    {
+        buf->st_mode = S_IREAD | S_IWRITE | S_IFDIR;
+        return 0;
+    }
+
+    try
+    {
+        std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
+
+        std::filesystem::path PathObject = path;
+        std::string DirectoryPath = HalalCloud::PathToUtf8String(
+            PathObject.parent_path());
+        std::string FileName = HalalCloud::PathToUtf8String(
+            PathObject.filename());
+
+        bool DirectoryAvailable = false;
+        {
+            auto Iterator = g_FileInformationCache.find(DirectoryPath);
+            if (Iterator != g_FileInformationCache.end())
+            {
+                DirectoryAvailable = true;
+            }
+        }
+        if (!DirectoryAvailable)
+        {
+            HalalCloud::GlobalConfigurations& Configurations =
+                HalalCloud::GetGlobalConfigurations();
+            HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
+
+            g_FileInformationCache[DirectoryPath] = HalalCloud::GetFileList(
+                CurrentToken,
+                DirectoryPath);
+        }
+        if (!DirectoryAvailable)
+        {
+            return -ENOENT;
+        }
+
+
+        HalalCloud::FileInformation Information = {};
+
+        bool FileAvailable = false;
+        for (auto const& Item : g_FileInformationCache[DirectoryPath])
+        {
+            if (FileName == Item.FileName)
+            {
+                Information = Item;
+                FileAvailable = true;
+                break;
+            }
+        }
+        if (!FileAvailable)
+        {
+            return -ENOENT;
+        }
+
+        ::ToFuseFileStatistics(buf, Information);
+    }
+    catch (...)
+    {
+        return -EINVAL;
+    }
 
     return 0;
 }
@@ -178,14 +268,53 @@ static int ReadDirectoryCallback(
     FUSE_OFF_T off,
     fuse_file_info* fi)
 {
-    MO_UNREFERENCED_PARAMETER(path);
-    MO_UNREFERENCED_PARAMETER(buf);
-    MO_UNREFERENCED_PARAMETER(filler);
     MO_UNREFERENCED_PARAMETER(off);
     MO_UNREFERENCED_PARAMETER(fi);
 
     fuse_context* Context = ::fuse_get_context();
     if (!Context)
+    {
+        return -EINVAL;
+    }
+
+    try
+    {
+        std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
+
+        bool DirectoryAvailable = false;
+        {
+            auto Iterator = g_FileInformationCache.find(path);
+            if (Iterator != g_FileInformationCache.end())
+            {
+                DirectoryAvailable = true;
+            }
+        }
+        if (!DirectoryAvailable)
+        {
+            HalalCloud::GlobalConfigurations& Configurations =
+                HalalCloud::GetGlobalConfigurations();
+            HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
+
+            g_FileInformationCache[path] = HalalCloud::GetFileList(
+                CurrentToken,
+                path);
+        }
+        if (!DirectoryAvailable)
+        {
+            return -ENOENT;
+        }
+
+        for (auto const& Item : g_FileInformationCache[path])
+        {
+            FUSE_STAT stbuf = {};
+            ::ToFuseFileStatistics(&stbuf, Item);
+            if (filler(buf, Item.FileName.c_str(), &stbuf, 0))
+            {
+                break;
+            }
+        }
+    }
+    catch (...)
     {
         return -EINVAL;
     }
