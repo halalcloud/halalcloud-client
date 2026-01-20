@@ -15,7 +15,80 @@
 #include <filesystem>
 #include <map>
 #include <mutex>
+#include <stack>
 #include <thread>
+
+namespace
+{
+    static std::mutex g_FileInformationCacheMutex;
+    static std::map<std::string, HalalCloud::FileList> g_FileInformationCache;
+
+    static bool IsFileInformationCacheInitialized()
+    {
+        // Empty cache means uninitialized because at least the root path a.k.a
+        // "/" should be cached.
+        return !g_FileInformationCache.empty();
+    }
+
+    static void UninitializeFileInformationCache()
+    {
+        if (!::IsFileInformationCacheInitialized())
+        {
+            return;
+        }
+        std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
+        g_FileInformationCache.clear();
+    }
+
+    static void InitializeFileInformationCache()
+    {
+        if (::IsFileInformationCacheInitialized())
+        {
+            return;
+        }
+
+        std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
+
+        g_FileInformationCache.clear();
+
+        std::stack<std::string> PathStack;
+        PathStack.push("/");
+
+        HalalCloud::GlobalConfigurations& Configurations =
+            HalalCloud::GetGlobalConfigurations();
+        HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
+
+        while (!PathStack.empty())
+        {
+            std::string CurrentPath = PathStack.top();
+            PathStack.pop();
+            HalalCloud::FileList Candidate = {};
+            try
+            {
+                Candidate = HalalCloud::GetFileList(
+                    CurrentToken,
+                    CurrentPath);
+            }
+            catch (...)
+            {
+                continue;
+            }
+            g_FileInformationCache[CurrentPath] = Candidate;
+            for (auto const& Item : Candidate)
+            {
+                if (Item.FileAttributes.Fields.IsDirectory)
+                {
+                    std::filesystem::path ChildPathObject =
+                        std::filesystem::path(CurrentPath) / Item.FileName;
+                    std::string ChildPath = HalalCloud::PathToUtf8String(
+                        ChildPathObject,
+                        true);
+                    PathStack.push(ChildPath);
+                }
+            }
+        }
+    }
+}
 
 namespace
 {
@@ -29,17 +102,11 @@ namespace
 
     static fuse_chan* g_Channel = nullptr;
     static fuse* g_Instance = nullptr;
-
-    static std::mutex g_FileInformationCacheMutex;
-    static std::map<std::string, HalalCloud::FileList> g_FileInformationCache;
 }
 
 static void CleanupWorkerContext()
 {
-    {
-        std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
-        g_FileInformationCache.clear();
-    }
+    ::UninitializeFileInformationCache();
 
     if (g_Channel)
     {
@@ -194,7 +261,11 @@ static int GetAttributesCallback(
         return -EINVAL;
     }
 
-    if (!std::strcmp(path, "/"))
+    std::string NormalizedPath = HalalCloud::PathToUtf8String(
+        std::filesystem::path(path).lexically_normal(),
+        true);
+
+    if ("/" == NormalizedPath)
     {
         buf->st_mode = S_IREAD | S_IWRITE | S_IFDIR;
         return 0;
@@ -204,50 +275,35 @@ static int GetAttributesCallback(
     {
         std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
 
-        std::filesystem::path PathObject = path;
+        std::filesystem::path NormalizedPathObject =
+            std::filesystem::path(NormalizedPath);
         std::string DirectoryPath = HalalCloud::PathToUtf8String(
-            PathObject.parent_path());
+            NormalizedPathObject.parent_path());
         std::string FileName = HalalCloud::PathToUtf8String(
-            PathObject.filename());
+            NormalizedPathObject.filename());
 
-        bool DirectoryAvailable = false;
+        auto Iterator = g_FileInformationCache.find(DirectoryPath);
+        if (Iterator == g_FileInformationCache.end())
         {
-            auto Iterator = g_FileInformationCache.find(DirectoryPath);
-            if (Iterator != g_FileInformationCache.end())
-            {
-                DirectoryAvailable = true;
-            }
-        }
-        if (!DirectoryAvailable)
-        {
-            HalalCloud::GlobalConfigurations& Configurations =
-                HalalCloud::GetGlobalConfigurations();
-            HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
-
-            g_FileInformationCache[DirectoryPath] = HalalCloud::GetFileList(
-                CurrentToken,
-                DirectoryPath);
-        }
-        if (!DirectoryAvailable)
-        {
+            // Directory is not found.
             return -ENOENT;
         }
 
-
         HalalCloud::FileInformation Information = {};
 
-        bool FileAvailable = false;
-        for (auto const& Item : g_FileInformationCache[DirectoryPath])
+        bool Available = false;
+        for (auto const& Item : Iterator->second)
         {
             if (FileName == Item.FileName)
             {
                 Information = Item;
-                FileAvailable = true;
+                Available = true;
                 break;
             }
         }
-        if (!FileAvailable)
+        if (!Available)
         {
+            // File is not found.
             return -ENOENT;
         }
 
@@ -277,34 +333,22 @@ static int ReadDirectoryCallback(
         return -EINVAL;
     }
 
+    std::string NormalizedPath = HalalCloud::PathToUtf8String(
+        std::filesystem::path(path).lexically_normal(),
+        true);
+
     try
     {
         std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
 
-        bool DirectoryAvailable = false;
+        auto Iterator = g_FileInformationCache.find(NormalizedPath);
+        if (Iterator == g_FileInformationCache.end())
         {
-            auto Iterator = g_FileInformationCache.find(path);
-            if (Iterator != g_FileInformationCache.end())
-            {
-                DirectoryAvailable = true;
-            }
-        }
-        if (!DirectoryAvailable)
-        {
-            HalalCloud::GlobalConfigurations& Configurations =
-                HalalCloud::GetGlobalConfigurations();
-            HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
-
-            g_FileInformationCache[path] = HalalCloud::GetFileList(
-                CurrentToken,
-                path);
-        }
-        if (!DirectoryAvailable)
-        {
+            // Directory is not found.
             return -ENOENT;
         }
 
-        for (auto const& Item : g_FileInformationCache[path])
+        for (auto const& Item : Iterator->second)
         {
             FUSE_STAT stbuf = {};
             ::ToFuseFileStatistics(&stbuf, Item);
@@ -343,6 +387,8 @@ void HalalCloud::StartFuseWorker()
         return;
     }
     g_WorkerRunning = true;
+
+    ::InitializeFileInformationCache();
 
     {
         HalalCloud::GlobalConfigurations& Configurations =
