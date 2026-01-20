@@ -17,6 +17,7 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace HalalCloud
 {
@@ -119,6 +120,8 @@ namespace HalalCloud
             std::string_view JsonString);
     };
 
+    using FileList = std::vector<FileInformation>;
+
     using FileDictionary = std::map<std::string, FileInformation>;
 }
 
@@ -179,6 +182,10 @@ namespace HalalCloud
         UserToken& Token);
 
     FileInformation GetFileInformation(
+        UserToken& Token,
+        std::string_view Path);
+
+    FileList GetFileList(
         UserToken& Token,
         std::string_view Path);
 

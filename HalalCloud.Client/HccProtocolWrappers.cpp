@@ -524,6 +524,39 @@ HalalCloud::FileInformation HalalCloud::GetFileInformation(
         Request.dump()));
 }
 
+HalalCloud::FileList HalalCloud::GetFileList(
+    HalalCloud::UserToken& Token,
+    std::string_view Path)
+{
+    HalalCloud::FileList Result;
+
+    nlohmann::json Request;
+    Request["parent"]["path"] = Path;
+
+    std::string NextToken;
+    do
+    {
+        Request["list_info"]["token"] = NextToken;
+
+        nlohmann::json Response = nlohmann::json::parse(HalalCloud::Request(
+            Token,
+            "/v6/userfile/list",
+            Request.dump()));
+
+        NextToken = Mile::Json::ToString(Mile::Json::GetSubKey(
+            Mile::Json::GetSubKey(Response, "list_info"),
+            "token"));
+
+        for (nlohmann::json const& File
+            : Mile::Json::GetSubKey(Response, "files"))
+        {
+            Result.emplace_back(HalalCloud::FileInformation(File.dump()));
+        }
+    } while (!NextToken.empty());
+
+    return Result;
+}
+
 void HalalCloud::AppendFileList(
     HalalCloud::FileDictionary& Dictionary,
     HalalCloud::UserToken& Token,

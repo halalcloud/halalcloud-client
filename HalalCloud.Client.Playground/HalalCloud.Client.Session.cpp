@@ -427,19 +427,9 @@ HalalCloud::FileInformation HalalCloud::Session::GetFileInformation(
 std::vector<HalalCloud::FileInformation> HalalCloud::Session::EnumerateFiles(
     std::string_view Path)
 {
-    std::vector<HalalCloud::FileInformation> Result;
-
-    HalalCloud::FileDictionary Dictionary;
-    HalalCloud::AppendFileList(
-        Dictionary,
+    return HalalCloud::GetFileList(
         this->m_CurrentToken,
         Path);
-    for (auto const& Item : Dictionary)
-    {
-        Result.push_back(Item.second);
-    }
-
-    return Result;
 }
 
 void HalalCloud::Session::UploadFile(
