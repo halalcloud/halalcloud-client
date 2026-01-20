@@ -262,7 +262,7 @@ static int GetAttributesCallback(
     }
 
     std::string NormalizedPath = HalalCloud::PathToUtf8String(
-        std::filesystem::path(path).lexically_normal(),
+        HalalCloud::PathFromUtf8String(path).lexically_normal(),
         true);
 
     if ("/" == NormalizedPath)
@@ -276,7 +276,7 @@ static int GetAttributesCallback(
         std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
 
         std::filesystem::path NormalizedPathObject =
-            std::filesystem::path(NormalizedPath);
+            HalalCloud::PathFromUtf8String(NormalizedPath);
         std::string DirectoryPath = HalalCloud::PathToUtf8String(
             NormalizedPathObject.parent_path());
         std::string FileName = HalalCloud::PathToUtf8String(
@@ -334,7 +334,7 @@ static int ReadDirectoryCallback(
     }
 
     std::string NormalizedPath = HalalCloud::PathToUtf8String(
-        std::filesystem::path(path).lexically_normal(),
+        HalalCloud::PathFromUtf8String(path).lexically_normal(),
         true);
 
     try
