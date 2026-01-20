@@ -35,12 +35,15 @@
 }
 
 std::string HalalCloud::PathToUtf8String(
-    std::filesystem::path const& Path)
+    std::filesystem::path const& Path,
+    bool Generic)
 {
 #ifdef _WIN32
-    return Mile::ToString(CP_UTF8, Path.wstring());
+    return Mile::ToString(
+        CP_UTF8,
+        Generic ? Path.generic_wstring() : Path.wstring());
 #else
-    return Path.string();
+    return Generic ? Path.generic_string() : Path.string();
 #endif
 }
 

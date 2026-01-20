@@ -25,7 +25,8 @@ namespace HalalCloud
         std::int32_t const& Code);
 
     std::string PathToUtf8String(
-        std::filesystem::path const& Path);
+        std::filesystem::path const& Path,
+        bool Generic = false);
 
     std::filesystem::path EnsureDirectoryPathExists(
         std::filesystem::path const& Path);
