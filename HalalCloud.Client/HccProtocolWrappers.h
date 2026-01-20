@@ -92,9 +92,9 @@ namespace HalalCloud
     {
     public:
 
-        std::int64_t CreationTime;
-        std::int64_t LastWriteTime;
-        std::int64_t FileSize;
+        std::int64_t CreationTime = 0;
+        std::int64_t LastWriteTime = 0;
+        std::int64_t FileSize = 0;
         union
         {
             struct
@@ -102,7 +102,7 @@ namespace HalalCloud
                 std::uint64_t IsDirectory : 1;
                 std::uint64_t IsHidden : 1;
             } Fields;
-            std::uint64_t Value;
+            std::uint64_t Value = 0;
         } FileAttributes;
         std::string FileName;
 
