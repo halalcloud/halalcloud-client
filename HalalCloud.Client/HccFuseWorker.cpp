@@ -420,6 +420,9 @@ void HalalCloud::StartFuseWorker()
         "-odaemon_timeout=86400");
     ::fuse_opt_add_arg(
         &g_Arguments,
+        "-ordonly");
+    ::fuse_opt_add_arg(
+        &g_Arguments,
         (std::string("-ovolname=") + g_VolumeName).c_str());
 
     g_WorkerThread = std::thread(FuseWorker);
