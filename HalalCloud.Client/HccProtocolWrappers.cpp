@@ -220,6 +220,8 @@ void HalalCloud::FileInformation::Parse(
         Mile::Json::GetSubKey(Object, "hidden"));
     this->FileName = Mile::Json::ToString(
         Mile::Json::GetSubKey(Object, "name"));
+    this->ContentIdentity = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "content_identity"));
 }
 
 HalalCloud::FileInformation::FileInformation(
@@ -466,6 +468,16 @@ std::string HalalCloud::Request(
     }
     if (HCC_RPC_STATUS_OK != Status)
     {
+#ifdef _WIN32
+        ::OutputDebugStringW(Mile::ToWideString(CP_UTF8,
+            Mile::FormatString(
+                "[HalalCloud::Request!HccRpcPostRequest]\n"
+                "Request = %s\n"
+                "Response = %s",
+                RequestJson.data(),
+                RawResponseJson)).c_str());
+#endif // _WIN32
+
         HalalCloud::ThrowException(
             "HalalCloud::Request!HccRpcPostRequest",
             Status);

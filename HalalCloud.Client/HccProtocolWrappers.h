@@ -109,6 +109,7 @@ namespace HalalCloud
             std::uint64_t Value = 0;
         } FileAttributes;
         std::string FileName;
+        std::string ContentIdentity;
 
     public:
 
