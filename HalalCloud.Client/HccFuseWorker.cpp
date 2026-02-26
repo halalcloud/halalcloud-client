@@ -21,6 +21,7 @@
 namespace
 {
     static std::mutex g_FileInformationCacheMutex;
+    static std::int64_t g_FileInformationCacheLastUpdateTime = 0;
     static std::map<std::string, HalalCloud::FileList> g_FileInformationCache;
 
     static bool IsFileInformationCacheInitialized()
@@ -38,6 +39,7 @@ namespace
         }
         std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
         g_FileInformationCache.clear();
+        g_FileInformationCacheLastUpdateTime = 0;
     }
 
     static void InitializeFileInformationCache()
@@ -48,6 +50,10 @@ namespace
         }
 
         std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
+
+        g_FileInformationCacheLastUpdateTime =
+            std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::system_clock::now().time_since_epoch()).count();
 
         g_FileInformationCache.clear();
 
@@ -86,6 +92,91 @@ namespace
                     PathStack.push(ChildPath);
                 }
             }
+        }
+    }
+
+    static void UpdateFileInformationCache()
+    {
+        if (!::IsFileInformationCacheInitialized())
+        {
+            return;
+        }
+
+        std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
+
+        HalalCloud::GlobalConfigurations& Configurations =
+            HalalCloud::GetGlobalConfigurations();
+        HalalCloud::UserToken& CurrentToken = Configurations.CurrentToken;
+
+        try
+        {
+            HalalCloud::RecentUpdatedFileList UpdateList =
+                HalalCloud::ListRecentUpdatedFiles(
+                    CurrentToken,
+                    "/",
+                    g_FileInformationCacheLastUpdateTime,
+                    false,
+                    false);
+            if (!UpdateList.empty())
+            {
+                g_FileInformationCacheLastUpdateTime =
+                    std::chrono::duration_cast<std::chrono::milliseconds>(
+                        std::chrono::system_clock::now().time_since_epoch()).count();
+            }
+            for (auto const& Item : UpdateList)
+            {
+                std::filesystem::path NormalizedPathObject =
+                    HalalCloud::PathFromUtf8String(Item.Path);
+                std::string FullPath = HalalCloud::PathToUtf8String(
+                    NormalizedPathObject);
+                std::string DirectoryPath = HalalCloud::PathToUtf8String(
+                    NormalizedPathObject.parent_path());
+                std::string FileName = HalalCloud::PathToUtf8String(
+                    NormalizedPathObject.filename());
+
+                if (g_FileInformationCache.contains(FullPath))
+                {
+                    g_FileInformationCache.erase(FullPath);
+                }
+                if (g_FileInformationCache.contains(DirectoryPath))
+                {
+                    HalalCloud::FileList& Current =
+                        g_FileInformationCache[DirectoryPath];
+
+                    for (HalalCloud::FileList::iterator Iterator =
+                        Current.begin();
+                        Iterator != Current.end();
+                        ++Iterator)
+                    {
+                        if (Iterator->FileName == FileName)
+                        {
+                            Current.erase(Iterator);
+                            break;
+                        }
+                    }
+                }
+                if (Item.Deleted)
+                {
+                    continue;
+                }
+
+                HalalCloud::FileInformation Information =
+                    HalalCloud::GetFileInformation(
+                        CurrentToken,
+                        FullPath);
+                g_FileInformationCache[DirectoryPath].push_back(Information);
+
+                if (Information.FileAttributes.Fields.IsDirectory)
+                {
+                    g_FileInformationCache[FullPath] = HalalCloud::GetFileList(
+                        CurrentToken,
+                        FullPath);
+                }
+            }
+        }
+        catch (...)
+        {
+            return;
         }
     }
 }
@@ -271,6 +362,8 @@ static int GetAttributesCallback(
         return 0;
     }
 
+    ::UpdateFileInformationCache();
+
     try
     {
         std::lock_guard<std::mutex> Lock(g_FileInformationCacheMutex);
@@ -336,6 +429,8 @@ static int ReadDirectoryCallback(
     std::string NormalizedPath = HalalCloud::PathToUtf8String(
         HalalCloud::PathFromUtf8String(path).lexically_normal(),
         true);
+
+    ::UpdateFileInformationCache();
 
     try
     {
