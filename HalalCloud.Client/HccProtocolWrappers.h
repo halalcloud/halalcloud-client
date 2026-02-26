@@ -125,6 +125,29 @@ namespace HalalCloud
     };
 
     using FileList = std::vector<FileInformation>;
+
+    struct RecentUpdatedFileInformation
+    {
+    public:
+
+        std::string Path;
+        std::int64_t UpdateTime = 0;
+        bool Deleted = false;
+
+    public:
+
+        void Parse(
+            std::string_view JsonString);
+
+    public:
+
+        RecentUpdatedFileInformation() = default;
+
+        RecentUpdatedFileInformation(
+            std::string_view JsonString);
+    };
+
+    using RecentUpdatedFileList = std::vector<RecentUpdatedFileInformation>;
 }
 
 namespace HalalCloud
@@ -190,6 +213,13 @@ namespace HalalCloud
     FileList GetFileList(
         UserToken& Token,
         std::string_view Path);
+
+    RecentUpdatedFileList ListRecentUpdatedFiles(
+        UserToken& Token,
+        std::string_view Path,
+        std::int64_t SinceTimestamp,
+        bool ContainSubdirectories,
+        bool ContainSelf);
 }
 
 #endif // !HALALCLOUD_CLIENT_PROTOCOL_WRAPPERS

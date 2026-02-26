@@ -230,6 +230,24 @@ HalalCloud::FileInformation::FileInformation(
     this->Parse(JsonString);
 }
 
+void HalalCloud::RecentUpdatedFileInformation::Parse(
+    std::string_view JsonString)
+{
+    nlohmann::json Object = nlohmann::json::parse(JsonString);
+    this->Path = Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "path"));
+    this->UpdateTime = Mile::ToInt64(Mile::Json::ToString(
+        Mile::Json::GetSubKey(Object, "update_ts")));
+    this->Deleted = Mile::Json::ToBoolean(
+        Mile::Json::GetSubKey(Object, "deleted"));
+}
+
+HalalCloud::RecentUpdatedFileInformation::RecentUpdatedFileInformation(
+    std::string_view JsonString)
+{
+    this->Parse(JsonString);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 std::string HalalCloud::RequestWithoutToken(
@@ -579,5 +597,31 @@ HalalCloud::FileList HalalCloud::GetFileList(
         }
     } while (!NextToken.empty());
 
+    return Result;
+}
+
+HalalCloud::RecentUpdatedFileList HalalCloud::ListRecentUpdatedFiles(
+    HalalCloud::UserToken& Token,
+    std::string_view Path,
+    std::int64_t SinceTimestamp,
+    bool ContainSubdirectories,
+    bool ContainSelf)
+{
+    nlohmann::json Request;
+    Request["parent"]["path"] = Path;
+    Request["start_ts"] = SinceTimestamp;
+    Request["contain_subdir"] = ContainSubdirectories;
+    Request["contain_self"] = ContainSelf;
+    nlohmann::json Response = nlohmann::json::parse(HalalCloud::Request(
+        Token,
+        "/v6/userfile/list_recent_updated_files",
+        Request.dump()));
+    HalalCloud::RecentUpdatedFileList Result;
+    for (nlohmann::json const& File
+        : Mile::Json::GetSubKey(Response, "files"))
+    {
+        Result.emplace_back(
+            HalalCloud::RecentUpdatedFileInformation(File.dump()));
+    }
     return Result;
 }
