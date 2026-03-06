@@ -661,7 +661,7 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
     CURL* CurlHandle = ::curl_easy_init();
     if (!CurlHandle)
     {
-        return CURLE_FAILED_INIT;
+        return HCC_RPC_STATUS_INTERNAL;
     }
     auto CurlHandleCleanupHandler = Mile::ScopeExitTaskHandler([&]()
     {
