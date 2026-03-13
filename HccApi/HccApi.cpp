@@ -389,6 +389,30 @@ EXTERN_C MO_RESULT MOAPI HccEncodeBase64UrlSafe(
 
 namespace
 {
+    CURL* PrivateCurlCreateHandle()
+    {
+        CURL* CurlHandle = ::curl_easy_init();
+        if (CurlHandle)
+        {
+            if (CURLE_OK == ::curl_easy_setopt(
+                CurlHandle,
+                CURLOPT_SSL_VERIFYPEER,
+                0L))
+            {
+                return CurlHandle;
+            }
+        }
+
+        if (CurlHandle)
+        { 
+            ::curl_easy_cleanup(CurlHandle);
+        }
+        return nullptr;
+    }
+}
+
+namespace
+{
     std::string BytesToHexString(
         std::vector<uint8_t> const& Bytes)
     {
@@ -658,7 +682,7 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
     RequestHeaders.emplace("authorization", Authorization);
     RequestHeaders.erase("host");
 
-    CURL* CurlHandle = ::curl_easy_init();
+    CURL* CurlHandle = ::PrivateCurlCreateHandle();
     if (!CurlHandle)
     {
         return HCC_RPC_STATUS_INTERNAL;
@@ -723,11 +747,6 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
         CurlHandle,
         CURLOPT_POSTFIELDSIZE,
         RequestJson.size()))
-    {
-        return HCC_RPC_STATUS_INTERNAL;
-    }
-
-    if (CURLE_OK != ::curl_easy_setopt(CurlHandle, CURLOPT_SSL_VERIFYPEER, 0L))
     {
         return HCC_RPC_STATUS_INTERNAL;
     }
@@ -985,7 +1004,7 @@ EXTERN_C MO_RESULT MOAPI HccDownloadFile(
 
     do
     {
-        CurlHandle = ::curl_easy_init();
+        CurlHandle = ::PrivateCurlCreateHandle();
         if (!CurlHandle)
         {
             break;
@@ -995,14 +1014,6 @@ EXTERN_C MO_RESULT MOAPI HccDownloadFile(
             CurlHandle,
             CURLOPT_FOLLOWLOCATION,
             CURLFOLLOW_ALL))
-        {
-            break;
-        }
-
-        if (CURLE_OK != ::curl_easy_setopt(
-            CurlHandle,
-            CURLOPT_SSL_VERIFYPEER,
-            0L))
         {
             break;
         }
