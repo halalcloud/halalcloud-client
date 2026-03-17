@@ -20,6 +20,7 @@
 #include <map>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include <curl/curl.h>
 #include <mbedtls/base64.h>
@@ -409,6 +410,68 @@ namespace
         }
         return nullptr;
     }
+
+    static std::size_t PrivateCurlOutputBufferWriteFunction(
+        char* data,
+        std::size_t size,
+        std::size_t nmemb,
+        void* clientp)
+    {
+        std::size_t AppendSize = size * nmemb;
+
+        std::vector<std::uint8_t>* OutputVector =
+            reinterpret_cast<std::vector<std::uint8_t>*>(clientp);
+
+        if (OutputVector)
+        {
+            try
+            {
+                std::size_t PreviousSize = OutputVector->size();
+                OutputVector->resize(PreviousSize + AppendSize);
+                std::memcpy(
+                    OutputVector->data() + PreviousSize,
+                    data,
+                    AppendSize);
+                return AppendSize;
+            }
+            catch (...)
+            {
+                // If any exception occurs (e.g., std::bad_alloc), clear the
+                // output buffer.
+                OutputVector->clear();
+            }
+        }
+
+        // If we reach here, it means the output buffer is not valid or an
+        // exception occurred during buffer resizing or data copying. In
+        // either case, we return 0 to indicate failure to libcurl, which
+        // will cause the request to fail and libcurl will clean up the
+        // output buffer as needed.
+        return 0;
+    }
+
+    bool PrivateCurlSetOutputBuffer(
+        std::vector<std::uint8_t>& OutputBuffer,
+        CURL* CurlHandle)
+    {
+        if (CURLE_OK != ::curl_easy_setopt(
+            CurlHandle,
+            CURLOPT_WRITEFUNCTION,
+            ::PrivateCurlOutputBufferWriteFunction))
+        {
+            return false;
+        }
+
+        if (CURLE_OK != ::curl_easy_setopt(
+            CurlHandle,
+            CURLOPT_WRITEDATA,
+            &OutputBuffer))
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
 
 namespace
@@ -536,23 +599,6 @@ namespace
             UtcTime.tm_hour,
             UtcTime.tm_min,
             UtcTime.tm_sec);
-    }
-
-    std::size_t HccRpcCurlWriteCallback(
-        char* data,
-        std::size_t size,
-        std::size_t nmemb,
-        void* clientp)
-    {
-        std::size_t realsize = size * nmemb;
-
-        std::string* OutputString = reinterpret_cast<std::string*>(clientp);
-        if (OutputString)
-        {
-            OutputString->append(std::string(data, realsize));
-        }
-
-        return realsize;
     }
 }
 
@@ -751,19 +797,8 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
         return HCC_RPC_STATUS_INTERNAL;
     }
 
-    if (CURLE_OK != ::curl_easy_setopt(
-        CurlHandle,
-        CURLOPT_WRITEFUNCTION,
-        ::HccRpcCurlWriteCallback))
-    {
-        return HCC_RPC_STATUS_INTERNAL;
-    }
-
-    std::string ResponseJson;
-    if (CURLE_OK != ::curl_easy_setopt(
-        CurlHandle,
-        CURLOPT_WRITEDATA,
-        &ResponseJson))
+    std::vector<std::uint8_t> ResponseJson;
+    if (!::PrivateCurlSetOutputBuffer(ResponseJson, CurlHandle))
     {
         return HCC_RPC_STATUS_INTERNAL;
     }
@@ -847,7 +882,7 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
             return HCC_RPC_STATUS_INTERNAL;
         }
 
-        std::memcpy(*ResponseJsonString, ResponseJson.c_str(), BufferSize);
+        std::memcpy(*ResponseJsonString, ResponseJson.data(), BufferSize);
     }
 
     return Status;
