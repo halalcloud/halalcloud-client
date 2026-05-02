@@ -30,8 +30,8 @@
 
 #include "Multiformats.h"
 
-EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
-    _In_ MO_UINTN Size)
+MO_EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
+    _Mo_In_ MO_UINTN Size)
 {
 #ifdef _WIN32
     return ::MileAllocateMemory(Size);
@@ -40,8 +40,8 @@ EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
 #endif
 }
 
-EXTERN_C VOID MOAPI HccFreeMemory(
-    _In_ MO_POINTER Block)
+MO_EXTERN_C MO_VOID MOAPI HccFreeMemory(
+    _Mo_In_ MO_POINTER Block)
 {
 #ifdef _WIN32
     ::MileFreeMemory(Block);
@@ -58,9 +58,9 @@ namespace
 {
     template<typename XorValueType>
     void XorBufferWithSingleUInt(
-        _Inout_ MO_POINTER Buffer,
-        _In_ MO_UINT32 Count,
-        _In_ XorValueType XorValue)
+        _Mo_InOut_ MO_POINTER Buffer,
+        _Mo_In_ MO_UINT32 Count,
+        _Mo_In_ XorValueType XorValue)
     {
         XorValueType* TypedBuffer = reinterpret_cast<XorValueType*>(Buffer);
         do
@@ -70,8 +70,8 @@ namespace
     }
 
     static MO_UINTN GetAlignedSize(
-        _In_ MO_UINTN Size,
-        _In_ MO_UINTN Alignment)
+        _Mo_In_ MO_UINTN Size,
+        _Mo_In_ MO_UINTN Alignment)
     {
         return (Size + Alignment - 1) & ~(Alignment - 1);
     }
@@ -80,9 +80,9 @@ namespace
 
     template<>
     void XorBufferWithSingleUInt<__m128i>(
-        _Inout_ MO_POINTER Buffer,
-        _In_ MO_UINT32 Count,
-        _In_ __m128i XorValue)
+        _Mo_InOut_ MO_POINTER Buffer,
+        _Mo_In_ MO_UINT32 Count,
+        _Mo_In_ __m128i XorValue)
     {
         __m128i* TypedBuffer = reinterpret_cast<__m128i*>(Buffer);
         do
@@ -99,10 +99,10 @@ namespace
 #endif // defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
 }
 
-EXTERN_C VOID MOAPI HccXorBufferWithByte(
-    _Inout_ MO_POINTER Buffer,
-    _In_ MO_UINT32 BufferSize,
-    _In_ MO_UINT8 XorByte)
+MO_EXTERN_C MO_VOID MOAPI HccXorBufferWithByte(
+    _Mo_InOut_ MO_POINTER Buffer,
+    _Mo_In_ MO_UINT32 BufferSize,
+    _Mo_In_ MO_UINT8 XorByte)
 {
     // When XorByte is 0, the buffer will remain unchanged. So we also skip the
     // operation in this case.
@@ -181,10 +181,10 @@ EXTERN_C VOID MOAPI HccXorBufferWithByte(
         XorByte);
 }
 
-EXTERN_C MO_RESULT MOAPI HccComputeSha256(
-    _Out_ MO_POINTER OutputBuffer,
-    _In_ MO_CONSTANT_POINTER InputBuffer,
-    _In_ MO_UINT32 InputSize)
+MO_EXTERN_C MO_RESULT MOAPI HccComputeSha256(
+    _Mo_Out_ MO_POINTER OutputBuffer,
+    _Mo_In_ MO_CONSTANT_POINTER InputBuffer,
+    _Mo_In_ MO_UINT32 InputSize)
 {
     if (!OutputBuffer || !InputBuffer || !InputSize)
     {
@@ -223,12 +223,12 @@ EXTERN_C MO_RESULT MOAPI HccComputeSha256(
     return Result;
 }
 
-EXTERN_C MO_RESULT MOAPI HccComputeHmacSha256(
-    _Out_ MO_POINTER OutputBuffer,
-    _In_ MO_CONSTANT_POINTER KeyBuffer,
-    _In_ MO_UINT32 KeySize,
-    _In_ MO_CONSTANT_POINTER InputBuffer,
-    _In_ MO_UINT32 InputSize)
+MO_EXTERN_C MO_RESULT MOAPI HccComputeHmacSha256(
+    _Mo_Out_ MO_POINTER OutputBuffer,
+    _Mo_In_ MO_CONSTANT_POINTER KeyBuffer,
+    _Mo_In_ MO_UINT32 KeySize,
+    _Mo_In_ MO_CONSTANT_POINTER InputBuffer,
+    _Mo_In_ MO_UINT32 InputSize)
 {
     if (!OutputBuffer || !KeyBuffer || !KeySize || !InputBuffer || !InputSize)
     {
@@ -270,9 +270,9 @@ EXTERN_C MO_RESULT MOAPI HccComputeHmacSha256(
     return Result;
 }
 
-EXTERN_C MO_RESULT MOAPI HccGenerateRandomBytes(
-    _Out_ MO_POINTER OutputBuffer,
-    _In_ MO_UINT32 OutputSize)
+MO_EXTERN_C MO_RESULT MOAPI HccGenerateRandomBytes(
+    _Mo_Out_ MO_POINTER OutputBuffer,
+    _Mo_In_ MO_UINT32 OutputSize)
 {
     if (!OutputBuffer || !OutputSize)
     {
@@ -313,10 +313,10 @@ EXTERN_C MO_RESULT MOAPI HccGenerateRandomBytes(
     return Result;
 }
 
-EXTERN_C MO_RESULT MOAPI HccEncodeBase64(
-    _Out_ PMO_STRING OutputString,
-    _In_ MO_CONSTANT_POINTER InputBuffer,
-    _In_ MO_UINT32 InputSize)
+MO_EXTERN_C MO_RESULT MOAPI HccEncodeBase64(
+    _Mo_Out_ PMO_STRING OutputString,
+    _Mo_In_ MO_CONSTANT_POINTER InputBuffer,
+    _Mo_In_ MO_UINT32 InputSize)
 {
     if (!OutputString || !InputBuffer || !InputSize)
     {
@@ -357,10 +357,10 @@ EXTERN_C MO_RESULT MOAPI HccEncodeBase64(
     return MO_RESULT_SUCCESS_OK;
 }
 
-EXTERN_C MO_RESULT MOAPI HccEncodeBase64UrlSafe(
-    _Out_ PMO_STRING OutputString,
-    _In_ MO_CONSTANT_POINTER InputBuffer,
-    _In_ MO_UINT32 InputSize)
+MO_EXTERN_C MO_RESULT MOAPI HccEncodeBase64UrlSafe(
+    _Mo_Out_ PMO_STRING OutputString,
+    _Mo_In_ MO_CONSTANT_POINTER InputBuffer,
+    _Mo_In_ MO_UINT32 InputSize)
 {
     MO_RESULT Result = ::HccEncodeBase64(OutputString, InputBuffer, InputSize);
     if (MO_RESULT_SUCCESS_OK != Result)
@@ -405,7 +405,7 @@ namespace
         }
 
         if (CurlHandle)
-        { 
+        {
             ::curl_easy_cleanup(CurlHandle);
         }
         return nullptr;
@@ -602,11 +602,11 @@ namespace
     }
 }
 
-EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
-    _Out_opt_ PMO_STRING ResponseJsonString,
-    _In_ MO_CONSTANT_STRING AccessTokenString,
-    _In_ MO_CONSTANT_STRING ApiPathString,
-    _In_ MO_CONSTANT_STRING RequestJsonString)
+MO_EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
+    _Mo_Out_Opt_ PMO_STRING ResponseJsonString,
+    _Mo_In_ MO_CONSTANT_STRING AccessTokenString,
+    _Mo_In_ MO_CONSTANT_STRING ApiPathString,
+    _Mo_In_ MO_CONSTANT_STRING RequestJsonString)
 {
     if (!AccessTokenString || !ApiPathString || !RequestJsonString)
     {
@@ -909,10 +909,10 @@ namespace
     }
 }
 
-EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
-    _Out_ PMO_UINT8* ContentBuffer,
-    _Out_ PMO_UINT32 ContentSize,
-    _In_ MO_CONSTANT_STRING FilePath)
+MO_EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
+    _Mo_Out_ PMO_UINT8* ContentBuffer,
+    _Mo_Out_ PMO_UINT32 ContentSize,
+    _Mo_In_ MO_CONSTANT_STRING FilePath)
 {
     if (!ContentBuffer || !ContentSize || !FilePath)
     {
@@ -982,10 +982,10 @@ EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
     return Result;
 }
 
-EXTERN_C MO_RESULT MOAPI HccWriteAllBytesToFile(
-    _In_ MO_CONSTANT_STRING FilePath,
-    _In_ PMO_UINT8 ContentBuffer,
-    _In_ MO_UINT32 ContentSize)
+MO_EXTERN_C MO_RESULT MOAPI HccWriteAllBytesToFile(
+    _Mo_In_ MO_CONSTANT_STRING FilePath,
+    _Mo_In_ PMO_UINT8 ContentBuffer,
+    _Mo_In_ MO_UINT32 ContentSize)
 {
     if (!FilePath || !ContentBuffer || !ContentSize)
     {
@@ -1024,9 +1024,9 @@ EXTERN_C MO_RESULT MOAPI HccWriteAllBytesToFile(
     return Result;
 }
 
-EXTERN_C MO_RESULT MOAPI HccDownloadFile(
-    _In_ MO_CONSTANT_STRING SourceUrl,
-    _In_ MO_CONSTANT_STRING TargetPath)
+MO_EXTERN_C MO_RESULT MOAPI HccDownloadFile(
+    _Mo_In_ MO_CONSTANT_STRING SourceUrl,
+    _Mo_In_ MO_CONSTANT_STRING TargetPath)
 {
     if (!SourceUrl || !TargetPath)
     {
@@ -1165,9 +1165,9 @@ namespace
     }
 }
 
-EXTERN_C MO_BOOL MOAPI HccCidGetSha256(
-    _Out_ MO_POINTER HashBytes,
-    _In_ MO_CONSTANT_STRING CidString)
+MO_EXTERN_C MO_BOOL MOAPI HccCidGetSha256(
+    _Mo_Out_ MO_POINTER HashBytes,
+    _Mo_In_ MO_CONSTANT_STRING CidString)
 {
     if (!CidString || !HashBytes)
     {

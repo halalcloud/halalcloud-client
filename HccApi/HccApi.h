@@ -12,17 +12,6 @@
 #define HALALCLOUD_CLIENT_API
 
 #include <Mile.Mobility.Portable.Types.h>
-#ifndef MILE_MOBILITY_ENABLE_MINIMUM_SAL
-#include <sal.h>
-#endif // !MILE_MOBILITY_ENABLE_MINIMUM_SAL
-
-// Workaround for Windows SDK, which defines these types in #ifndef VOID block.
-// That design is terrible, but needs to have a workaround.
-#ifdef VOID
-typedef char CHAR;
-typedef short SHORT;
-typedef long LONG;
-#endif // VOID
 
 /**
  * @brief Allocates a block of memory from the default heap of the calling
@@ -33,8 +22,8 @@ typedef long LONG;
  *         allocated memory block. If the function fails, the return value is
  *         nullptr.
  */
-EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
-    _In_ MO_UINTN Size);
+MO_EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
+    _Mo_In_ MO_UINTN Size);
 
 /**
  * @brief Frees a memory block allocated from a heap by the HccAllocateMemory
@@ -44,8 +33,8 @@ EXTERN_C MO_POINTER MOAPI HccAllocateMemory(
  *        nullptr, the behavior is undefined.
  * @return This function does not return a value.
  */
-EXTERN_C VOID MOAPI HccFreeMemory(
-    _In_ MO_POINTER Block);
+MO_EXTERN_C MO_VOID MOAPI HccFreeMemory(
+    _Mo_In_ MO_POINTER Block);
 
 /**
  * @brief Execute XOR operation on a buffer with a single byte.
@@ -53,10 +42,10 @@ EXTERN_C VOID MOAPI HccFreeMemory(
  * @param BufferSize The size of the buffer, in bytes.
  * @param XorByte The byte used for XOR operation.
  */
-EXTERN_C VOID MOAPI HccXorBufferWithByte(
-    _Inout_ MO_POINTER Buffer,
-    _In_ MO_UINT32 BufferSize,
-    _In_ MO_UINT8 XorByte);
+MO_EXTERN_C MO_VOID MOAPI HccXorBufferWithByte(
+    _Mo_InOut_ MO_POINTER Buffer,
+    _Mo_In_ MO_UINT32 BufferSize,
+    _Mo_In_ MO_UINT8 XorByte);
 
 // The length of a SHA-256 hash value in bytes.
 #define HCC_SHA256_HASH_LENGTH 32
@@ -70,10 +59,10 @@ EXTERN_C VOID MOAPI HccXorBufferWithByte(
  * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
  *         it returns an MO_RESULT error code.
  */
-EXTERN_C MO_RESULT MOAPI HccComputeSha256(
-    _Out_ MO_POINTER OutputBuffer,
-    _In_ MO_CONSTANT_POINTER InputBuffer,
-    _In_ MO_UINT32 InputSize);
+MO_EXTERN_C MO_RESULT MOAPI HccComputeSha256(
+    _Mo_Out_ MO_POINTER OutputBuffer,
+    _Mo_In_ MO_CONSTANT_POINTER InputBuffer,
+    _Mo_In_ MO_UINT32 InputSize);
 
 /**
  * @brief Compute the HMAC-SHA256 for the input buffer using the specified key.
@@ -86,12 +75,12 @@ EXTERN_C MO_RESULT MOAPI HccComputeSha256(
  * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
  *         it returns an MO_RESULT error code.
  */
-EXTERN_C MO_RESULT MOAPI HccComputeHmacSha256(
-    _Out_ MO_POINTER OutputBuffer,
-    _In_ MO_CONSTANT_POINTER KeyBuffer,
-    _In_ MO_UINT32 KeySize,
-    _In_ MO_CONSTANT_POINTER InputBuffer,
-    _In_ MO_UINT32 InputSize);
+MO_EXTERN_C MO_RESULT MOAPI HccComputeHmacSha256(
+    _Mo_Out_ MO_POINTER OutputBuffer,
+    _Mo_In_ MO_CONSTANT_POINTER KeyBuffer,
+    _Mo_In_ MO_UINT32 KeySize,
+    _Mo_In_ MO_CONSTANT_POINTER InputBuffer,
+    _Mo_In_ MO_UINT32 InputSize);
 
 /**
  * @brief Generate cryptographically secure random bytes.
@@ -100,9 +89,9 @@ EXTERN_C MO_RESULT MOAPI HccComputeHmacSha256(
  * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
  *         it returns an MO_RESULT error code.
  */
-EXTERN_C MO_RESULT MOAPI HccGenerateRandomBytes(
-    _Out_ MO_POINTER OutputBuffer,
-    _In_ MO_UINT32 OutputSize);
+MO_EXTERN_C MO_RESULT MOAPI HccGenerateRandomBytes(
+    _Mo_Out_ MO_POINTER OutputBuffer,
+    _Mo_In_ MO_UINT32 OutputSize);
 
 /**
  * @brief Encode data to Base64 string.
@@ -114,10 +103,10 @@ EXTERN_C MO_RESULT MOAPI HccGenerateRandomBytes(
  * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
  *         it returns an MO_RESULT error code.
  */
-EXTERN_C MO_RESULT MOAPI HccEncodeBase64(
-    _Out_ PMO_STRING OutputString,
-    _In_ MO_CONSTANT_POINTER InputBuffer,
-    _In_ MO_UINT32 InputSize);
+MO_EXTERN_C MO_RESULT MOAPI HccEncodeBase64(
+    _Mo_Out_ PMO_STRING OutputString,
+    _Mo_In_ MO_CONSTANT_POINTER InputBuffer,
+    _Mo_In_ MO_UINT32 InputSize);
 
 /**
  * @brief Encode data to URL-safe Base64 string.
@@ -129,10 +118,10 @@ EXTERN_C MO_RESULT MOAPI HccEncodeBase64(
  * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
  *         it returns an MO_RESULT error code.
  */
-EXTERN_C MO_RESULT MOAPI HccEncodeBase64UrlSafe(
-    _Out_ PMO_STRING OutputString,
-    _In_ MO_CONSTANT_POINTER InputBuffer,
-    _In_ MO_UINT32 InputSize);
+MO_EXTERN_C MO_RESULT MOAPI HccEncodeBase64UrlSafe(
+    _Mo_Out_ PMO_STRING OutputString,
+    _Mo_In_ MO_CONSTANT_POINTER InputBuffer,
+    _Mo_In_ MO_UINT32 InputSize);
 
 typedef MO_INT32 HCC_RPC_STATUS;
 
@@ -226,11 +215,11 @@ typedef MO_INT32 HCC_RPC_STATUS;
  * @return If the function succeeds, it returns HCC_RPC_STATUS_OK. Otherwise,
  *         it returns an HCC_RPC_STATUS error code.
  */
-EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
-    _Out_opt_ PMO_STRING ResponseJsonString,
-    _In_ MO_CONSTANT_STRING AccessTokenString,
-    _In_ MO_CONSTANT_STRING ApiPathString,
-    _In_ MO_CONSTANT_STRING RequestJsonString);
+MO_EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
+    _Mo_Out_Opt_ PMO_STRING ResponseJsonString,
+    _Mo_In_ MO_CONSTANT_STRING AccessTokenString,
+    _Mo_In_ MO_CONSTANT_STRING ApiPathString,
+    _Mo_In_ MO_CONSTANT_STRING RequestJsonString);
 
 /**
  * @brief Read all bytes from file.
@@ -245,10 +234,10 @@ EXTERN_C HCC_RPC_STATUS MOAPI HccRpcPostRequest(
  * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
  *         it returns an MO_RESULT error code.
  */
-EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
-    _Out_ PMO_UINT8* ContentBuffer,
-    _Out_ PMO_UINT32 ContentSize,
-    _In_ MO_CONSTANT_STRING FilePath);
+MO_EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
+    _Mo_Out_ PMO_UINT8* ContentBuffer,
+    _Mo_Out_ PMO_UINT32 ContentSize,
+    _Mo_In_ MO_CONSTANT_STRING FilePath);
 
 /**
  * @brief Write all bytes to file.
@@ -260,10 +249,10 @@ EXTERN_C MO_RESULT MOAPI HccReadAllBytesFromFile(
  * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
  *         it returns an MO_RESULT error code.
  */
-EXTERN_C MO_RESULT MOAPI HccWriteAllBytesToFile(
-    _In_ MO_CONSTANT_STRING FilePath,
-    _In_ PMO_UINT8 ContentBuffer,
-    _In_ MO_UINT32 ContentSize);
+MO_EXTERN_C MO_RESULT MOAPI HccWriteAllBytesToFile(
+    _Mo_In_ MO_CONSTANT_STRING FilePath,
+    _Mo_In_ PMO_UINT8 ContentBuffer,
+    _Mo_In_ MO_UINT32 ContentSize);
 
 /**
  * @brief Download a file from the specified URL to the target path.
@@ -274,9 +263,9 @@ EXTERN_C MO_RESULT MOAPI HccWriteAllBytesToFile(
  * @return If the function succeeds, it returns MO_RESULT_SUCCESS_OK. Otherwise,
  *         it returns an MO_RESULT error code.
  */
-EXTERN_C MO_RESULT MOAPI HccDownloadFile(
-    _In_ MO_CONSTANT_STRING SourceUrl,
-    _In_ MO_CONSTANT_STRING TargetPath);
+MO_EXTERN_C MO_RESULT MOAPI HccDownloadFile(
+    _Mo_In_ MO_CONSTANT_STRING SourceUrl,
+    _Mo_In_ MO_CONSTANT_STRING TargetPath);
 
 // The length of the CID content used in the current Halal Cloud service
 // implementation should be 36 bytes long, which is calculated as follows:
@@ -314,8 +303,8 @@ EXTERN_C MO_RESULT MOAPI HccDownloadFile(
  *         - Multihash type: SHA2-256
  *         - CID string length: HCC_CID_STRING_LENGTH
  */
-EXTERN_C MO_BOOL MOAPI HccCidGetSha256(
-    _Out_ MO_POINTER HashBytes,
-    _In_ MO_CONSTANT_STRING CidString);
+MO_EXTERN_C MO_BOOL MOAPI HccCidGetSha256(
+    _Mo_Out_ MO_POINTER HashBytes,
+    _Mo_In_ MO_CONSTANT_STRING CidString);
 
 #endif // !HALALCLOUD_CLIENT_API
